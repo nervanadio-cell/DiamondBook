@@ -12,6 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const chapters=flattenChapters(book).length;
       const card=document.createElement("article"); card.className="book-card"; card.style.animationDelay=`${index*50}ms`;
       card.innerHTML=`<div><div class="book-cover"><div class="book-cover-title">${escapeHtml(book.title)}</div></div><div class="book-meta">${escapeHtml(book.author||"Без автора")} · ${chapters} глав</div></div><div class="book-card-bottom"><a class="book-open" href="editor.html?id=${encodeURIComponent(book.id)}">Открыть →</a><button class="delete-book" data-id="${book.id}">Удалить</button></div>`;
+      const cover = card.querySelector(".book-cover");
+      if (book.coverDataUrl && /^data:image\/(?:jpeg|png|webp);base64,/.test(book.coverDataUrl)) {
+        cover.style.backgroundImage = "linear-gradient(180deg, transparent 15%, rgba(0,0,0,.8)), url(" + book.coverDataUrl + ")";
+        cover.style.backgroundPosition = "center";
+        cover.style.backgroundSize = "cover";
+        const title = cover.querySelector(".book-cover-title");
+        if (title) { title.style.color = "#fff"; title.style.textShadow = "0 2px 12px #000"; }
+      }
       grid.appendChild(card);
     });
   }
