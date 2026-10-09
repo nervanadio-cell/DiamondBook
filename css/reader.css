@@ -95,16 +95,23 @@
 .reader-page {
   height:100vh; overflow:hidden; color:#33291e;
   --reader-bg:#e8ddc8; --reader-text:#34291e;
-  background:
-    radial-gradient(ellipse at 50% 5%,rgba(105,77,43,.16),transparent 54%),
-    linear-gradient(135deg,#211d16,#40301f 48%,#211910);
+  background-color:#1c150e;
+  background-image:
+    linear-gradient(rgba(13,12,9,.44),rgba(13,12,9,.62)),
+    url("../assets/oak-bark.svg");
+  background-position:center,center;
+  background-size:cover,min(1440px,100vw) auto;
+  background-repeat:no-repeat,repeat;
+  background-attachment:fixed,fixed;
   transition:opacity .28s ease, transform .32s ease, filter .32s ease;
 }
 .reader-page.theme-night { --reader-bg:#1e211f; --reader-text:#dfded6; }
 .reader-page.theme-warm { --reader-bg:#d9c39d; --reader-text:#3a2a1a; }
 .reader-page.reader-closing { opacity:0; transform:scale(.91) rotateY(5deg); filter:brightness(.7); transform-origin:right center; }
 .reader-topbar {
-  height:58px; position:relative; z-index:20; background:rgba(19,22,17,.84);
+  height:58px; position:relative; z-index:20;
+  background-image:linear-gradient(rgba(15,19,13,.85),rgba(24,22,16,.91)),url("../assets/oak-bark.svg");
+  background-size:cover,700px auto;background-position:center,center;
   color:#e6d4b3; border-bottom:1px solid rgba(209,176,120,.22);
   padding:0 22px; grid-template-columns:1fr auto 1fr;
 }
