@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const tree = document.getElementById("readerTree");
   const sidebar = document.getElementById("readerSidebar");
   const themePanel = document.getElementById("themePanel");
+  let lastRenderedIndex = null;
 
   bookTitle.textContent = book.title;
   document.getElementById("backToEditor").href =
@@ -46,6 +47,15 @@ document.addEventListener("DOMContentLoaded", () => {
   function render() {
     const item = chapters[currentIndex];
     if (!item) return;
+
+    const paper = document.getElementById("readerPaper");
+    if (paper && lastRenderedIndex !== null && lastRenderedIndex !== currentIndex) {
+      paper.classList.remove("page-turn-next", "page-turn-prev");
+      void paper.offsetWidth;
+      paper.classList.add(currentIndex > lastRenderedIndex ? "page-turn-next" : "page-turn-prev");
+      window.setTimeout(() => paper.classList.remove("page-turn-next", "page-turn-prev"), 460);
+    }
+    lastRenderedIndex = currentIndex;
 
     title.textContent = item.chapter.title;
     chapterTitle.textContent = item.chapter.title;
