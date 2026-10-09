@@ -62,7 +62,13 @@
       </div>
 
       <div class="chapter-editor">
-        <input id="chapterTitle" class="chapter-title-input" type="text" maxlength="200" placeholder="Название главы">
+        <div class="chapter-title-row">
+          <input id="chapterTitle" class="chapter-title-input" type="text" maxlength="200" placeholder="Название главы" autocomplete="off">
+          <div class="chapter-title-actions">
+            <button type="button" id="cancelChapterTitle" class="chapter-title-cancel" title="Отменить название" aria-label="Отменить название" disabled>×</button>
+            <button type="button" id="saveChapterTitle" class="chapter-title-save" title="Сохранить название" aria-label="Сохранить название" disabled>✓</button>
+          </div>
+        </div>
         <div id="editor" class="rich-editor" contenteditable="true" spellcheck="true" data-placeholder="Начни писать здесь..."></div>
       </div>
     </section>
