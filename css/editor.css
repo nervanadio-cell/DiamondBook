@@ -238,3 +238,21 @@
   min-height:0;
   scrollbar-width:thin;
 }
+
+
+/* Writer controls and inline title fields */
+.line-spacing-control {display:flex;align-items:center;gap:6px;margin-left:auto;padding:0 8px;color:#f0dfc0;font:11px system-ui,sans-serif;white-space:nowrap;}
+.line-spacing-control select {max-width:75px;border:1px solid #6c4b2a;border-radius:7px;background:#3c2a19;color:#f4e6ce;padding:6px 7px;font:11px system-ui,sans-serif;}
+.book-title-inline-input {width:min(260px,30vw);min-width:100px;border:1px solid #b28c59;border-radius:7px;background:#2b2c23;color:#f1dfc0;padding:8px 10px;font:600 13px system-ui,sans-serif;outline:2px solid #b28c5940;}
+.tree-inline-rename {min-width:20px;flex:1;width:calc(100% - 40px);border:1px solid #a98758;border-radius:6px;padding:7px 8px;background:#181b14;color:#f3e4ca;font:12px system-ui,sans-serif;outline:2px solid #a9875838;}
+.tree-row > .tree-inline-rename {margin:2px 0;}
+.writer-dialog-backdrop {position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,6,4,.74);backdrop-filter:blur(8px);}
+.writer-dialog {width:min(420px,100%);padding:23px;border:1px solid rgba(213,174,119,.35);border-radius:14px;background:linear-gradient(140deg,#30271b,#181a14);color:#eadcc2;box-shadow:0 26px 80px #0009;animation:writerDialogIn .18s ease-out;}
+.writer-dialog h2 {margin:0 0 9px;font:400 25px Georgia,serif;color:#eddbbb;}
+.writer-dialog-description {margin:0 0 17px;color:#c3b69b;font:13px/1.55 system-ui,sans-serif;}
+.writer-dialog-input {box-sizing:border-box;width:100%;padding:11px;border:1px solid #795b37;border-radius:8px;background:#12140f;color:#f1dfc0;outline:2px solid #b28c5920;}
+.writer-dialog-actions {display:flex;justify-content:flex-end;gap:8px;margin-top:20px;}
+.writer-dialog-actions button {border:1px solid rgba(220,187,137,.25);border-radius:7px;padding:9px 13px;background:#302b21;color:#e5d5b7;font:600 12px system-ui,sans-serif;cursor:pointer;}
+.writer-dialog-actions .writer-dialog-confirm {background:#b5905a;color:#1e160d;border-color:#b5905a;}
+.writer-dialog-actions .writer-dialog-confirm.danger {background:#793a30;color:#fff0e9;border-color:#b15b4b;}
+@keyframes writerDialogIn {from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
