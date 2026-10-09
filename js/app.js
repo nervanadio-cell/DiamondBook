@@ -3,6 +3,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const emptyState = document.getElementById("emptyState");
   const count = document.getElementById("bookCount");
 
+  function coverTexture(book) {
+    const seed = String(book.id || book.title || "book");
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+    return hash % 8;
+  }
+
   function render() {
     const books = getBooks();
     grid.innerHTML = "";
@@ -27,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         card.style.animationDelay = `${offset * 65}ms`;
         card.innerHTML = `
           <div class="book-card-main">
-            <a class="book-cover book-open-cover" aria-label="Открыть ${escapeHtml(book.title)}" href="editor.html?id=${encodeURIComponent(book.id)}">
+            <a class="book-cover book-open-cover texture-${coverTexture(book)}" aria-label="Читать ${escapeHtml(book.title)}" href="reader.html?id=${encodeURIComponent(book.id)}">
               <span class="book-cover-title">${escapeHtml(book.title)}</span>
               <span class="book-cover-author">${escapeHtml(book.author || "Без автора")}</span>
             </a>
