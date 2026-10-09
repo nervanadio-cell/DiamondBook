@@ -93,3 +93,32 @@ GitHub Pages сам по себе не требует сервера. Проек
 ## Зависимости
 
 EPUB/ODT используют JSZip, PDF импорт — PDF.js, PDF экспорт — html2pdf, DOCX импорт — Mammoth, DOCX экспорт — docx. Эти библиотеки подключаются с CDN и поэтому требуют интернет-соединения при загрузке функций, которые ими пользуются.
+
+
+## Структура проекта
+
+```text
+DiamondBook/
+├── index.html
+├── create.html
+├── editor.html
+├── reader.html
+├── css/
+│   ├── main.css
+│   ├── create.css
+│   ├── editor.css
+│   └── reader.css
+├── js/
+│   ├── storage.js
+│   ├── app.js
+│   ├── create.js
+│   ├── editor.js
+│   ├── reader.js
+│   ├── formats.js
+│   ├── export.js
+│   ├── import.js
+│   └── cover-editor.js
+└── README.md
+```
+
+HTML-страницы остаются в корне для GitHub Pages. Стили находятся в `css/`, скрипты — в `js/`; пути внутри HTML соответствуют этой структуре.
