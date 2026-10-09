@@ -400,3 +400,26 @@ body {
   55% {transform:perspective(900px) scale(1.09) rotateY(-5deg) translateY(-10px);filter:brightness(1.12);}
   100% {transform:perspective(900px) scale(1.24) rotateY(-9deg) translateY(5px);filter:brightness(.95);}
 }
+
+
+/* Give cover scans a paper/cloth grain without hiding the artwork */
+.book-cover.cover-custom::before {
+  inset:0;border:0;border-radius:inherit;
+  background:
+    repeating-linear-gradient(0deg,rgba(255,235,191,.035) 0 1px,transparent 1px 4px),
+    repeating-linear-gradient(90deg,rgba(12,8,4,.035) 0 1px,transparent 1px 6px),
+    linear-gradient(90deg,rgba(5,4,2,.24),transparent 14%,transparent 90%,rgba(255,230,183,.05));
+  pointer-events:none;
+}
+.book-cover.cover-custom::after {
+  left:0;top:0;bottom:0;width:5px;
+  background:linear-gradient(90deg,rgba(9,6,3,.72),rgba(226,192,131,.35),rgba(6,4,2,.38));
+  pointer-events:none;
+}
+.book-cover.book-open-cover {cursor:pointer;transform-origin:center center;}
+.book-card.book-opening .book-cover {animation:bookCoverPick .38s cubic-bezier(.2,.8,.18,1) forwards;}
+@keyframes bookCoverPick {
+  0% {transform:scale(1);box-shadow:inset 7px 0 10px rgba(0,0,0,.3),0 12px 18px rgba(0,0,0,.35);}
+  60% {transform:scale(1.12);box-shadow:inset 7px 0 10px rgba(0,0,0,.3),0 25px 40px rgba(0,0,0,.5);}
+  100% {transform:scale(1.38);box-shadow:inset 7px 0 10px rgba(0,0,0,.3),0 36px 65px rgba(0,0,0,.6);}
+}
