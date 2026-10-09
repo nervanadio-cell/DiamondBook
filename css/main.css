@@ -359,3 +359,44 @@ body {
   55% { transform:perspective(700px) rotateY(-12deg) translateY(-7px) scale(1.025); opacity:1; }
   100% { transform:perspective(700px) rotateY(17deg) translateY(18px) scale(.78); opacity:.25; }
 }
+
+
+/* Keep the oak bark visible; no large green promo rectangle above the shelves */
+.hero.hero-shelf-actions {
+  min-height:82px;padding:16px 0 8px;justify-content:flex-end;
+  background:transparent!important;background-image:none!important;box-shadow:none;
+}
+.hero.hero-shelf-actions::before,.hero.hero-shelf-actions::after {display:none!important;}
+.library-section {padding-top:10px;}
+.book-cover.texture-0:not(.cover-custom) {
+  background-image:radial-gradient(ellipse at 72% 20%,#c49a6040,transparent 40%),repeating-linear-gradient(4deg,transparent 0 11px,#e6c18c0b 12px,#1c100a2c 14px),linear-gradient(130deg,#665034,#33271b 50%,#1a1712);
+}
+.book-cover.texture-1:not(.cover-custom) {
+  background-image:repeating-linear-gradient(92deg,#f1d8a20b 0 1px,#100d0818 2px 4px,transparent 5px 9px),linear-gradient(135deg,#273e32,#15241c 55%,#101812);
+}
+.book-cover.texture-2:not(.cover-custom) {
+  background-image:repeating-linear-gradient(45deg,#e0c39210 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,#07080522 0 1px,transparent 1px 5px),linear-gradient(140deg,#6a3330,#3a1c20 60%,#201214);
+}
+.book-cover.texture-3:not(.cover-custom) {
+  background-image:radial-gradient(ellipse at 20% 30%,#e4bc8647,transparent 31%),radial-gradient(ellipse at 80% 66%,#10131e88,transparent 40%),linear-gradient(145deg,#4c5267,#242638 60%,#171722);
+}
+.book-cover.texture-4:not(.cover-custom) {
+  background-image:repeating-linear-gradient(0deg,#fff4d109 0 2px,transparent 3px 7px),linear-gradient(135deg,#91794f,#59472f 60%,#382b1d);
+}
+.book-cover.texture-5:not(.cover-custom) {
+  background-image:repeating-linear-gradient(88deg,#d5b38c0c 0 2px,#08070428 3px 5px,transparent 6px 12px),linear-gradient(145deg,#45403a,#24211f 65%,#131312);
+}
+.book-cover.texture-6:not(.cover-custom) {
+  background-image:repeating-linear-gradient(25deg,#f2d4a00b 0 1px,transparent 1px 8px),repeating-linear-gradient(155deg,#08060420 0 1px,transparent 2px 9px),linear-gradient(135deg,#75604c,#3c2f25 60%,#1e1914);
+}
+.book-cover.texture-7:not(.cover-custom) {
+  background-image:radial-gradient(ellipse at 45% 20%,#e9d0a538,transparent 50%),repeating-linear-gradient(0deg,#22180e11 0 1px,transparent 2px 5px),linear-gradient(135deg,#8c7147,#59442c 64%,#332416);
+}
+.book-cover.cover-custom::before {background:linear-gradient(90deg,#100c0750,transparent 35%,#d6b77a12);inset:0;border:0;border-radius:inherit;}
+.book-cover.cover-custom::after {width:5px;background:linear-gradient(90deg,#120e09a8,#f2d8a333,#100b0766);}
+.book-card.book-opening .book-cover {animation:bookCoverPick .36s cubic-bezier(.18,.78,.18,1) forwards;}
+@keyframes bookCoverPick {
+  0% {transform:perspective(900px) scale(1) rotateY(0);filter:brightness(1);}
+  55% {transform:perspective(900px) scale(1.09) rotateY(-5deg) translateY(-10px);filter:brightness(1.12);}
+  100% {transform:perspective(900px) scale(1.24) rotateY(-9deg) translateY(5px);filter:brightness(.95);}
+}
