@@ -256,3 +256,39 @@
 .writer-dialog-actions .writer-dialog-confirm {background:#b5905a;color:#1e160d;border-color:#b5905a;}
 .writer-dialog-actions .writer-dialog-confirm.danger {background:#793a30;color:#fff0e9;border-color:#b15b4b;}
 @keyframes writerDialogIn {from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+
+
+/* Checkmark-based renaming, chapter heading, and wood confirmation dialog */
+.chapter-title-row {display:flex;align-items:center;gap:10px;margin-bottom:32px;min-width:0;}
+.chapter-title-row .chapter-title-input {flex:1 1 auto;min-width:0;width:0;margin-bottom:0;padding:4px 0;border-bottom:1px solid transparent;transition:border-color .18s;}
+.chapter-title-row .chapter-title-input:focus,.chapter-title-row .chapter-title-input.title-dirty {border-bottom-color:#b28d5a;}
+.chapter-title-actions {display:flex;gap:5px;align-items:center;flex:0 0 auto;}
+.chapter-title-save,.chapter-title-cancel {
+  display:grid;place-items:center;width:35px;height:35px;border-radius:50%;
+  border:1px solid rgba(140,103,60,.35);background:rgba(117,81,43,.12);color:#87633b;
+  font:700 18px/1 system-ui,sans-serif;cursor:pointer;transition:background .18s,transform .18s,opacity .18s;
+}
+.chapter-title-save {background:#84613a;color:#fff0d8;border-color:#a8814d;}
+.chapter-title-save:hover:not(:disabled) {background:#a47d49;transform:translateY(-1px);}
+.chapter-title-cancel:hover:not(:disabled) {background:#eadbc3;}
+.chapter-title-save:disabled,.chapter-title-cancel:disabled {opacity:.22;cursor:default;}
+.tree-inline-actions,.book-title-inline-actions {display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;}
+.tree-inline-actions button,.book-title-inline-actions button {
+  display:grid;place-items:center;width:26px;height:27px;padding:0;border:1px solid rgba(213,176,120,.25);
+  border-radius:6px;background:#30291d;color:#e8d7b7;font:700 14px/1 system-ui,sans-serif;cursor:pointer;
+}
+.tree-inline-actions button:first-child,.book-title-inline-actions button:first-child {background:#927044;color:#fff0d4;}
+.tree-inline-actions button:hover,.book-title-inline-actions button:hover {filter:brightness(1.15);}
+.book-title-inline-actions button {width:30px;height:30px;}
+.writer-dialog {
+  background-color:#19160f;
+  background-image:linear-gradient(145deg,rgba(48,37,23,.93),rgba(18,19,14,.97)),url("../assets/oak-bark.svg");
+  background-size:cover,800px auto;
+  border-color:rgba(214,177,121,.48);
+}
+.writer-dialog-actions button {
+  background-image:linear-gradient(rgba(227,190,132,.04),rgba(26,18,10,.22)),url("../assets/oak-board.svg");
+  background-size:cover,100% 100%;
+}
+.writer-dialog-actions .writer-dialog-confirm {background-image:linear-gradient(120deg,#d2b17a,#a7804a);}
+.writer-dialog-actions .writer-dialog-confirm.danger {background-image:linear-gradient(120deg,#985447,#633026);}
