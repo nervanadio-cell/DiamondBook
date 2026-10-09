@@ -25,7 +25,7 @@
         <header class="cover-head"><div><h2 id="coverTitle">Редактор обложки</h2><p>Загрузи фото и выдели нужный фрагмент.</p></div><button type="button" id="coverClose" aria-label="Закрыть">×</button></header>
         <div class="cover-grid"><div><div class="cover-stage"><canvas id="coverCanvas" hidden></canvas><p id="coverHint" class="cover-hint">JPG, PNG, WebP или BMP. GIF и видео не поддерживаются.</p></div><p class="cover-note">Потяни мышью или пальцем, чтобы выбрать кадр. Повторное выделение заменит предыдущий кадр.</p></div>
           <aside class="cover-controls"><input id="coverInput" type="file" accept="image/jpeg,image/png,image/webp,image/bmp,.jpg,.jpeg,.png,.webp,.bmp" hidden><button type="button" id="coverChoose" class="cover-primary">Выбрать фото…</button>
-            <div class="cover-ratios"><button type="button" data-ratio="0.6666667" class="active">2:3</button><button type="button" data-ratio="0.75">3:4</button><button type="button" data-ratio="1">1:1</button><button type="button" data-ratio="free">Свободно</button></div>
+            <div class="cover-ratios"><button type="button" data-ratio="0.6666667">2:3</button><button type="button" data-ratio="0.75">3:4</button><button type="button" data-ratio="1">1:1</button><button type="button" data-ratio="free" class="active">Свободно</button></div>
             <div class="cover-preview" id="coverPreview">Предпросмотр</div><button type="button" id="coverDownload">Скачать JPG</button><button type="button" id="coverRemove">Убрать обложку</button></aside>
         </div>
         <footer class="cover-foot"><button type="button" id="coverCancel">Отмена</button><button type="button" id="coverSave" class="cover-primary">Сохранить обложку</button></footer>
@@ -43,7 +43,7 @@
     const hint = root.querySelector("#coverHint");
     const input = root.querySelector("#coverInput");
     const preview = root.querySelector("#coverPreview");
-    let source = null, crop = null, scale = 1, ratio = 2/3, drag = null;
+    let source = null, crop = null, scale = 1, ratio = null, drag = null;
 
     function makeDataUrl() {
       if (!source || !crop || crop.w < 3 || crop.h < 3) throw new Error("Сначала выбери изображение и выдели область.");
@@ -65,6 +65,9 @@
         ctx.strokeStyle="#f0c891"; ctx.lineWidth=2; ctx.strokeRect(crop.x,crop.y,crop.w,crop.h);
         ctx.strokeStyle="#ffffff88"; ctx.lineWidth=1;
         for(let n=1;n<3;n++){ctx.beginPath();ctx.moveTo(crop.x+crop.w*n/3,crop.y);ctx.lineTo(crop.x+crop.w*n/3,crop.y+crop.h);ctx.stroke();ctx.beginPath();ctx.moveTo(crop.x,crop.y+crop.h*n/3);ctx.lineTo(crop.x+crop.w,crop.y+crop.h*n/3);ctx.stroke();}
+        const handle=Math.max(8,Math.min(14,canvas.width/35));
+        ctx.fillStyle="#f0c891";
+        [[crop.x,crop.y],[crop.x+crop.w,crop.y],[crop.x,crop.y+crop.h],[crop.x+crop.w,crop.y+crop.h]].forEach(([x,y])=>ctx.fillRect(x-handle/2,y-handle/2,handle,handle));
       }
       try { preview.innerHTML='<img alt="Предпросмотр обложки" src="'+makeDataUrl()+'">'; } catch { preview.textContent="Предпросмотр"; }
     }
@@ -107,28 +110,49 @@
       button.classList.add("active");ratio=button.dataset.ratio==="free"?null:Number(button.dataset.ratio);newCrop();
     });
     function point(e){const rect=canvas.getBoundingClientRect();return{x:(e.clientX-rect.left)*canvas.width/rect.width,y:(e.clientY-rect.top)*canvas.height/rect.height};}
-    canvas.onpointerdown=e=>{if(!source)return;e.preventDefault();const p=point(e);drag={x:p.x,y:p.y};crop={x:p.x,y:p.y,w:1,h:1};canvas.setPointerCapture(e.pointerId);draw();};
+    canvas.onpointerdown=e=>{
+      if(!source)return;e.preventDefault();
+      const p=point(e),handleSize=Math.max(14,canvas.width/38);
+      const inside=crop&&p.x>=crop.x&&p.x<=crop.x+crop.w&&p.y>=crop.y&&p.y<=crop.y+crop.h;
+      const corners=crop?[["nw",crop.x,crop.y],["ne",crop.x+crop.w,crop.y],["sw",crop.x,crop.y+crop.h],["se",crop.x+crop.w,crop.y+crop.h]]:[];
+      const corner=corners.find(([,x,y])=>Math.abs(p.x-x)<=handleSize&&Math.abs(p.y-y)<=handleSize);
+      if(corner)drag={mode:"resize",handle:corner[0],start:p,original:{...crop}};
+      else if(inside)drag={mode:"move",start:p,original:{...crop}};
+      else {drag={mode:"draw",start:p,original:null};crop={x:p.x,y:p.y,w:1,h:1};}
+      canvas.setPointerCapture(e.pointerId);draw();
+    };
     canvas.onpointermove=e=>{
       if(!drag||!source)return;
-      const p=point(e);
-      let w=Math.abs(p.x-drag.x),h=Math.abs(p.y-drag.y);
-      w=Math.min(w,canvas.width);h=Math.min(h,canvas.height);
-      if(ratio){
-        const maxW=Math.min(canvas.width,canvas.height*ratio);
-        const maxH=Math.min(canvas.height,canvas.width/ratio);
-        w=Math.min(w,maxW);h=Math.min(h,maxH);
-        if(!h&&w)h=w/ratio;
-        else if(!w&&h)w=h*ratio;
-        else if(h>0&&w/h>ratio)h=w/ratio;
-        else w=h*ratio;
+      const p=point(e),clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+      if(drag.mode==="move"){
+        crop.x=clamp(drag.original.x+p.x-drag.start.x,0,canvas.width-crop.w);
+        crop.y=clamp(drag.original.y+p.y-drag.start.y,0,canvas.height-crop.h);
+      }else if(drag.mode==="resize"){
+        const o=drag.original,dx=p.x-drag.start.x,dy=p.y-drag.start.y;
+        let left=o.x,right=o.x+o.w,top=o.y,bottom=o.y+o.h;
+        if(drag.handle.includes("w"))left=clamp(o.x+dx,0,right-12);
+        if(drag.handle.includes("e"))right=clamp(o.x+o.w+dx,left+12,canvas.width);
+        if(drag.handle.includes("n"))top=clamp(o.y+dy,0,bottom-12);
+        if(drag.handle.includes("s"))bottom=clamp(o.y+o.h+dy,top+12,canvas.height);
+        if(ratio){
+          let w=right-left,h=bottom-top;
+          if(w/h>ratio)w=h*ratio;else h=w/ratio;
+          if(drag.handle.includes("w"))left=right-w;else right=left+w;
+          if(drag.handle.includes("n"))top=bottom-h;else bottom=top+h;
+          left=clamp(left,0,canvas.width-12);top=clamp(top,0,canvas.height-12);
+          right=clamp(right,left+12,canvas.width);bottom=clamp(bottom,top+12,canvas.height);
+        }
+        crop={x:left,y:top,w:right-left,h:bottom-top};
+      }else{
+        let w=Math.abs(p.x-drag.start.x),h=Math.abs(p.y-drag.start.y);
+        if(ratio){if(h>0&&w/h>ratio)h=w/ratio;else w=h*ratio;}
+        w=Math.min(w,canvas.width);h=Math.min(h,canvas.height);
+        crop={x:clamp(p.x<drag.start.x?drag.start.x-w:drag.start.x,0,canvas.width-w),y:clamp(p.y<drag.start.y?drag.start.y-h:drag.start.y,0,canvas.height-h),w:Math.max(1,w),h:Math.max(1,h)};
       }
-      w=Math.min(w,canvas.width);h=Math.min(h,canvas.height);
-      crop={x:p.x<drag.x?drag.x-w:drag.x,y:p.y<drag.y?drag.y-h:drag.y,w:Math.max(1,w),h:Math.max(1,h)};
-      crop.x=Math.max(0,Math.min(crop.x,canvas.width-crop.w));
-      crop.y=Math.max(0,Math.min(crop.y,canvas.height-crop.h));
       draw();
     };
-    canvas.onpointerup=()=>drag=null;canvas.onpointercancel=()=>drag=null;
+    canvas.onpointerup=()=>drag=null;
+    canvas.onpointercancel=()=>drag=null;
     root.querySelector("#coverSave").onclick=()=>{
       try{book.coverDataUrl=makeDataUrl();saveBook(book);document.dispatchEvent(new CustomEvent("bookcoverchange",{detail:{bookId:book.id}}));if(typeof onSaved==="function")onSaved();close();}
       catch(error){alert(error.message||"Не удалось сохранить обложку. Возможно, в браузере закончилось место.");}
