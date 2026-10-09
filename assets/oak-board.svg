@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="180" viewBox="0 0 1200 180">
+<defs>
+ <linearGradient id="oak" x1="0" y1="0" x2="0" y2="180" gradientUnits="userSpaceOnUse">
+  <stop stop-color="#d0a16a"/><stop offset=".08" stop-color="#92633a"/><stop offset=".2" stop-color="#b17c49"/><stop offset=".5" stop-color="#714727"/><stop offset=".78" stop-color="#a16d3e"/><stop offset=".94" stop-color="#5f3c23"/><stop offset="1" stop-color="#2a1a10"/>
+ </linearGradient>
+ <linearGradient id="grainGlow" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+  <stop stop-color="#301d11" stop-opacity=".65"/><stop offset=".13" stop-color="#f4c58a" stop-opacity=".3"/><stop offset=".29" stop-color="#4c2e19" stop-opacity=".24"/><stop offset=".53" stop-color="#d6a56b" stop-opacity=".17"/><stop offset=".69" stop-color="#301b0e" stop-opacity=".35"/><stop offset=".86" stop-color="#edbd7e" stop-opacity=".19"/><stop offset="1" stop-color="#28170c" stop-opacity=".7"/>
+ </linearGradient>
+ <filter id="texture"><feTurbulence type="fractalNoise" baseFrequency=".008 .14" numOctaves="2" seed="8"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .13"/></feComponentTransfer><feBlend in="SourceGraphic" mode="soft-light"/></filter>
+</defs>
+<rect width="1200" height="180" fill="url(#oak)"/>
+<rect width="1200" height="180" fill="url(#grainGlow)"/>
+<g fill="none" stroke-linecap="round">
+ <path d="M0 23C130 17 196 34 302 26S487 18 610 26 804 37 927 27s193-13 273-4" stroke="#e6bc83" stroke-width="2" opacity=".35"/>
+ <path d="M0 34C130 27 202 43 307 35S488 27 611 35 809 48 930 37s190-13 270-5" stroke="#3c2414" stroke-width="3" opacity=".4"/>
+ <path d="M0 59C140 51 197 73 330 63S520 55 651 64 837 77 956 65s170-10 244-3" stroke="#e2af71" stroke-width="1.4" opacity=".4"/>
+ <path d="M0 93C118 85 229 101 358 94S571 87 690 95 852 109 982 97s154-8 218-3" stroke="#321e11" stroke-width="4" opacity=".38"/>
+ <path d="M0 111C133 103 244 119 373 111S573 103 701 112 864 126 991 114s147-8 209-4" stroke="#e0ae74" stroke-width="2" opacity=".27"/>
+ <path d="M0 143C151 133 228 157 366 145S568 136 693 145 887 160 1015 148s125-7 185-4" stroke="#442817" stroke-width="4" opacity=".35"/>
+ <path d="M0 155C160 149 250 166 380 155S582 146 707 155 892 172 1021 158s119-5 179-4" stroke="#e0ae74" stroke-width="1.5" opacity=".34"/>
+ <path d="M262 62c-16-17-38-20-53-7-14 11-9 26 8 27 21 1 41-13 45-20 4 8 22 20 42 16 17-4 18-19 2-27-16-7-31-2-44 11Z" stroke="#4c2b16" stroke-width="3" opacity=".55"/>
+ <path d="M262 62c-9-9-23-12-32-4-8 7 0 13 10 11 9-2 16-7 22-7 7 1 14 8 25 6" stroke="#dfaa6a" stroke-width="1.5" opacity=".44"/>
+ <path d="M862 113c-18-16-42-16-53-3-10 12-1 24 16 23 17-1 31-11 37-18 8 8 24 15 39 8 14-8 6-21-8-24-12-2-24 5-31 14Z" stroke="#402515" stroke-width="3" opacity=".5"/>
+ <path d="M862 113c-11-8-26-9-33-1-4 7 4 11 13 8 8-3 13-7 19-7 6 0 13 5 23 3" stroke="#e6b87b" stroke-width="1.4" opacity=".37"/>
+</g>
+<rect width="1200" height="180" filter="url(#texture)" fill="transparent"/>
+</svg>
