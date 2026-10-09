@@ -138,6 +138,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         nodeActions.appendChild(renameButton);
 
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "tree-action tree-delete";
+        deleteButton.title = `Удалить ${typeLabel}`;
+        deleteButton.setAttribute("aria-label", `Удалить ${typeLabel} ${node.title}`);
+        deleteButton.textContent = "×";
+        deleteButton.addEventListener("click", event => {
+          event.stopPropagation();
+          deleteNodeIds(new Set([node.id]));
+        });
+        nodeActions.appendChild(deleteButton);
+
         if (node.type === "volume" || node.type === "part") {
           const addButton = document.createElement("button");
           addButton.type = "button";
@@ -300,8 +312,9 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     document.body.appendChild(menu);
     activeContextMenu = menu;
-    const left = Math.max(8, Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 8));
-    const top = Math.max(8, Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 8));
+    const nodeRect = event.currentTarget.getBoundingClientRect();
+    const left = Math.max(8, Math.min(nodeRect.right + 5, window.innerWidth - menu.offsetWidth - 8));
+    const top = Math.max(8, Math.min(nodeRect.top, window.innerHeight - menu.offsetHeight - 8));
     menu.style.left = `${left}px`;
     menu.style.top = `${top}px`;
 
