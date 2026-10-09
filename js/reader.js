@@ -22,6 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const runningRight = document.getElementById("readerRunningRight");
   const contentLeft = document.getElementById("readerContentLeft");
   const contentRight = document.getElementById("readerContentRight");
+  const bookLineHeight = Number(book.editorLineHeight);
+  if (Number.isFinite(bookLineHeight) && bookLineHeight >= 1.2 && bookLineHeight <= 3) {
+    contentLeft.style.lineHeight = String(bookLineHeight);
+    contentRight.style.lineHeight = String(bookLineHeight);
+  }
   const bookTitle = document.getElementById("readerBookTitle");
   const chapterTitleLabel = document.getElementById("readerChapterTitle");
   const progress = document.getElementById("readerProgress");
