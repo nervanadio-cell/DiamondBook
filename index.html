@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#111318">
   <title>Book Creator — Мои книги</title>
-  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="main.css">
 </head>
 <body>
   <div class="app-shell">
@@ -17,7 +17,6 @@
         <input id="fileInput" type="file" accept=".json,.txt,.md,.markdown,.html,.htm,.xhtml,.mhtml,.adoc,.asciidoc,.org,.rst,.djot,.bbcode,.textile,.wiki,.fountain,.rtf,.fb2,.epub,.pdf,.docx,.odt,.xml,.jsonld,.yaml,.yml,.csv,.tsv,.opml,.srt,.vtt" hidden>
       </nav>
     </header>
-
     <main class="library-page">
       <section class="hero">
         <div>
@@ -25,36 +24,21 @@
           <h1>Создавай книги.<br><em>Пиши свои истории.</em></h1>
           <p class="hero-text">Создавай тома, части и главы, пиши в удобном редакторе и читай в спокойном книжном режиме.</p>
         </div>
-        <button class="hero-create" id="heroCreateButton">
-          <span>＋</span>
-          Новая книга
-        </button>
+        <button class="hero-create" id="heroCreateButton"><span>＋</span>Новая книга</button>
       </section>
-
       <section class="library-section">
-        <div class="section-heading">
-          <div>
-            <h2>Мои книги</h2>
-            <p id="bookCount">0 книг</p>
-          </div>
-        </div>
+        <div class="section-heading"><div><h2>Мои книги</h2><p id="bookCount">0 книг</p></div></div>
         <div class="books-grid" id="booksGrid"></div>
-        <div class="empty-state" id="emptyState">
-          <div class="empty-icon">✦</div>
-          <h3>Здесь пока тихо</h3>
-          <p>Создай первую книгу и начни писать свою историю.</p>
-          <button class="primary-button" id="emptyCreateButton">Создать первую книгу</button>
-        </div>
+        <div class="empty-state" id="emptyState"><div class="empty-icon">✦</div><h3>Здесь пока тихо</h3><p>Создай первую книгу и начни писать свою историю.</p><button class="primary-button" id="emptyCreateButton">Создать первую книгу</button></div>
       </section>
     </main>
   </div>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/formats.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/import.js"></script>
+  <script src="storage.js"></script>
+  <script src="formats.js"></script>
+  <script src="app.js"></script>
+  <script src="import.js"></script>
 </body>
 </html>
