@@ -109,10 +109,24 @@
     function point(e){const rect=canvas.getBoundingClientRect();return{x:(e.clientX-rect.left)*canvas.width/rect.width,y:(e.clientY-rect.top)*canvas.height/rect.height};}
     canvas.onpointerdown=e=>{if(!source)return;e.preventDefault();const p=point(e);drag={x:p.x,y:p.y};crop={x:p.x,y:p.y,w:1,h:1};canvas.setPointerCapture(e.pointerId);draw();};
     canvas.onpointermove=e=>{
-      if(!drag||!source)return;const p=point(e);let w=Math.abs(p.x-drag.x),h=Math.abs(p.y-drag.y);
-      if(ratio){if(h>0&&w/h>ratio)w=h*ratio;else h=w/ratio;}
+      if(!drag||!source)return;
+      const p=point(e);
+      let w=Math.abs(p.x-drag.x),h=Math.abs(p.y-drag.y);
+      w=Math.min(w,canvas.width);h=Math.min(h,canvas.height);
+      if(ratio){
+        const maxW=Math.min(canvas.width,canvas.height*ratio);
+        const maxH=Math.min(canvas.height,canvas.width/ratio);
+        w=Math.min(w,maxW);h=Math.min(h,maxH);
+        if(!h&&w)h=w/ratio;
+        else if(!w&&h)w=h*ratio;
+        else if(h>0&&w/h>ratio)h=w/ratio;
+        else w=h*ratio;
+      }
+      w=Math.min(w,canvas.width);h=Math.min(h,canvas.height);
       crop={x:p.x<drag.x?drag.x-w:drag.x,y:p.y<drag.y?drag.y-h:drag.y,w:Math.max(1,w),h:Math.max(1,h)};
-      crop.x=Math.max(0,Math.min(crop.x,canvas.width-crop.w));crop.y=Math.max(0,Math.min(crop.y,canvas.height-crop.h));draw();
+      crop.x=Math.max(0,Math.min(crop.x,canvas.width-crop.w));
+      crop.y=Math.max(0,Math.min(crop.y,canvas.height-crop.h));
+      draw();
     };
     canvas.onpointerup=()=>drag=null;canvas.onpointercancel=()=>drag=null;
     root.querySelector("#coverSave").onclick=()=>{
