@@ -369,11 +369,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("keydown", event => {
     if (event.target?.matches?.("input,textarea,[contenteditable='true']")) return;
-    if (event.key === "ArrowRight") { event.preventDefault(); flip("next"); }
-    if (event.key === "ArrowLeft") { event.preventDefault(); flip("prev"); }
-    if (event.key === "ArrowUp") { event.preventDefault(); navigatePart("next"); }
-    if (event.key === "ArrowDown") { event.preventDefault(); navigatePart("prev"); }
-    if (event.key === "Escape") { sidebar.classList.remove("open"); themePanel.classList.add("hidden"); }
+    const key = event.key.toLowerCase();
+    if (key === "d" || key === "arrowright" || key === " ") { event.preventDefault(); flip("next"); }
+    if (key === "a" || key === "arrowleft" || key === "backspace") { event.preventDefault(); flip("prev"); }
+    if (key === "w" || key === "arrowup") { event.preventDefault(); navigatePart("next"); }
+    if (key === "s" || key === "arrowdown") { event.preventDefault(); navigatePart("prev"); }
+    if (key === "escape") { sidebar.classList.remove("open"); themePanel.classList.add("hidden"); }
   });
 
   document.querySelectorAll(".reader-close-link").forEach(link => {
