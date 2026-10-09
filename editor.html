@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактор — Book Creator</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/editor.css">
+</head>
+<body class="editor-page">
+  <header class="editor-topbar">
+    <div class="editor-left">
+      <a class="brand" href="index.html">Book<span>Creator</span></a>
+      <span class="divider"></span>
+      <button class="book-name-button" id="bookNameButton">Книга</button>
+    </div>
+    <div class="editor-center">
+      <span class="save-status" id="saveStatus">Сохранено</span>
+    </div>
+    <div class="editor-actions">
+      <button class="icon-button" id="readerButton" title="Режим чтения">◉</button>
+      <button class="ghost-button" id="exportButton">Экспорт / импорт</button>
+      <a class="ghost-button link-button" href="index.html">Библиотека</a>
+    </div>
+  </header>
+
+  <main class="editor-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-heading">
+        <div>
+          <span class="eyebrow">Содержание</span>
+          <h2 id="sidebarBookTitle">Книга</h2>
+        </div>
+        <button class="icon-button small" id="addRootButton">＋</button>
+      </div>
+      <div id="tree" class="tree"></div>
+    </aside>
+
+    <section class="writing-area">
+      <div class="editor-toolbar">
+        <button class="tool-button" data-command="bold"><b>B</b></button>
+        <button class="tool-button" data-command="italic"><i>I</i></button>
+        <button class="tool-button" data-command="underline"><u>U</u></button>
+        <span class="toolbar-divider"></span>
+        <button class="tool-button" data-command="formatBlock" data-value="h2">H</button>
+        <button class="tool-button" data-command="formatBlock" data-value="p">¶</button>
+        <span class="toolbar-divider"></span>
+        <button class="tool-button" data-command="justifyLeft">≡</button>
+        <button class="tool-button" data-command="justifyCenter">≡</button>
+        <button class="tool-button" data-command="justifyRight">≡</button>
+        <span class="toolbar-divider"></span>
+        <button class="tool-button" id="insertDivider">—</button>
+      </div>
+
+      <div class="chapter-editor">
+        <input id="chapterTitle" class="chapter-title-input" type="text" maxlength="200" placeholder="Название главы">
+        <div id="editor" class="rich-editor" contenteditable="true" spellcheck="true" data-placeholder="Начни писать здесь..."></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop hidden" id="exportModal">
+    <div class="modal format-modal">
+      <button class="modal-close" id="closeExport">×</button>
+      <p class="eyebrow">Файлы</p>
+      <h2>Импорт и экспорт</h2>
+      <p>В проекте доступно более 30 форматов. EPUB, PDF, DOCX и ODT собираются как отдельные файлы.</p>
+      <div class="format-tabs"><button class="format-tab active" data-mode="export">Экспорт</button><button class="format-tab" data-mode="import">Импорт</button></div>
+      <div id="formatSearchWrap"><input id="formatSearch" class="format-search" placeholder="Поиск формата…"></div>
+      <div id="formatList" class="format-list"></div>
+      <input id="editorFileInput" type="file" accept=".json,.txt,.md,.markdown,.html,.htm,.xhtml,.mhtml,.adoc,.asciidoc,.org,.rst,.djot,.bbcode,.textile,.wiki,.fountain,.rtf,.fb2,.epub,.pdf,.docx,.odt,.xml,.jsonld,.yaml,.yml,.csv,.tsv,.opml,.srt,.vtt" hidden>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+  <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/formats.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Чтение — Book Creator</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/reader.css">
+</head>
+<body class="reader-page">
+  <header class="reader-topbar" id="readerTopbar">
+    <a class="brand" href="index.html">Book<span>Creator</span></a>
+    <div class="reader-book-info">
+      <span id="readerBookTitle">Книга</span>
+      <small id="readerChapterTitle">Глава</small>
+    </div>
+    <a class="ghost-button link-button" id="backToEditor" href="#">Редактор</a>
+  </header>
+
+  <aside class="reader-sidebar" id="readerSidebar">
+    <div class="sidebar-heading">
+      <span class="eyebrow">Содержание</span>
+      <button class="icon-button small" id="closeSidebar">×</button>
+    </div>
+    <div id="readerTree" class="tree"></div>
+  </aside>
+
+  <main class="reader-main" id="readerMain">
+    <article class="reader-paper" id="readerPaper">
+      <p class="reader-kicker" id="readerKicker"></p>
+      <h1 id="readerTitle">Глава</h1>
+      <div id="readerContent" class="reader-content"></div>
+    </article>
+  </main>
+
+  <footer class="reader-controls" id="readerControls">
+    <button class="reader-control" id="menuButton">☰</button>
+    <button class="reader-control" id="prevButton">←</button>
+    <span class="reader-progress" id="readerProgress">1 / 1</span>
+    <button class="reader-control" id="nextButton">→</button>
+    <button class="reader-control" id="themeButton">Aa</button>
+  </footer>
+
+  <div class="theme-panel hidden" id="themePanel">
+    <button data-theme="paper">Бумага</button>
+    <button data-theme="night">Ночь</button>
+    <button data-theme="warm">Тёплый</button>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/reader.js"></script>
+</body>
+</html>

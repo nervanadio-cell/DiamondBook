@@ -1,0 +1,64 @@
+.reader-page {
+  min-height: 100vh; background: #e9e2d5; color: #29251f;
+  --reader-text: #29251f; --reader-bg: #e9e2d5;
+  transition: background .4s ease, color .4s ease;
+}
+.reader-page.theme-night { --reader-bg: #111318; --reader-text: #d5d3cc; }
+.reader-page.theme-warm { --reader-bg: #d9c7a8; --reader-text: #332a20; }
+.reader-page { background: var(--reader-bg); color: var(--reader-text); }
+.reader-topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 66px; z-index: 20;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  padding: 0 24px; background: color-mix(in srgb, var(--reader-bg) 85%, transparent);
+  backdrop-filter: blur(16px); border-bottom: 1px solid rgba(80,60,40,.12);
+  transition: transform .35s var(--ease);
+}
+.reader-book-info { display: flex; flex-direction: column; text-align: center; gap: 3px; }
+.reader-book-info span { font-weight: 700; }
+.reader-book-info small { opacity: .6; }
+.reader-topbar > :last-child { justify-self: end; }
+.reader-main { padding: 105px 20px 120px; min-height: 100vh; }
+.reader-paper {
+  width: min(760px, 100%); margin: auto; padding: 70px 75px 100px;
+  min-height: calc(100vh - 170px); color: var(--reader-text);
+  animation: pageIn .55s var(--ease);
+}
+.reader-kicker { text-transform: uppercase; letter-spacing: .15em; font: 700 10px/1.2 system-ui; opacity: .55; }
+.reader-paper h1 { font: 400 clamp(40px, 7vw, 65px)/1.05 Georgia, serif; letter-spacing: -.04em; margin: 20px 0 40px; }
+.reader-content { font: 400 20px/1.9 Georgia, "Times New Roman", serif; }
+.reader-content p { margin: 0 0 1.25em; }
+.reader-content h2 { font: 400 32px/1.2 Georgia, serif; margin: 1.5em 0 .7em; }
+.reader-controls {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  z-index: 30; display: flex; align-items: center; gap: 5px;
+  padding: 7px; border-radius: 16px; background: rgba(20,18,15,.86);
+  color: white; backdrop-filter: blur(18px); box-shadow: 0 12px 40px rgba(0,0,0,.18);
+}
+.reader-control { width: 42px; height: 38px; border: 0; background: transparent; color: inherit; border-radius: 10px; }
+.reader-control:hover { background: rgba(255,255,255,.1); }
+.reader-progress { min-width: 60px; text-align: center; font: 11px system-ui; opacity: .7; }
+.reader-sidebar {
+  position: fixed; z-index: 50; top: 0; bottom: 0; left: 0; width: 320px;
+  padding: 28px 18px; background: color-mix(in srgb, var(--reader-bg) 96%, black 4%);
+  color: var(--reader-text); box-shadow: 10px 0 40px rgba(0,0,0,.16);
+  transform: translateX(-105%); transition: transform .4s var(--ease);
+  overflow: auto;
+}
+.reader-sidebar.open { transform: translateX(0); }
+.reader-sidebar .tree-line { color: inherit; opacity: .7; }
+.reader-sidebar .tree-line.active { background: rgba(150,110,65,.15); opacity: 1; }
+.theme-panel {
+  position: fixed; right: 18px; bottom: 76px; z-index: 35;
+  display: flex; gap: 6px; padding: 7px; border-radius: 13px;
+  background: rgba(20,18,15,.9); box-shadow: 0 10px 30px rgba(0,0,0,.2);
+}
+.theme-panel button { border: 0; background: rgba(255,255,255,.08); color: white; border-radius: 9px; padding: 9px 12px; }
+@keyframes pageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@media (max-width: 700px) {
+  .reader-topbar { padding: 0 14px; grid-template-columns: auto 1fr auto; }
+  .reader-topbar .brand { font-size: 16px; }
+  .reader-book-info { font-size: 12px; }
+  .reader-main { padding: 85px 12px 100px; }
+  .reader-paper { padding: 45px 12px 70px; }
+  .reader-content { font-size: 18px; line-height: 1.8; }
+}

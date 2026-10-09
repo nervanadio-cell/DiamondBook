@@ -1,0 +1,42 @@
+.create-page { min-height: calc(100vh - 76px); display: flex; justify-content: center; padding: 70px 20px; }
+.create-container { width: min(720px, 100%); }
+.create-heading { margin-bottom: 50px; }
+.create-heading h1 { font-size: clamp(48px, 8vw, 78px); }
+.create-form { display: grid; gap: 12px; }
+.field-label { font-size: 13px; font-weight: 750; margin-top: 8px; }
+.field-label span { color: var(--muted); font-weight: 400; }
+.text-input {
+  width: 100%; padding: 15px 16px; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--surface);
+  color: var(--text); outline: none; transition: border .2s, box-shadow .2s;
+}
+.text-input:focus { border-color: rgba(215,180,134,.55); box-shadow: 0 0 0 4px rgba(215,180,134,.07); }
+.text-input.large { font-size: 19px; padding: 17px; }
+.structure-card { margin-top: 25px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+.structure-title h2 { margin: 0; font-size: 18px; }
+.structure-title p { color: var(--muted); font-size: 12px; margin: 5px 0 15px; }
+.structure-row {
+  min-height: 72px; display: grid; grid-template-columns: 28px 1fr 72px;
+  align-items: center; gap: 12px; border-top: 1px solid var(--line);
+}
+.check-wrap input { display: none; }
+.custom-check {
+  width: 21px; height: 21px; display: block; border: 1px solid #5e626c;
+  border-radius: 6px; position: relative; transition: .2s;
+}
+.check-wrap input:checked + .custom-check { background: var(--accent); border-color: var(--accent); }
+.check-wrap input:checked + .custom-check::after { content: "✓"; position: absolute; color: #15110c; font-size: 14px; left: 4px; top: 0; font-weight: 900; }
+.row-copy { display: flex; flex-direction: column; gap: 4px; }
+.row-copy small { color: var(--muted); font-size: 11px; }
+.count-input {
+  width: 72px; padding: 9px; background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--line); border-radius: 9px; text-align: center;
+}
+.count-input:disabled { opacity: .3; }
+.create-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 28px; }
+@media (max-width: 520px) {
+  .structure-row { grid-template-columns: 28px 1fr; padding: 8px 0; }
+  .count-input { grid-column: 2; width: 90px; }
+  .create-actions { justify-content: stretch; }
+  .create-actions > * { flex: 1; }
+}
