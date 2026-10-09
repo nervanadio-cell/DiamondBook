@@ -314,3 +314,46 @@ body { background:#10130f; }
   .oak-tree-art { top:110px; width:95vw; opacity:.2; }
   .shelf-board { margin-left:-8px; margin-right:-8px; }
 }
+
+
+/* All pages use a dark, plate-like oak bark backdrop — no tree illustration */
+body {
+  background-color:#1c150e;
+  background-image:
+    linear-gradient(180deg,rgba(9,11,8,.62),rgba(10,10,8,.49) 46%,rgba(7,8,6,.72)),
+    url("../assets/oak-bark.svg");
+  background-position:center,center;
+  background-size:cover, min(1440px, 100vw) auto;
+  background-repeat:no-repeat,repeat;
+  background-attachment:fixed,fixed;
+}
+.topbar,.editor-topbar {
+  background-image:
+    linear-gradient(90deg,rgba(18,21,14,.89),rgba(35,26,16,.91)),
+    url("../assets/oak-bark.svg");
+  background-size:cover,640px 540px;
+  background-position:center,center;
+  border-bottom-color:rgba(207,169,111,.3);
+  box-shadow:0 5px 22px rgba(0,0,0,.22);
+}
+.app-shell { background:transparent; }
+.oak-tree-art { display:none!important; }
+.create-container,.structure-card {
+  background-image:linear-gradient(145deg,rgba(28,24,17,.92),rgba(17,18,14,.93)),url("../assets/oak-bark.svg");
+  background-size:cover,900px auto;
+  border-color:rgba(202,162,103,.26);
+}
+.sidebar {
+  background-image:linear-gradient(180deg,rgba(17,20,14,.92),rgba(27,21,14,.95)),url("../assets/oak-bark.svg")!important;
+  background-size:cover,650px auto;
+  border-right-color:rgba(208,171,116,.22);
+}
+.shelf-board {
+  background-image:
+    linear-gradient(180deg,rgba(255,218,159,.05),rgba(39,22,10,.15)),
+    url("../assets/oak-board.svg");
+  background-size:cover,100% 100%;
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; transition-duration:.01ms!important; }
+}
