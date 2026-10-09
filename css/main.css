@@ -357,3 +357,14 @@ body {
 @media(prefers-reduced-motion:reduce) {
   *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; transition-duration:.01ms!important; }
 }
+
+
+/* Book pick-up animation */
+.book-card.book-opening .book-cover { animation:bookCoverPick .3s cubic-bezier(.2,.8,.2,1) forwards; }
+.library-book-opening .book-card:not(.book-opening) { opacity:.22; filter:blur(1px); transition:opacity .24s,filter .24s; }
+.library-book-opening .bookshelf-row { transition:opacity .24s; }
+@keyframes bookCoverPick {
+  0% { transform:perspective(700px) rotateY(0) translateY(0) scale(1); opacity:1; }
+  55% { transform:perspective(700px) rotateY(-12deg) translateY(-7px) scale(1.025); opacity:1; }
+  100% { transform:perspective(700px) rotateY(17deg) translateY(18px) scale(.78); opacity:.25; }
+}
