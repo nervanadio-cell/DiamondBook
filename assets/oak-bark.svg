@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1200" viewBox="0 0 1440 1200">
+<defs>
+  <linearGradient id="base" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#17150f"/><stop offset=".12" stop-color="#3b2a1a"/><stop offset=".25" stop-color="#251b12"/>
+    <stop offset=".39" stop-color="#4d3620"/><stop offset=".53" stop-color="#21180f"/><stop offset=".69" stop-color="#46301b"/>
+    <stop offset=".82" stop-color="#241a11"/><stop offset="1" stop-color="#332317"/>
+  </linearGradient>
+  <linearGradient id="slabA" x1="0" y1="0" x2="1" y2="0">
+    <stop stop-color="#110f0b"/><stop offset=".11" stop-color="#65472b"/><stop offset=".27" stop-color="#382618"/><stop offset=".48" stop-color="#745033"/><stop offset=".63" stop-color="#3d2a18"/><stop offset=".83" stop-color="#523820"/><stop offset="1" stop-color="#17120c"/>
+  </linearGradient>
+  <linearGradient id="slabB" x1="0" y1="0" x2="1" y2="0">
+    <stop stop-color="#1b140d"/><stop offset=".2" stop-color="#513820"/><stop offset=".36" stop-color="#2d2015"/><stop offset=".59" stop-color="#65472a"/><stop offset=".78" stop-color="#332317"/><stop offset="1" stop-color="#130f0a"/>
+  </linearGradient>
+  <linearGradient id="ridge" x1="0" y1="0" x2="1" y2="0">
+    <stop stop-color="#070806" stop-opacity=".7"/><stop offset=".28" stop-color="#c0935b" stop-opacity=".33"/><stop offset=".53" stop-color="#080907" stop-opacity=".28"/><stop offset=".73" stop-color="#b4844e" stop-opacity=".24"/><stop offset="1" stop-color="#090806" stop-opacity=".72"/>
+  </linearGradient>
+  <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency=".022 .12" numOctaves="3" seed="19" result="noise"/>
+    <feColorMatrix in="noise" type="saturate" values="0" result="gray"/>
+    <feComponentTransfer><feFuncA type="table" tableValues="0 .18"/></feComponentTransfer>
+    <feBlend in="SourceGraphic" mode="soft-light"/>
+  </filter>
+  <pattern id="grain" width="280" height="1200" patternUnits="userSpaceOnUse">
+    <path d="M18 0C32 145 4 205 25 330S16 485 38 603 12 805 30 913 13 1080 21 1200" stroke="#100d08" stroke-width="8" opacity=".4" fill="none"/>
+    <path d="M26 0C40 135 14 230 37 347S27 510 45 626 20 815 39 936 23 1090 30 1200" stroke="#b68a56" stroke-width="2" opacity=".3" fill="none"/>
+    <path d="M95 0C81 140 121 250 96 401S113 585 88 721 113 904 96 1016 104 1120 91 1200" stroke="#130e08" stroke-width="5" opacity=".45" fill="none"/>
+    <path d="M101 0C88 155 128 249 102 405S120 587 95 720 119 904 102 1014 110 1125 98 1200" stroke="#c19a6b" stroke-width="1.5" opacity=".2" fill="none"/>
+    <path d="M180 0C166 176 191 269 175 422S199 623 179 764 193 930 170 1061 183 1140 180 1200" stroke="#0a0907" stroke-width="10" opacity=".3" fill="none"/>
+    <path d="M244 0C257 185 230 299 248 445S228 614 255 788 235 982 246 1200" stroke="#a57945" stroke-width="3" opacity=".22" fill="none"/>
+    <path d="M0 202l55 -13 -18 28 41 -12M110 497l39 -14 -13 25 45 -16M25 860l47 -19 -19 30 39 -12M170 1075l31 -13 -8 24 40 -16" stroke="#0d0b07" stroke-width="5" opacity=".6" fill="none"/>
+  </pattern>
+</defs>
+<rect width="1440" height="1200" fill="url(#base)"/>
+<g filter="url(#rough)">
+  <path d="M0 0H198L208 76 194 142 205 231 187 330 203 418 192 525 208 605 190 711 201 810 182 918 197 1016 189 1095 201 1200H0Z" fill="url(#slabA)"/>
+  <path d="M206 0H427L414 96 432 176 416 269 439 365 416 463 429 560 414 641 436 746 417 843 431 940 414 1037 428 1127 420 1200H201L189 1095 197 1016 182 918 201 810 190 711 208 605 192 525 203 418 187 330 205 231 194 142 208 76Z" fill="url(#slabB)"/>
+  <path d="M430 0H671L660 88 677 179 662 282 677 372 658 467 674 563 660 666 681 760 661 856 675 960 660 1060 670 1141 663 1200H420L428 1127 414 1037 431 940 417 843 436 746 414 641 429 560 416 463 439 365 416 269 432 176 414 96Z" fill="url(#slabA)"/>
+  <path d="M675 0H897L886 94 903 201 884 298 901 395 884 491 903 592 883 684 896 783 884 881 902 982 887 1085 897 1200H663L670 1141 660 1060 675 960 661 856 681 760 660 666 674 563 658 467 677 372 662 282 677 179 660 88Z" fill="url(#slabB)"/>
+  <path d="M901 0H1124L1114 98 1132 198 1118 299 1136 401 1115 498 1135 602 1117 698 1134 798 1119 900 1137 995 1119 1094 1128 1200H897L887 1085 902 982 884 881 896 783 883 684 903 592 884 491 901 395 884 298 903 201 886 94Z" fill="url(#slabA)"/>
+  <path d="M1131 0H1440V1200H1128L1119 1094 1137 995 1119 900 1134 798 1117 698 1135 602 1115 498 1136 401 1118 299 1132 198 1114 98Z" fill="url(#slabB)"/>
+</g>
+<rect width="1440" height="1200" fill="url(#grain)"/>
+<g fill="none" stroke-linecap="round">
+  <path d="M195 0l-9 112 7 82 -14 88 7 95 -8 97 12 72 -14 96 9 84 -11 90 9 100 -8 85 4 99" stroke="#0b0906" stroke-width="12" opacity=".8"/>
+  <path d="M199 0l-7 112 9 82 -11 88 8 95 -10 97 11 72 -12 96 8 84 -8 90 7 100 -6 85 5 99" stroke="#c19460" stroke-width="2.2" opacity=".42"/>
+  <path d="M424 0l7 120 -12 80 9 91 -8 105 11 91 -10 88 8 102 -12 94 10 86 -7 105 4 99" stroke="#080806" stroke-width="13" opacity=".72"/>
+  <path d="M428 0l4 120 -9 80 7 91 -5 105 7 91 -7 88 6 102 -9 94 7 86 -5 105 4 99" stroke="#b7864d" stroke-width="2" opacity=".43"/>
+  <path d="M665 0l-7 100 11 100 -9 94 10 103 -8 93 12 95 -10 101 7 99 -10 100 8 109 -6 106" stroke="#080705" stroke-width="14" opacity=".8"/>
+  <path d="M670 0l-5 100 8 100 -7 94 8 103 -6 93 8 95 -8 101 5 99 -7 100 6 109 -4 106" stroke="#bd925d" stroke-width="2.5" opacity=".35"/>
+  <path d="M891 0l11 110 -12 96 8 100 -10 92 12 100 -9 95 8 94 -11 96 7 111 -4 102" stroke="#0a0806" stroke-width="12" opacity=".75"/>
+  <path d="M895 0l7 110 -9 96 6 100 -8 92 8 100 -6 95 6 94 -8 96 5 111 -3 102" stroke="#c19360" stroke-width="2" opacity=".42"/>
+  <path d="M1120 0l-8 119 11 96 -12 95 9 104 -8 91 11 96 -8 101 10 95 -11 105 8 101" stroke="#090806" stroke-width="13" opacity=".8"/>
+  <path d="M1125 0l-5 119 7 96 -8 95 6 104 -5 91 7 96 -5 101 7 95 -8 105 6 101" stroke="#b88854" stroke-width="2.4" opacity=".4"/>
+  <path d="M64 106l49 13 -18 25 34 16 -21 29M261 298l41 -18 -9 29 35 18 -19 28M516 155l42 13 -20 24 36 21 -22 29M747 450l38 -19 -8 28 35 18 -17 27M988 250l45 -15 -16 29 30 20 -19 25M1260 635l42 -19 -13 31 33 20 -20 26M325 911l38 -14 -11 30 33 21 -20 27M780 1001l45 -18 -18 31 34 18" stroke="#090806" stroke-width="6" opacity=".5"/>
+</g>
+<rect width="1440" height="1200" fill="#060805" opacity=".18"/>
+</svg>
