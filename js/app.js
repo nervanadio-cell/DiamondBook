@@ -63,6 +63,16 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("importButton").addEventListener("click", () => document.getElementById("fileInput").click());
 
   grid.addEventListener("click", event => {
+    const openLink = event.target.closest(".book-open, .book-open-cover");
+    if (openLink) {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      const card = openLink.closest(".book-card");
+      if (card) card.classList.add("book-opening");
+      document.body.classList.add("library-book-opening");
+      window.setTimeout(() => { location.href = openLink.href; }, 300);
+      return;
+    }
     const coverButton = event.target.closest(".edit-cover");
     if (coverButton) {
       if (typeof window.openBookCoverEditor === "function") window.openBookCoverEditor(coverButton.dataset.id, render);
