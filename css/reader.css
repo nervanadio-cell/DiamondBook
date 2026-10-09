@@ -62,3 +62,30 @@
   .reader-paper { padding: 45px 12px 70px; }
   .reader-content { font-size: 18px; line-height: 1.8; }
 }
+
+
+/* Subtle ebook page and page-turn effect */
+.reader-main { background:linear-gradient(90deg, rgba(91,70,43,.06), transparent 16%, transparent 84%, rgba(91,70,43,.05)); }
+.reader-paper {
+  position:relative;
+  background:linear-gradient(90deg, rgba(112,81,43,.055), transparent 34px), var(--reader-bg);
+  border:1px solid rgba(115,91,58,.13);
+  border-radius:3px 12px 12px 3px;
+  box-shadow:0 12px 38px rgba(58,43,25,.11), inset 6px 0 11px rgba(88,62,33,.035);
+  transform-origin:left center;
+  backface-visibility:hidden;
+}
+.reader-paper.page-turn-next { animation:readerPageTurnNext .42s cubic-bezier(.22,.8,.2,1); }
+.reader-paper.page-turn-prev { animation:readerPageTurnPrev .42s cubic-bezier(.22,.8,.2,1); transform-origin:right center; }
+.reader-controls { border:1px solid rgba(255,255,255,.1); }
+@keyframes readerPageTurnNext {
+  0% { opacity:.25; transform:perspective(1400px) rotateY(-8deg) translateX(22px); filter:brightness(.92); }
+  100% { opacity:1; transform:perspective(1400px) rotateY(0) translateX(0); filter:brightness(1); }
+}
+@keyframes readerPageTurnPrev {
+  0% { opacity:.25; transform:perspective(1400px) rotateY(8deg) translateX(-22px); filter:brightness(.92); }
+  100% { opacity:1; transform:perspective(1400px) rotateY(0) translateX(0); filter:brightness(1); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .reader-paper.page-turn-next,.reader-paper.page-turn-prev { animation:none; }
+}
