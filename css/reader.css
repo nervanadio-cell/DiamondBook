@@ -100,7 +100,7 @@
     linear-gradient(rgba(13,12,9,.44),rgba(13,12,9,.62)),
     url("../assets/oak-bark.svg");
   background-position:center,center;
-  background-size:cover,min(1440px,100vw) auto;
+  background-size:cover,max(1080px,100vw) auto;
   background-repeat:no-repeat,repeat;
   background-attachment:fixed,fixed;
   transition:opacity .28s ease, transform .32s ease, filter .32s ease;
