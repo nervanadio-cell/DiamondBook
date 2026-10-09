@@ -23,6 +23,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentNodeId = flattenChapters(book)[0]?.chapter.id || null;
   let saveTimer = null;
   let saveErrorShown = false;
+  let multiSelectMode = false;
+  const selectedNodeIds = new Set();
+  let activeContextMenu = null;
+
+  const selectionBar = document.createElement("div");
+  selectionBar.className = "tree-selection-bar";
+  selectionBar.hidden = true;
+  selectionBar.innerHTML = `
+    <span class="tree-selection-count" id="treeSelectionCount">0 выбрано</span>
+    <button type="button" data-selection-action="rename">Переименовать</button>
+    <button type="button" data-selection-action="delete">Удалить</button>
+    <button type="button" data-selection-action="cancel" aria-label="Отменить выбор">×</button>
+  `;
+  sidebar.insertBefore(selectionBar, tree);
 
   document.getElementById("sidebarBookTitle").textContent = book.title;
   document.getElementById("bookNameButton").textContent = book.title;
@@ -71,9 +85,33 @@ document.addEventListener("DOMContentLoaded", () => {
           <span class="tree-label">${escapeHtml(node.title)}</span>
         `;
 
+        if (multiSelectMode) {
+          const check = document.createElement("input");
+          check.type = "checkbox";
+          check.className = "tree-select-checkbox";
+          check.checked = selectedNodeIds.has(node.id);
+          check.setAttribute("aria-label", `Выбрать ${node.title}`);
+          check.addEventListener("click", event => event.stopPropagation());
+          check.addEventListener("change", () => {
+            if (check.checked) selectedNodeIds.add(node.id);
+            else selectedNodeIds.delete(node.id);
+            updateSelectionBar();
+          });
+          row.appendChild(check);
+        }
+
         line.addEventListener("click", () => {
+          if (multiSelectMode) {
+            if (selectedNodeIds.has(node.id)) selectedNodeIds.delete(node.id);
+            else selectedNodeIds.add(node.id);
+            const check = row.querySelector(".tree-select-checkbox");
+            if (check) check.checked = selectedNodeIds.has(node.id);
+            updateSelectionBar();
+            return;
+          }
           if (node.type === "chapter") selectChapter(node.id);
         });
+        line.addEventListener("contextmenu", event => showNodeContextMenu(node, event));
 
         const nodeActions = document.createElement("div");
         nodeActions.className = "tree-node-actions";
@@ -143,6 +181,176 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderNodes(book.structure, tree);
   }
+
+  function updateSelectionBar() {
+    selectionBar.hidden = !multiSelectMode;
+    const count = selectionBar.querySelector("#treeSelectionCount");
+    if (count) count.textContent = `${selectedNodeIds.size} выбрано`;
+    selectionBar.querySelector('[data-selection-action="rename"]').disabled = selectedNodeIds.size === 0;
+    selectionBar.querySelector('[data-selection-action="delete"]').disabled = selectedNodeIds.size === 0;
+  }
+
+  function allNodes(nodes = book.structure, result = []) {
+    (nodes || []).forEach(node => {
+      result.push(node);
+      if (Array.isArray(node.children)) allNodes(node.children, result);
+    });
+    return result;
+  }
+
+  function countDescendants(node) {
+    return (node.children || []).reduce((total, child) => total + 1 + countDescendants(child), 0);
+  }
+
+  function removeNodeById(nodes, nodeId) {
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      if (nodes[i].id === nodeId) {
+        nodes.splice(i, 1);
+        return true;
+      }
+      if (Array.isArray(nodes[i].children) && removeNodeById(nodes[i].children, nodeId)) return true;
+    }
+    return false;
+  }
+
+  function renameSelectedNodes(ids) {
+    const nodes = allNodes().filter(node => ids.has(node.id));
+    if (!nodes.length) return;
+    if (nodes.length === 1) {
+      const node = nodes[0];
+      const type = node.type === "volume" ? "тома" : node.type === "part" ? "части" : "главы";
+      const next = prompt(`Новое название ${type}:`, node.title);
+      if (next === null) return;
+      if (!next.trim()) { alert("Название не может быть пустым."); return; }
+      node.title = next.trim();
+      if (node.id === currentNodeId) chapterTitle.value = node.title;
+    } else {
+      const prefix = prompt("Общее название. К каждому элементу добавится номер:", "Сцена");
+      if (prefix === null) return;
+      if (!prefix.trim()) { alert("Название не может быть пустым."); return; }
+      nodes.forEach((node, index) => {
+        node.title = `${prefix.trim()} ${index + 1}`;
+        if (node.id === currentNodeId) chapterTitle.value = node.title;
+      });
+    }
+    renderTree();
+    markSaving();
+  }
+
+  function deleteNodeIds(ids) {
+    const nodes = allNodes().filter(node => ids.has(node.id));
+    if (!nodes.length) return;
+    const totalChildren = nodes.reduce((sum, node) => sum + countDescendants(node), 0);
+    const headline = nodes.length === 1
+      ? `«${nodes[0].title}»${totalChildren ? ` и всё содержимое (${totalChildren} вложенных элементов)` : ""}`
+      : `${nodes.length} выбранных элементов`;
+    if (!confirm(`Точно удалить ${headline}? Это действие нельзя отменить.`)) return;
+
+    ids.forEach(id => removeNodeById(book.structure, id));
+    selectedNodeIds.clear();
+    multiSelectMode = false;
+    activeContextMenu?.remove();
+    activeContextMenu = null;
+
+    if (!flattenChapters(book).length) {
+      book.structure.push(makeChapter("Глава 1"));
+    }
+    if (!findNode(book, currentNodeId) || findNode(book, currentNodeId)?.type !== "chapter") {
+      currentNodeId = flattenChapters(book)[0]?.chapter.id || null;
+    }
+
+    updateSelectionBar();
+    if (currentNodeId) selectChapter(currentNodeId);
+    else renderTree();
+    persistNow();
+  }
+
+  function addChildNode(node) {
+    node.children ||= [];
+    if (node.type === "volume") {
+      const part = makePart(`Часть ${node.children.length + 1}`, 1);
+      node.children.push(part);
+      const firstChapter = flattenChapters({ structure: [part] })[0]?.chapter;
+      if (firstChapter) currentNodeId = firstChapter.id;
+    } else if (node.type === "part") {
+      const chapter = makeChapter(`Глава ${flattenChapters(book).length + 1}`);
+      node.children.push(chapter);
+      currentNodeId = chapter.id;
+    }
+    renderTree();
+    if (currentNodeId) selectChapter(currentNodeId);
+    markSaving();
+  }
+
+  function closeNodeContextMenu() {
+    if (activeContextMenu) activeContextMenu.remove();
+    activeContextMenu = null;
+  }
+
+  function showNodeContextMenu(node, event) {
+    event.preventDefault();
+    closeNodeContextMenu();
+    const menu = document.createElement("div");
+    menu.className = "tree-context-menu";
+    menu.innerHTML = `
+      <button type="button" data-action="rename">✎ <span>Переименовать</span></button>
+      <button type="button" data-action="multi">☷ <span>${multiSelectMode ? "Выключить мультивыбор" : "Выбрать несколько"}</span></button>
+      <button type="button" data-action="add" ${node.type === "chapter" ? "hidden" : ""}>＋ <span>Добавить вложенное</span></button>
+      <button type="button" data-action="delete" class="danger">⌫ <span>Удалить</span></button>
+    `;
+    document.body.appendChild(menu);
+    activeContextMenu = menu;
+    const left = Math.max(8, Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 8));
+    const top = Math.max(8, Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 8));
+    menu.style.left = `${left}px`;
+    menu.style.top = `${top}px`;
+
+    menu.querySelector('[data-action="rename"]').addEventListener("click", () => {
+      closeNodeContextMenu();
+      renameSelectedNodes(new Set([node.id]));
+    });
+    menu.querySelector('[data-action="multi"]').addEventListener("click", () => {
+      closeNodeContextMenu();
+      if (!multiSelectMode) {
+        multiSelectMode = true;
+        selectedNodeIds.clear();
+        selectedNodeIds.add(node.id);
+      } else if (!selectedNodeIds.has(node.id)) {
+        selectedNodeIds.add(node.id);
+      } else {
+        selectedNodeIds.delete(node.id);
+      }
+      renderTree();
+      updateSelectionBar();
+    });
+    menu.querySelector('[data-action="add"]').addEventListener("click", () => {
+      closeNodeContextMenu();
+      addChildNode(node);
+    });
+    menu.querySelector('[data-action="delete"]').addEventListener("click", () => {
+      closeNodeContextMenu();
+      deleteNodeIds(new Set([node.id]));
+    });
+  }
+
+  selectionBar.querySelector('[data-selection-action="rename"]').addEventListener("click", () => renameSelectedNodes(selectedNodeIds));
+  selectionBar.querySelector('[data-selection-action="delete"]').addEventListener("click", () => deleteNodeIds(selectedNodeIds));
+  selectionBar.querySelector('[data-selection-action="cancel"]').addEventListener("click", () => {
+    selectedNodeIds.clear();
+    multiSelectMode = false;
+    renderTree();
+    updateSelectionBar();
+  });
+  document.addEventListener("click", event => {
+    if (activeContextMenu && !activeContextMenu.contains(event.target)) closeNodeContextMenu();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeNodeContextMenu();
+    if (event.key === "Delete" && multiSelectMode && selectedNodeIds.size && !event.target.matches("input,textarea,[contenteditable=true]")) {
+      event.preventDefault();
+      deleteNodeIds(selectedNodeIds);
+    }
+  });
 
   function selectChapter(nodeId) {
     const node = findNode(book, nodeId);
