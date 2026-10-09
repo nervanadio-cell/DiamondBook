@@ -118,3 +118,45 @@
 @media (prefers-reduced-motion:reduce) {
   .chapter-editor.page-turn-forward,.chapter-editor.page-turn-back { animation:none; }
 }
+
+
+/* Outline actions: right-click context panel and bulk selection */
+.tree-selection-bar {
+  position:sticky;top:0;z-index:12;display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+  padding:9px;margin:-7px -5px 14px;border:1px solid rgba(209,173,117,.26);border-radius:10px;
+  background:linear-gradient(110deg,rgba(74,49,27,.97),rgba(29,28,20,.98));
+  box-shadow:0 8px 22px rgba(0,0,0,.2);
+}
+.tree-selection-bar[hidden] {display:none!important;}
+.tree-selection-count {color:#e0c79b;font-size:11px;font-weight:750;flex:1 1 100%;}
+.tree-selection-bar button {
+  border:1px solid rgba(220,196,157,.2);border-radius:7px;padding:7px 8px;
+  background:rgba(255,255,255,.055);color:#e8dcc6;font:600 11px/1.15 system-ui,sans-serif;cursor:pointer;
+}
+.tree-selection-bar button:hover {background:rgba(215,180,134,.16);}
+.tree-selection-bar button:disabled {opacity:.35;cursor:default;}
+.tree-selection-bar [data-selection-action="delete"] {color:#f0b1a6;}
+.tree-select-checkbox {flex:0 0 auto;accent-color:#c6a06b;margin:0 3px 0 7px;width:14px;height:14px;}
+.tree-context-menu {
+  position:fixed;z-index:3000;min-width:205px;padding:6px;
+  background:linear-gradient(135deg,rgba(54,39,23,.99),rgba(22,24,17,.99));
+  border:1px solid rgba(216,185,135,.36);border-radius:10px;
+  box-shadow:0 18px 50px rgba(0,0,0,.56),inset 0 1px rgba(255,255,255,.04);
+  animation:treeMenuIn .14s ease-out;
+}
+.tree-context-menu button {
+  width:100%;display:flex;align-items:center;gap:10px;text-align:left;
+  background:transparent;border:0;border-radius:6px;padding:9px 10px;
+  color:#e2d3b8;font:500 12px/1.2 system-ui,sans-serif;cursor:pointer;
+}
+.tree-context-menu button:hover {background:rgba(220,184,127,.13);}
+.tree-context-menu button[hidden] {display:none;}
+.tree-context-menu button.danger {color:#e9a69b;border-top:1px solid rgba(255,255,255,.08);margin-top:4px;padding-top:12px;}
+.tree-context-menu button span {flex:1;}
+.tree-node-actions {gap:3px;}
+.tree-action {background:rgba(39,31,21,.4);}
+@keyframes treeMenuIn { from {opacity:0;transform:translateY(4px) scale(.98)} to {opacity:1;transform:none} }
+@media (max-width:850px) {
+  .tree-selection-bar {margin-right:0;margin-left:0;}
+  .tree-node-actions {opacity:.92;}
+}
