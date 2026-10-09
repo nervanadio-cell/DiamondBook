@@ -107,7 +107,19 @@
     };
     root.querySelectorAll("[data-ratio]").forEach(button=>button.onclick=()=>{
       root.querySelectorAll("[data-ratio]").forEach(b=>b.classList.remove("active"));
-      button.classList.add("active");ratio=button.dataset.ratio==="free"?null:Number(button.dataset.ratio);newCrop();
+      button.classList.add("active");
+      ratio=button.dataset.ratio==="free"?null:Number(button.dataset.ratio);
+      if(!crop) { newCrop(); return; }
+      if(!source) { draw(); return; }
+      if(!ratio) { draw(); return; }
+      const centerX=crop.x+crop.w/2,centerY=crop.y+crop.h/2;
+      const maxW=Math.min(canvas.width,canvas.height*ratio);
+      const maxH=Math.min(canvas.height,canvas.width/ratio);
+      let w=Math.min(crop.w,maxW),h=w/ratio;
+      if(h>Math.min(crop.h,maxH)) { h=Math.min(crop.h,maxH);w=h*ratio; }
+      w=Math.max(1,Math.min(w,maxW));h=Math.max(1,Math.min(h,maxH));
+      crop={x:Math.max(0,Math.min(canvas.width-w,centerX-w/2)),y:Math.max(0,Math.min(canvas.height-h,centerY-h/2)),w,h};
+      draw();
     });
     function point(e){const rect=canvas.getBoundingClientRect();return{x:(e.clientX-rect.left)*canvas.width/rect.width,y:(e.clientY-rect.top)*canvas.height/rect.height};}
     canvas.onpointerdown=e=>{
