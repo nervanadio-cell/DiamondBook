@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
     kickerRight.textContent = part.title;
     contentLeft.innerHTML = pages[pageIndex] || "";
     contentRight.innerHTML = pages[rightIndex] || "";
-    sheetRight.hidden = isNarrow() || rightIndex >= total;
+    sheetRight.hidden = isNarrow();
     document.getElementById("readerLeftNumber").textContent = String(pageIndex + 1);
     document.getElementById("readerRightNumber").textContent = rightIndex < total ? String(rightIndex + 1) : "";
     progress.textContent = isNarrow()
