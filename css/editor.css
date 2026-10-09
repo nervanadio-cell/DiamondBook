@@ -74,11 +74,21 @@
 
 
 /* Paper-like writing desk */
-.writing-area { background: #d0c7b8; }
-.editor-toolbar { background: #eee7da; border-bottom-color: #d3c6b1; }
-.editor-toolbar .tool-button { color: #625846; }
-.editor-toolbar .tool-button:hover { background: #e1d5c2; color: #302a22; }
-.toolbar-divider { background: #c8baa3; }
+.writing-area {
+  background-color:#21170f;
+  background-image:linear-gradient(rgba(19,16,11,.35),rgba(20,15,10,.52)),url("../assets/oak-bark.svg");
+  background-size:cover,min(1440px,100vw) auto;
+  background-position:center,center;
+}
+.editor-toolbar {
+  background-color:#80572f;
+  background-image:linear-gradient(rgba(42,28,17,.14),rgba(23,16,10,.2)),url("../assets/oak-board.svg");
+  background-size:cover,100% 100%;
+  border-bottom:2px solid #352214;
+}
+.editor-toolbar .tool-button { color: #f1dfbe; text-shadow:0 1px 2px #24170d; }
+.editor-toolbar .tool-button:hover { background:rgba(255,229,185,.16); color:#fff3dc; }
+.toolbar-divider { background:rgba(37,22,11,.5); }
 .chapter-editor {
   width: min(920px, calc(100% - 38px));
   margin: 20px auto 26px;
