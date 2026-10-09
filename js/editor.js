@@ -55,12 +55,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const wrapper = document.createElement("div");
         wrapper.className = "tree-node";
 
+        const row = document.createElement("div");
+        row.className = "tree-row";
+
         const line = document.createElement("button");
         line.type = "button";
         line.className = `tree-line ${node.id === currentNodeId ? "active" : ""}`;
         line.style.paddingLeft = `${8 + depth * 12}px`;
 
         const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+        const typeLabel = node.type === "volume" ? "том" : node.type === "part" ? "часть" : "главу";
 
         line.innerHTML = `
           <span class="tree-toggle">${hasChildren ? "▾" : "·"}</span>
@@ -71,7 +75,60 @@ document.addEventListener("DOMContentLoaded", () => {
           if (node.type === "chapter") selectChapter(node.id);
         });
 
-        wrapper.appendChild(line);
+        const nodeActions = document.createElement("div");
+        nodeActions.className = "tree-node-actions";
+
+        const renameButton = document.createElement("button");
+        renameButton.type = "button";
+        renameButton.className = "tree-action tree-rename";
+        renameButton.title = `Переименовать ${typeLabel}`;
+        renameButton.setAttribute("aria-label", `Переименовать ${typeLabel} ${node.title}`);
+        renameButton.textContent = "✎";
+        renameButton.addEventListener("click", event => {
+          event.stopPropagation();
+          const nextTitle = prompt(`Новое название для ${typeLabel} (например, «Том 1 — Сага»):`, node.title);
+          if (nextTitle === null) return;
+          const cleanTitle = nextTitle.trim();
+          if (!cleanTitle) {
+            alert("Название не может быть пустым.");
+            return;
+          }
+          node.title = cleanTitle;
+          if (node.id === currentNodeId) chapterTitle.value = cleanTitle;
+          renderTree();
+          markSaving();
+        });
+        nodeActions.appendChild(renameButton);
+
+        if (node.type === "volume" || node.type === "part") {
+          const addButton = document.createElement("button");
+          addButton.type = "button";
+          addButton.className = "tree-action tree-add-child";
+          addButton.title = node.type === "volume" ? "Добавить часть" : "Добавить главу";
+          addButton.setAttribute("aria-label", addButton.title);
+          addButton.textContent = "+";
+          addButton.addEventListener("click", event => {
+            event.stopPropagation();
+            node.children ||= [];
+            if (node.type === "volume") {
+              const part = makePart(`Часть ${node.children.length + 1}`, 1);
+              node.children.push(part);
+              const firstChapter = flattenChapters({ structure: [part] })[0]?.chapter;
+              if (firstChapter) selectChapter(firstChapter.id);
+            } else {
+              const chapter = makeChapter(`Глава ${flattenChapters(book).length + 1}`);
+              node.children.push(chapter);
+              selectChapter(chapter.id);
+            }
+            renderTree();
+            markSaving();
+          });
+          nodeActions.appendChild(addButton);
+        }
+
+        row.appendChild(line);
+        row.appendChild(nodeActions);
+        wrapper.appendChild(row);
 
         if (hasChildren) {
           const children = document.createElement("div");
@@ -90,6 +147,18 @@ document.addEventListener("DOMContentLoaded", () => {
   function selectChapter(nodeId) {
     const node = findNode(book, nodeId);
     if (!node || node.type !== "chapter") return;
+
+    const previousId = currentNodeId;
+    const allChapters = flattenChapters(book);
+    const previousIndex = allChapters.findIndex(item => item.chapter.id === previousId);
+    const nextIndex = allChapters.findIndex(item => item.chapter.id === nodeId);
+    const sheet = document.querySelector(".chapter-editor");
+    if (sheet && previousId && previousId !== nodeId) {
+      sheet.classList.remove("page-turn-forward", "page-turn-back");
+      void sheet.offsetWidth;
+      sheet.classList.add(nextIndex >= previousIndex ? "page-turn-forward" : "page-turn-back");
+      window.setTimeout(() => sheet.classList.remove("page-turn-forward", "page-turn-back"), 460);
+    }
 
     currentNodeId = nodeId;
     chapterTitle.value = node.title;
