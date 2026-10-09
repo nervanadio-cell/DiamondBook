@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function isNarrow() {
-    return window.matchMedia("(max-width: 760px)").matches;
+    return window.matchMedia("(max-width: 620px)").matches;
   }
 
   function pagesPerSpread() {
