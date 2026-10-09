@@ -311,14 +311,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     menu.querySelector('[data-action="multi"]').addEventListener("click", () => {
       closeNodeContextMenu();
-      if (!multiSelectMode) {
+      if (multiSelectMode) {
+        multiSelectMode = false;
+        selectedNodeIds.clear();
+      } else {
         multiSelectMode = true;
         selectedNodeIds.clear();
         selectedNodeIds.add(node.id);
-      } else if (!selectedNodeIds.has(node.id)) {
-        selectedNodeIds.add(node.id);
-      } else {
-        selectedNodeIds.delete(node.id);
       }
       renderTree();
       updateSelectionBar();
