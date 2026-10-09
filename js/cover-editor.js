@@ -1,87 +1,143 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(location.search);
-  const book = getBook(params.get("id")) || getCurrentBook();
-  const actions = document.querySelector(".editor-actions");
-  if (!book || !actions || document.getElementById("coverOpen")) return;
+(function () {
+  let dialog = null;
 
-  const css = document.createElement("style");
-  css.textContent = `
-  .cover-overlay{position:fixed;inset:0;z-index:9999;background:#050609dd;display:flex;align-items:center;justify-content:center;padding:16px}
-  .cover-overlay[hidden]{display:none}.cover-dialog{width:min(1050px,100%);max-height:95vh;overflow:auto;background:#151820;color:#f1f0eb;border:1px solid #ffffff20;border-radius:18px;padding:18px}
-  .cover-grid{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px}.cover-stage{background:#090b0f;min-height:300px;display:flex;align-items:center;justify-content:center;border-radius:12px;overflow:hidden}
-  #coverCanvas{max-width:100%;max-height:58vh;touch-action:none;cursor:crosshair} .cover-controls{display:flex;flex-direction:column;gap:8px}
-  .cover-dialog button{border:1px solid #ffffff20;border-radius:9px;background:#252a35;color:#fff;padding:10px;cursor:pointer}.cover-dialog .cover-main{background:#d7b486;color:#17120c;font-weight:700}
-  .cover-ratios{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.cover-ratios button.active{border-color:#d7b486;color:#e6c79c}
-  .cover-preview{aspect-ratio:2/3;background:#0b0d12;border:1px solid #ffffff20;border-radius:7px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#888;font-size:12px}.cover-preview img{width:100%;height:100%;object-fit:cover}
-  @media(max-width:650px){.cover-grid{grid-template-columns:1fr}.cover-controls{display:grid;grid-template-columns:1fr 1fr}.cover-ratios,.cover-preview{grid-column:1/-1}}
-  `;
-  document.head.appendChild(css);
-
-  const open = document.createElement("button");
-  open.id = "coverOpen"; open.className = "ghost-button"; open.textContent = "Обложка";
-  actions.insertBefore(open, actions.firstChild);
-
-  const overlay = document.createElement("div");
-  overlay.className = "cover-overlay"; overlay.hidden = true;
-  overlay.innerHTML = `<section class="cover-dialog" role="dialog" aria-modal="true">
-    <header style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><h2 style="margin:0;font:26px Georgia,serif">Редактор обложки</h2><p style="color:#999;font-size:13px">Выбери фото и выдели нужную область.</p></div><button id="coverClose">✕</button></header>
-    <div class="cover-grid" style="margin-top:14px"><div><div class="cover-stage"><canvas id="coverCanvas" hidden></canvas><p id="coverHint">Загрузи фото JPG, PNG, WebP или BMP. GIF и видео не поддерживаются.</p></div><p style="color:#999;font-size:12px">Перетаскивай выделение мышью или пальцем. Выделение можно создать заново в любом месте.</p></div>
-    <aside class="cover-controls"><input id="coverInput" type="file" accept="image/jpeg,image/png,image/webp,image/bmp,.jpg,.jpeg,.png,.webp,.bmp" hidden><button id="coverChoose" class="cover-main">Выбрать фото…</button>
-    <div class="cover-ratios"><button data-ratio="0.6666667" class="active">2:3</button><button data-ratio="0.75">3:4</button><button data-ratio="1">1:1</button><button data-ratio="free">Свободно</button></div>
-    <div id="coverPreview" class="cover-preview">Предпросмотр</div><button id="coverDownload">Скачать JPG</button><button id="coverRemove">Убрать обложку</button></aside></div>
-    <footer style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button id="coverCancel">Отмена</button><button id="coverSave" class="cover-main">Сохранить</button></footer></section>`;
-  document.body.appendChild(overlay);
-
-  const canvas = overlay.querySelector("#coverCanvas"), ctx = canvas.getContext("2d");
-  const hint = overlay.querySelector("#coverHint"), input = overlay.querySelector("#coverInput"), preview = overlay.querySelector("#coverPreview");
-  let image = null, crop = null, ratio = 2/3, scale = 1, start = null;
-
-  function cropData() {
-    if (!image || !crop || crop.w < 3 || crop.h < 3) throw new Error("Сначала выбери фото и выдели область.");
-    const out = document.createElement("canvas");
-    const sx=crop.x/scale, sy=crop.y/scale, sw=crop.w/scale, sh=crop.h/scale;
-    const factor=Math.min(1,1200/sw,1800/sh);
-    out.width=Math.max(1,Math.round(sw*factor)); out.height=Math.max(1,Math.round(sh*factor));
-    out.getContext("2d").drawImage(image,sx,sy,sw,sh,0,0,out.width,out.height);
-    return out.toDataURL("image/jpeg",.92);
+  function makeDialog() {
+    if (dialog) return dialog;
+    const style = document.createElement("style");
+    style.textContent = `
+      .cover-overlay{position:fixed;inset:0;z-index:9999;background:rgba(5,6,9,.84);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:16px}
+      .cover-overlay[hidden]{display:none!important}.cover-dialog{width:min(1040px,100%);max-height:94vh;overflow:auto;background:#f4efe4;color:#302b23;border:1px solid #c9bda8;border-radius:16px;box-shadow:0 30px 90px #0008;padding:18px}
+      .cover-head,.cover-foot{display:flex;align-items:center;justify-content:space-between;gap:12px}.cover-head{border-bottom:1px solid #d8cebd;padding-bottom:12px}.cover-head h2{margin:0;font:28px Georgia,serif}.cover-head p{margin:5px 0 0;color:#746c60;font:13px system-ui}
+      .cover-grid{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px;padding:16px 0}.cover-stage{background:#d6d0c4;min-height:300px;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+      #coverCanvas{max-width:100%;max-height:58vh;touch-action:none;cursor:crosshair;display:block}#coverCanvas[hidden]{display:none}.cover-hint{padding:24px;text-align:center;line-height:1.6;color:#625b50}
+      .cover-controls{display:flex;flex-direction:column;gap:8px}.cover-dialog button{font:inherit;border:1px solid #d0c4b1;border-radius:8px;background:#e8e0d2;color:#2e2922;padding:10px;cursor:pointer}.cover-dialog button:hover{filter:brightness(.97)}.cover-dialog .cover-primary{background:#8d6e4b;color:#fffaf2;border-color:#8d6e4b;font-weight:700}
+      .cover-ratios{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.cover-ratios button{font-size:12px;padding:8px}.cover-ratios button.active{border-color:#8d6e4b;background:#dfcfb7}
+      .cover-preview{aspect-ratio:2/3;background:#e8e0d2;border:1px solid #d0c4b1;border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#81786b;font-size:12px}.cover-preview img{width:100%;height:100%;object-fit:cover}
+      .cover-foot{border-top:1px solid #d8cebd;padding-top:13px;justify-content:flex-end}.cover-note{font:12px/1.5 system-ui;color:#746c60;margin:8px 0 0}
+      @media(max-width:700px){.cover-overlay{padding:6px}.cover-dialog{padding:12px;max-height:98vh}.cover-grid{grid-template-columns:1fr;padding:10px 0}.cover-stage{min-height:200px}.cover-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.cover-ratios,.cover-preview{grid-column:1/-1}.cover-head h2{font-size:22px}}
+    `;
+    document.head.appendChild(style);
+    dialog = document.createElement("div");
+    dialog.className = "cover-overlay";
+    dialog.hidden = true;
+    dialog.innerHTML = `
+      <section class="cover-dialog" role="dialog" aria-modal="true" aria-labelledby="coverTitle">
+        <header class="cover-head"><div><h2 id="coverTitle">Редактор обложки</h2><p>Загрузи фото и выдели нужный фрагмент.</p></div><button type="button" id="coverClose" aria-label="Закрыть">×</button></header>
+        <div class="cover-grid"><div><div class="cover-stage"><canvas id="coverCanvas" hidden></canvas><p id="coverHint" class="cover-hint">JPG, PNG, WebP или BMP. GIF и видео не поддерживаются.</p></div><p class="cover-note">Потяни мышью или пальцем, чтобы выбрать кадр. Повторное выделение заменит предыдущий кадр.</p></div>
+          <aside class="cover-controls"><input id="coverInput" type="file" accept="image/jpeg,image/png,image/webp,image/bmp,.jpg,.jpeg,.png,.webp,.bmp" hidden><button type="button" id="coverChoose" class="cover-primary">Выбрать фото…</button>
+            <div class="cover-ratios"><button type="button" data-ratio="0.6666667" class="active">2:3</button><button type="button" data-ratio="0.75">3:4</button><button type="button" data-ratio="1">1:1</button><button type="button" data-ratio="free">Свободно</button></div>
+            <div class="cover-preview" id="coverPreview">Предпросмотр</div><button type="button" id="coverDownload">Скачать JPG</button><button type="button" id="coverRemove">Убрать обложку</button></aside>
+        </div>
+        <footer class="cover-foot"><button type="button" id="coverCancel">Отмена</button><button type="button" id="coverSave" class="cover-primary">Сохранить обложку</button></footer>
+      </section>`;
+    document.body.appendChild(dialog);
+    return dialog;
   }
-  function draw() {
-    if (!image) return;
-    ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(image,0,0,canvas.width,canvas.height);
-    if(crop){ctx.fillStyle="#0009";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,crop.x/scale,crop.y/scale,crop.w/scale,crop.h/scale,crop.x,crop.y,crop.w,crop.h);ctx.strokeStyle="#f0c891";ctx.lineWidth=2;ctx.strokeRect(crop.x,crop.y,crop.w,crop.h);}
-    try { preview.innerHTML='<img alt="Предпросмотр обложки" src="'+cropData()+'">'; } catch { preview.textContent="Предпросмотр"; }
-  }
-  function fitCrop() {
-    if(!image)return;
-    let w=canvas.width*.82,h=canvas.height*.82;
-    if(ratio){if(w/h>ratio)w=h*ratio;else h=w/ratio;}
-    crop={x:(canvas.width-w)/2,y:(canvas.height-h)/2,w,h};draw();
-  }
-  function loadData(url) {
-    const next = new Image();
-    next.onload=()=>{image=next;scale=Math.min(1,760/next.naturalWidth,520/next.naturalHeight);canvas.width=Math.round(next.naturalWidth*scale);canvas.height=Math.round(next.naturalHeight*scale);canvas.hidden=false;hint.hidden=true;fitCrop();};
-    next.onerror=()=>alert("Не удалось открыть изображение.");
-    next.src=url;
-  }
-  function close(){overlay.hidden=true;start=null;}
-  function show(){overlay.hidden=false;if(book.coverDataUrl)loadData(book.coverDataUrl);else{image=null;crop=null;canvas.hidden=true;hint.hidden=false;preview.textContent="Предпросмотр";}}
-  open.addEventListener("click",show);
-  overlay.querySelector("#coverClose").addEventListener("click",close);
-  overlay.querySelector("#coverCancel").addEventListener("click",close);
-  overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!overlay.hidden)close();});
-  overlay.querySelector("#coverChoose").addEventListener("click",()=>input.click());
-  input.addEventListener("change",()=>{
-    const file=input.files&&input.files[0]; if(!file)return;
-    if(!/^image\/(jpeg|png|webp|bmp)$/i.test(file.type)){alert("Подойдут JPG, PNG, WebP или BMP. GIF и видео не поддерживаются.");input.value="";return;}
-    const reader=new FileReader();reader.onload=()=>loadData(String(reader.result));reader.onerror=()=>alert("Не удалось прочитать файл.");reader.readAsDataURL(file);input.value="";
+
+  window.openBookCoverEditor = function (bookId, onSaved) {
+    const book = typeof getBook === "function" ? getBook(bookId) : null;
+    if (!book) { alert("Книга не найдена."); return; }
+    const root = makeDialog();
+    const canvas = root.querySelector("#coverCanvas");
+    const ctx = canvas.getContext("2d");
+    const hint = root.querySelector("#coverHint");
+    const input = root.querySelector("#coverInput");
+    const preview = root.querySelector("#coverPreview");
+    let source = null, crop = null, scale = 1, ratio = 2/3, drag = null;
+
+    function makeDataUrl() {
+      if (!source || !crop || crop.w < 3 || crop.h < 3) throw new Error("Сначала выбери изображение и выдели область.");
+      const sx=crop.x/scale, sy=crop.y/scale, sw=crop.w/scale, sh=crop.h/scale;
+      const factor=Math.min(1,1200/sw,1800/sh);
+      const out=document.createElement("canvas");
+      out.width=Math.max(1,Math.round(sw*factor)); out.height=Math.max(1,Math.round(sh*factor));
+      out.getContext("2d").drawImage(source,sx,sy,sw,sh,0,0,out.width,out.height);
+      return out.toDataURL("image/jpeg",.92);
+    }
+
+    function draw() {
+      if (!source) return;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(source,0,0,canvas.width,canvas.height);
+      if (crop) {
+        ctx.fillStyle="rgba(0,0,0,.58)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(source,crop.x/scale,crop.y/scale,crop.w/scale,crop.h/scale,crop.x,crop.y,crop.w,crop.h);
+        ctx.strokeStyle="#f0c891"; ctx.lineWidth=2; ctx.strokeRect(crop.x,crop.y,crop.w,crop.h);
+        ctx.strokeStyle="#ffffff88"; ctx.lineWidth=1;
+        for(let n=1;n<3;n++){ctx.beginPath();ctx.moveTo(crop.x+crop.w*n/3,crop.y);ctx.lineTo(crop.x+crop.w*n/3,crop.y+crop.h);ctx.stroke();ctx.beginPath();ctx.moveTo(crop.x,crop.y+crop.h*n/3);ctx.lineTo(crop.x+crop.w,crop.y+crop.h*n/3);ctx.stroke();}
+      }
+      try { preview.innerHTML='<img alt="Предпросмотр обложки" src="'+makeDataUrl()+'">'; } catch { preview.textContent="Предпросмотр"; }
+    }
+
+    function newCrop() {
+      if (!source) return;
+      let w=canvas.width*.86,h=canvas.height*.86;
+      if(ratio){if(w/h>ratio)w=h*ratio;else h=w/ratio;}
+      crop={x:(canvas.width-w)/2,y:(canvas.height-h)/2,w,h};
+      draw();
+    }
+
+    function loadData(url) {
+      const img=new Image();
+      img.onload=()=>{source=img;scale=Math.min(1,780/img.naturalWidth,560/img.naturalHeight);canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));canvas.hidden=false;hint.hidden=true;newCrop();};
+      img.onerror=()=>alert("Не удалось открыть изображение.");
+      img.src=url;
+    }
+
+    function close(){root.hidden=true;drag=null;}
+    root.hidden=false;
+    if(book.coverDataUrl) loadData(book.coverDataUrl);
+    else {source=null;crop=null;canvas.hidden=true;hint.hidden=false;preview.textContent="Предпросмотр";}
+
+    root.querySelector("#coverClose").onclick=close;
+    root.querySelector("#coverCancel").onclick=close;
+    root.onclick=e=>{if(e.target===root)close();};
+    root.querySelector("#coverChoose").onclick=()=>input.click();
+    input.onchange=()=>{
+      const file=input.files && input.files[0];
+      if(!file)return;
+      if(!/^image\/(jpeg|png|webp|bmp)$/i.test(file.type)){alert("Выбери фото JPG, PNG, WebP или BMP. GIF и видео не поддерживаются.");input.value="";return;}
+      const reader=new FileReader();
+      reader.onload=()=>loadData(String(reader.result||""));
+      reader.onerror=()=>alert("Не удалось прочитать изображение.");
+      reader.readAsDataURL(file);input.value="";
+    };
+    root.querySelectorAll("[data-ratio]").forEach(button=>button.onclick=()=>{
+      root.querySelectorAll("[data-ratio]").forEach(b=>b.classList.remove("active"));
+      button.classList.add("active");ratio=button.dataset.ratio==="free"?null:Number(button.dataset.ratio);newCrop();
+    });
+    function point(e){const rect=canvas.getBoundingClientRect();return{x:(e.clientX-rect.left)*canvas.width/rect.width,y:(e.clientY-rect.top)*canvas.height/rect.height};}
+    canvas.onpointerdown=e=>{if(!source)return;e.preventDefault();const p=point(e);drag={x:p.x,y:p.y};crop={x:p.x,y:p.y,w:1,h:1};canvas.setPointerCapture(e.pointerId);draw();};
+    canvas.onpointermove=e=>{
+      if(!drag||!source)return;const p=point(e);let w=Math.abs(p.x-drag.x),h=Math.abs(p.y-drag.y);
+      if(ratio){if(h>0&&w/h>ratio)w=h*ratio;else h=w/ratio;}
+      crop={x:p.x<drag.x?drag.x-w:drag.x,y:p.y<drag.y?drag.y-h:drag.y,w:Math.max(1,w),h:Math.max(1,h)};
+      crop.x=Math.max(0,Math.min(crop.x,canvas.width-crop.w));crop.y=Math.max(0,Math.min(crop.y,canvas.height-crop.h));draw();
+    };
+    canvas.onpointerup=()=>drag=null;canvas.onpointercancel=()=>drag=null;
+    root.querySelector("#coverSave").onclick=()=>{
+      try{book.coverDataUrl=makeDataUrl();saveBook(book);document.dispatchEvent(new CustomEvent("bookcoverchange",{detail:{bookId:book.id}}));if(typeof onSaved==="function")onSaved();close();}
+      catch(error){alert(error.message||"Не удалось сохранить обложку. Возможно, в браузере закончилось место.");}
+    };
+    root.querySelector("#coverDownload").onclick=()=>{
+      try{const a=document.createElement("a");a.href=makeDataUrl();a.download=(String(book.title||"book").replace(/[\\/:*?"<>|]+/g,"_")||"book")+"_cover.jpg";a.click();}
+      catch(error){alert(error.message||"Не удалось создать файл.");}
+    };
+    root.querySelector("#coverRemove").onclick=()=>{
+      if(!confirm("Убрать обложку книги?"))return;
+      delete book.coverDataUrl;saveBook(book);source=null;crop=null;canvas.hidden=true;hint.hidden=false;preview.textContent="Предпросмотр";
+      document.dispatchEvent(new CustomEvent("bookcoverchange",{detail:{bookId:book.id}}));if(typeof onSaved==="function")onSaved();
+    };
+  };
+
+  document.addEventListener("DOMContentLoaded",()=>{
+    const params=new URLSearchParams(location.search);
+    const book=(typeof getBook==="function"&&getBook(params.get("id")))||(typeof getCurrentBook==="function"&&getCurrentBook());
+    const actions=document.querySelector(".editor-actions");
+    if(book&&actions&&!document.getElementById("coverOpen")) {
+      const button=document.createElement("button");button.type="button";button.id="coverOpen";button.className="ghost-button";button.textContent="Обложка";
+      button.addEventListener("click",()=>window.openBookCoverEditor(book.id,()=>{const status=document.getElementById("saveStatus");if(status)status.textContent="Обложка сохранена";}));
+      actions.insertBefore(button,actions.firstChild);
+    }
   });
-  overlay.querySelectorAll("[data-ratio]").forEach(b=>b.addEventListener("click",()=>{overlay.querySelectorAll("[data-ratio]").forEach(x=>x.classList.remove("active"));b.classList.add("active");ratio=b.dataset.ratio==="free"?null:Number(b.dataset.ratio);fitCrop();}));
-  function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height};}
-  canvas.addEventListener("pointerdown",e=>{if(!image)return;const p=point(e);start=p;crop={x:p.x,y:p.y,w:1,h:1};canvas.setPointerCapture(e.pointerId);draw();});
-  canvas.addEventListener("pointermove",e=>{if(!start)return;const p=point(e);let w=Math.abs(p.x-start.x),h=Math.abs(p.y-start.y);if(ratio){if(w/h>ratio)w=h*ratio;else h=w/ratio;}crop={x:p.x<start.x?start.x-w:start.x,y:p.y<start.y?start.y-h:start.y,w:Math.max(1,w),h:Math.max(1,h)};crop.x=Math.max(0,Math.min(crop.x,canvas.width-crop.w));crop.y=Math.max(0,Math.min(crop.y,canvas.height-crop.h));draw();});
-  canvas.addEventListener("pointerup",()=>{start=null;});canvas.addEventListener("pointercancel",()=>{start=null;});
-  overlay.querySelector("#coverSave").addEventListener("click",()=>{try{book.coverDataUrl=cropData();saveBook(book);const status=document.getElementById("saveStatus");if(status)status.textContent="Обложка сохранена";close();}catch(e){alert(e.message||"Не удалось сохранить обложку.");}});
-  overlay.querySelector("#coverDownload").addEventListener("click",()=>{try{const a=document.createElement("a");a.href=cropData();a.download=(book.title||"book").replace(/[\\/:*?"<>|]+/g,"_")+"_cover.jpg";a.click();}catch(e){alert(e.message);}});
-  overlay.querySelector("#coverRemove").addEventListener("click",()=>{if(!confirm("Убрать обложку книги?"))return;delete book.coverDataUrl;saveBook(book);image=null;crop=null;canvas.hidden=true;hint.hidden=false;preview.textContent="Предпросмотр";});
-});
+})();
