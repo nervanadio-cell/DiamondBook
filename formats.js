@@ -1206,7 +1206,8 @@ async function importEpub(buffer) {
 
 function makeEpubFiles(book) {
   const entries = chaptersWithPath(book);
-  const manifest = entries.map((_, index) =>
+  const coverManifest = book.coverDataUrl && /^data:image\/jpeg;base64,/.test(book.coverDataUrl) ? '<item id="cover-image" href="cover.jpg" media-type="image/jpeg" properties="cover-image"/>' : "";
+  const manifest = coverManifest + entries.map((_, index) =>
     `<item id="ch${index}" href="chapter${index}.xhtml" media-type="application/xhtml+xml"/>`
   ).join("");
 
@@ -1246,6 +1247,13 @@ async function exportEpub(book) {
 
   const epub = makeEpubFiles(book);
   const folder = zip.folder("OEBPS");
+  if (book.coverDataUrl && /^data:image\/jpeg;base64,/.test(book.coverDataUrl)) {
+    const encoded = book.coverDataUrl.slice(book.coverDataUrl.indexOf(",") + 1);
+    const binary = atob(encoded);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    folder.file("cover.jpg", bytes);
+  }
 
   folder.file(
     "content.opf",
@@ -1306,6 +1314,7 @@ function makeBookFromImported(rawBook, fallbackTitle = "Импортирован
     id: createId("book"),
     title: String(source.title || fallbackTitle),
     author: String(source.author || ""),
+    coverDataUrl: typeof source.coverDataUrl === "string" && /^data:image\/(?:jpeg|png|webp);base64,/.test(source.coverDataUrl) ? source.coverDataUrl : "",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     structure: Array.isArray(source.structure) ? source.structure : []
