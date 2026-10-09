@@ -160,3 +160,47 @@
   .tree-selection-bar {margin-right:0;margin-left:0;}
   .tree-node-actions {opacity:.92;}
 }
+
+
+/* Context actions from the outline */
+.tree-selection-bar {
+  display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+  padding:9px;margin:-4px 0 12px;
+  border:1px solid rgba(208,171,116,.24);border-radius:10px;
+  background:linear-gradient(110deg,rgba(83,57,32,.48),rgba(24,25,19,.88));
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+.tree-selection-bar[hidden] {display:none!important;}
+.tree-selection-count {font:600 11px system-ui,sans-serif;color:#dcc49c;margin-right:auto;}
+.tree-selection-bar button {
+  border:1px solid rgba(220,194,150,.2);border-radius:6px;
+  padding:6px 7px;background:rgba(10,13,9,.45);color:#e3d4b7;font:11px system-ui,sans-serif;
+}
+.tree-selection-bar button:disabled {opacity:.35;cursor:default;}
+.tree-selection-bar [data-selection-action="delete"] {color:#ffb7a9;}
+.tree-selection-bar [data-selection-action="cancel"] {font-size:16px;padding:3px 8px;}
+.tree-select-checkbox {flex:0 0 auto;accent-color:#c7a06a;margin:0 2px 0 5px;}
+.tree-node-actions {flex:0 0 auto;}
+.tree-action {cursor:pointer;}
+.tree-action.tree-delete {color:#c49b8a;}
+.tree-action.tree-delete:hover {background:rgba(160,59,44,.2);color:#ffc2b4;}
+.tree-context-menu {
+  position:fixed;z-index:1000;width:202px;display:flex;flex-direction:column;gap:3px;
+  padding:6px;border:1px solid rgba(212,175,115,.35);border-radius:10px;
+  background:linear-gradient(145deg,#25251c,#171913);
+  box-shadow:0 14px 35px rgba(0,0,0,.48);
+  animation:treeMenuIn .15s ease-out;
+}
+.tree-context-menu button {
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+  border:0;border-radius:6px;padding:9px 10px;background:transparent;
+  color:#e4d6bb;font:12px system-ui,sans-serif;cursor:pointer;
+}
+.tree-context-menu button:hover {background:rgba(201,160,98,.14);}
+.tree-context-menu button.danger {color:#efa99d;}
+.tree-context-menu button[hidden] {display:none;}
+@keyframes treeMenuIn {from{opacity:0;transform:translateX(-7px) scale(.98)}to{opacity:1;transform:none}}
+@media (hover:none) {
+  .tree-node-actions {opacity:.92;}
+  .tree-action {width:28px;height:30px;flex-basis:28px;}
+}
