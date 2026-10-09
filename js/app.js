@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
           cover.style.backgroundImage = "linear-gradient(180deg, rgba(0,0,0,.03) 15%, rgba(0,0,0,.72)), url(" + book.coverDataUrl + ")";
           cover.style.backgroundSize = "cover";
           cover.style.backgroundPosition = "center";
+          cover.classList.add("cover-custom");
           card.classList.add("has-custom-cover");
         }
         booksWrap.appendChild(card);
@@ -76,8 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       const card = openLink.closest(".book-card");
       if (card) card.classList.add("book-opening");
-      document.body.classList.add("library-book-opening");
-      window.setTimeout(() => { location.href = openLink.href; }, 300);
+      window.setTimeout(() => { location.href = openLink.href; }, 390);
       return;
     }
     const coverButton = event.target.closest(".edit-cover");
