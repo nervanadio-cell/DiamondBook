@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const formatTabs = [...document.querySelectorAll(".format-tab")];
   const bookNameButton = document.getElementById("bookNameButton");
   const lineSpacingSelect = document.getElementById("lineSpacingSelect");
+  const saveChapterTitleButton = document.getElementById("saveChapterTitle");
+  const cancelChapterTitleButton = document.getElementById("cancelChapterTitle");
 
   let currentNodeId = flattenChapters(book)[0]?.chapter.id || null;
   let saveTimer = null;
@@ -141,31 +143,53 @@ document.addEventListener("DOMContentLoaded", () => {
     input.setAttribute("aria-label", `Новое название ${typeLabel}`);
     row.insertBefore(input, line.nextSibling);
 
+    const actions = document.createElement("div");
+    actions.className = "tree-inline-actions";
+    const save = document.createElement("button");
+    save.type = "button";
+    save.className = "tree-inline-confirm";
+    save.title = "Сохранить название";
+    save.setAttribute("aria-label", "Сохранить название");
+    save.textContent = "✓";
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "tree-inline-cancel";
+    cancel.title = "Отменить переименование";
+    cancel.setAttribute("aria-label", "Отменить переименование");
+    cancel.textContent = "×";
+    actions.append(save, cancel);
+    row.insertBefore(actions, input.nextSibling);
+
     let done = false;
-    const finish = save => {
+    const finish = shouldSave => {
       if (done) return;
-      done = true;
-      if (save) {
+      if (shouldSave) {
         const clean = input.value.trim();
         if (!clean) {
           input.setCustomValidity("Название не может быть пустым.");
           input.reportValidity();
-          done = false;
           input.focus();
           return;
         }
         node.title = clean;
-        if (node.id === currentNodeId) chapterTitle.value = clean;
+        if (node.id === currentNodeId) {
+          chapterTitle.value = clean;
+          syncChapterTitleButtons();
+        }
         markSaving();
       }
+      done = true;
       renderTree();
     };
+    save.addEventListener("pointerdown", event => event.preventDefault());
+    cancel.addEventListener("pointerdown", event => event.preventDefault());
+    save.addEventListener("click", () => finish(true));
+    cancel.addEventListener("click", () => finish(false));
     input.addEventListener("keydown", event => {
       if (event.key === "Enter") { event.preventDefault(); finish(true); }
       if (event.key === "Escape") { event.preventDefault(); finish(false); }
     });
     input.addEventListener("input", () => input.setCustomValidity(""));
-    input.addEventListener("blur", () => finish(true));
     requestAnimationFrame(() => { input.focus(); input.select(); });
   }
 
@@ -181,26 +205,51 @@ document.addEventListener("DOMContentLoaded", () => {
     bookNameButton.hidden = true;
     bookNameButton.insertAdjacentElement("afterend", input);
 
+    const actions = document.createElement("div");
+    actions.className = "book-title-inline-actions";
+    const save = document.createElement("button");
+    save.type = "button";
+    save.title = "Сохранить название книги";
+    save.setAttribute("aria-label", "Сохранить название книги");
+    save.textContent = "✓";
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.title = "Отменить переименование книги";
+    cancel.setAttribute("aria-label", "Отменить переименование книги");
+    cancel.textContent = "×";
+    actions.append(save, cancel);
+    input.insertAdjacentElement("afterend", actions);
+
     let done = false;
-    const finish = save => {
+    const finish = shouldSave => {
       if (done) return;
-      done = true;
-      if (save && input.value.trim()) {
-        book.title = input.value.trim();
-        bookNameButton.textContent = book.title;
-        document.getElementById("sidebarBookTitle").textContent = book.title;
-        markSaving();
+      if (shouldSave) {
+        const clean = input.value.trim();
+        if (!clean) {
+          input.setCustomValidity("Название не может быть пустым.");
+          input.reportValidity();
+          input.focus();
+          return;
+        }
+        book.title = clean;
+        bookNameButton.textContent = clean;
+        document.getElementById("sidebarBookTitle").textContent = clean;
+        persistNow();
       }
+      done = true;
       input.remove();
+      actions.remove();
       bookNameButton.hidden = false;
-      if (save) persistNow();
     };
+    save.addEventListener("pointerdown", event => event.preventDefault());
+    cancel.addEventListener("pointerdown", event => event.preventDefault());
+    save.addEventListener("click", () => finish(true));
+    cancel.addEventListener("click", () => finish(false));
     input.addEventListener("keydown", event => {
       if (event.key === "Enter") { event.preventDefault(); finish(true); }
       if (event.key === "Escape") { event.preventDefault(); finish(false); }
     });
     input.addEventListener("input", () => input.setCustomValidity(""));
-    input.addEventListener("blur", () => finish(true));
     requestAnimationFrame(() => { input.focus(); input.select(); });
   }
 
@@ -257,7 +306,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           if (node.type === "chapter") selectChapter(node.id);
         });
-        line.addEventListener("contextmenu", event => showNodeContextMenu(node, event));
         wrapper.addEventListener("contextmenu", event => {
           if (event.target.closest(".tree-context-menu")) return;
           showNodeContextMenu(node, event);
@@ -529,19 +577,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
     currentNodeId = nodeId;
     chapterTitle.value = node.title;
+    syncChapterTitleButtons();
     editor.innerHTML = node.content || "<p></p>";
     renderTree();
     editor.focus();
     sidebar.classList.remove("open");
   }
 
-  chapterTitle.addEventListener("input", () => {
+  function syncChapterTitleButtons() {
+    const node = findNode(book, currentNodeId);
+    const dirty = !!node && chapterTitle.value.trim() !== node.title;
+    if (saveChapterTitleButton) saveChapterTitleButton.disabled = !dirty || !chapterTitle.value.trim();
+    if (cancelChapterTitleButton) cancelChapterTitleButton.disabled = !dirty;
+    chapterTitle.classList.toggle("title-dirty", dirty);
+  }
+
+  function commitChapterTitle() {
     const node = findNode(book, currentNodeId);
     if (!node) return;
-
-    node.title = chapterTitle.value.trim() || "Без названия";
+    const clean = chapterTitle.value.trim();
+    if (!clean) {
+      chapterTitle.setCustomValidity("Название не может быть пустым.");
+      chapterTitle.reportValidity();
+      chapterTitle.focus();
+      return;
+    }
+    chapterTitle.setCustomValidity("");
+    node.title = clean;
+    chapterTitle.value = clean;
     renderTree();
     markSaving();
+    syncChapterTitleButtons();
+  }
+
+  chapterTitle.addEventListener("input", () => {
+    chapterTitle.setCustomValidity("");
+    syncChapterTitleButtons();
+  });
+  chapterTitle.addEventListener("keydown", event => {
+    if (event.key === "Enter") { event.preventDefault(); commitChapterTitle(); }
+    if (event.key === "Escape") {
+      const node = findNode(book, currentNodeId);
+      if (node) chapterTitle.value = node.title;
+      syncChapterTitleButtons();
+    }
+  });
+  saveChapterTitleButton?.addEventListener("click", commitChapterTitle);
+  cancelChapterTitleButton?.addEventListener("click", () => {
+    const node = findNode(book, currentNodeId);
+    if (node) chapterTitle.value = node.title;
+    chapterTitle.setCustomValidity("");
+    syncChapterTitleButtons();
   });
 
   editor.addEventListener("input", () => {
