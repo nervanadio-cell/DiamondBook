@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const formatSearch = document.getElementById("formatSearch");
   const editorFileInput = document.getElementById("editorFileInput");
   const formatTabs = [...document.querySelectorAll(".format-tab")];
+  const bookNameButton = document.getElementById("bookNameButton");
+  const lineSpacingSelect = document.getElementById("lineSpacingSelect");
 
   let currentNodeId = flattenChapters(book)[0]?.chapter.id || null;
   let saveTimer = null;
@@ -41,6 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("sidebarBookTitle").textContent = book.title;
   document.getElementById("bookNameButton").textContent = book.title;
 
+  if (lineSpacingSelect) {
+    lineSpacingSelect.value = String(book.editorLineHeight || 1.8);
+    editor.style.lineHeight = lineSpacingSelect.value;
+    lineSpacingSelect.addEventListener("change", () => {
+      book.editorLineHeight = Number(lineSpacingSelect.value) || 1.8;
+      editor.style.lineHeight = String(book.editorLineHeight);
+      markSaving();
+    });
+  }
+
   function persistNow() {
     try {
       saveBook(book);
@@ -61,6 +73,139 @@ document.addEventListener("DOMContentLoaded", () => {
     saveTimer = setTimeout(persistNow, 350);
   }
 
+  function showWriterDialog({ title, description = "", value = "", confirmText = "Сохранить", danger = false, onConfirm }) {
+    const overlay = document.createElement("div");
+    overlay.className = "writer-dialog-backdrop";
+    overlay.innerHTML = `
+      <section class="writer-dialog" role="dialog" aria-modal="true">
+        <h2 class="writer-dialog-title"></h2>
+        <p class="writer-dialog-description"></p>
+        ${value !== null ? '<input class="writer-dialog-input" type="text" maxlength="200" autocomplete="off">' : ""}
+        <div class="writer-dialog-actions">
+          <button type="button" class="writer-dialog-cancel">Отмена</button>
+          <button type="button" class="writer-dialog-confirm"></button>
+        </div>
+      </section>`;
+    overlay.querySelector(".writer-dialog-title").textContent = title;
+    overlay.querySelector(".writer-dialog-description").textContent = description;
+    const input = overlay.querySelector(".writer-dialog-input");
+    if (input) input.value = value;
+    const confirmButton = overlay.querySelector(".writer-dialog-confirm");
+    confirmButton.textContent = confirmText;
+    if (danger) confirmButton.classList.add("danger");
+    document.body.appendChild(overlay);
+
+    let finished = false;
+    const close = () => {
+      if (finished) return;
+      finished = true;
+      document.removeEventListener("keydown", keyHandler);
+      overlay.remove();
+    };
+    const accept = () => {
+      if (finished) return;
+      const result = input ? input.value.trim() : true;
+      if (input && !result) {
+        input.setCustomValidity("Название не может быть пустым.");
+        input.reportValidity();
+        return;
+      }
+      close();
+      onConfirm?.(result);
+    };
+    const keyHandler = event => {
+      if (event.key === "Escape" && overlay.isConnected) close();
+      if (event.key === "Enter" && overlay.isConnected) {
+        event.preventDefault();
+        accept();
+      }
+    };
+    overlay.querySelector(".writer-dialog-cancel").addEventListener("click", close);
+    confirmButton.addEventListener("click", accept);
+    overlay.addEventListener("click", event => { if (event.target === overlay) close(); });
+    document.addEventListener("keydown", keyHandler);
+    if (input) {
+      input.addEventListener("input", () => input.setCustomValidity(""));
+      requestAnimationFrame(() => { input.focus(); input.select(); });
+    } else confirmButton.focus();
+  }
+
+  function beginInlineNodeRename(node, row, line, typeLabel) {
+    if (row.querySelector(".tree-inline-rename")) return;
+    line.hidden = true;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "tree-inline-rename";
+    input.maxLength = 200;
+    input.value = node.title;
+    input.setAttribute("aria-label", `Новое название ${typeLabel}`);
+    row.insertBefore(input, line.nextSibling);
+
+    let done = false;
+    const finish = save => {
+      if (done) return;
+      done = true;
+      if (save) {
+        const clean = input.value.trim();
+        if (!clean) {
+          input.setCustomValidity("Название не может быть пустым.");
+          input.reportValidity();
+          done = false;
+          input.focus();
+          return;
+        }
+        node.title = clean;
+        if (node.id === currentNodeId) chapterTitle.value = clean;
+        markSaving();
+      }
+      renderTree();
+    };
+    input.addEventListener("keydown", event => {
+      if (event.key === "Enter") { event.preventDefault(); finish(true); }
+      if (event.key === "Escape") { event.preventDefault(); finish(false); }
+    });
+    input.addEventListener("input", () => input.setCustomValidity(""));
+    input.addEventListener("blur", () => finish(true));
+    requestAnimationFrame(() => { input.focus(); input.select(); });
+  }
+
+  function beginInlineBookRename() {
+    if (document.getElementById("bookTitleInlineInput")) return;
+    const input = document.createElement("input");
+    input.id = "bookTitleInlineInput";
+    input.className = "book-title-inline-input";
+    input.type = "text";
+    input.maxLength = 120;
+    input.value = book.title;
+    input.setAttribute("aria-label", "Название книги");
+    bookNameButton.hidden = true;
+    bookNameButton.insertAdjacentElement("afterend", input);
+
+    let done = false;
+    const finish = save => {
+      if (done) return;
+      done = true;
+      if (save && input.value.trim()) {
+        book.title = input.value.trim();
+        bookNameButton.textContent = book.title;
+        document.getElementById("sidebarBookTitle").textContent = book.title;
+        markSaving();
+      }
+      input.remove();
+      bookNameButton.hidden = false;
+      if (save) persistNow();
+    };
+    input.addEventListener("keydown", event => {
+      if (event.key === "Enter") { event.preventDefault(); finish(true); }
+      if (event.key === "Escape") { event.preventDefault(); finish(false); }
+    });
+    input.addEventListener("input", () => input.setCustomValidity(""));
+    input.addEventListener("blur", () => finish(true));
+    requestAnimationFrame(() => { input.focus(); input.select(); });
+  }
+
+  bookNameButton.addEventListener("click", beginInlineBookRename);
+
   function renderTree() {
     tree.innerHTML = "";
 
@@ -71,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const row = document.createElement("div");
         row.className = "tree-row";
+        row.dataset.nodeId = node.id;
 
         const line = document.createElement("button");
         line.type = "button";
@@ -112,6 +258,10 @@ document.addEventListener("DOMContentLoaded", () => {
           if (node.type === "chapter") selectChapter(node.id);
         });
         line.addEventListener("contextmenu", event => showNodeContextMenu(node, event));
+        wrapper.addEventListener("contextmenu", event => {
+          if (event.target.closest(".tree-context-menu")) return;
+          showNodeContextMenu(node, event);
+        });
 
         const nodeActions = document.createElement("div");
         nodeActions.className = "tree-node-actions";
@@ -124,17 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renameButton.textContent = "✎";
         renameButton.addEventListener("click", event => {
           event.stopPropagation();
-          const nextTitle = prompt(`Новое название для ${typeLabel} (например, «Том 1 — Сага»):`, node.title);
-          if (nextTitle === null) return;
-          const cleanTitle = nextTitle.trim();
-          if (!cleanTitle) {
-            alert("Название не может быть пустым.");
-            return;
-          }
-          node.title = cleanTitle;
-          if (node.id === currentNodeId) chapterTitle.value = cleanTitle;
-          renderTree();
-          markSaving();
+          beginInlineNodeRename(node, row, line, typeLabel);
         });
         nodeActions.appendChild(renameButton);
 
@@ -230,23 +370,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!nodes.length) return;
     if (nodes.length === 1) {
       const node = nodes[0];
-      const type = node.type === "volume" ? "тома" : node.type === "part" ? "части" : "главы";
-      const next = prompt(`Новое название ${type}:`, node.title);
-      if (next === null) return;
-      if (!next.trim()) { alert("Название не может быть пустым."); return; }
-      node.title = next.trim();
-      if (node.id === currentNodeId) chapterTitle.value = node.title;
-    } else {
-      const prefix = prompt("Общее название. К каждому элементу добавится номер:", "Сцена");
-      if (prefix === null) return;
-      if (!prefix.trim()) { alert("Название не может быть пустым."); return; }
-      nodes.forEach((node, index) => {
-        node.title = `${prefix.trim()} ${index + 1}`;
-        if (node.id === currentNodeId) chapterTitle.value = node.title;
-      });
+      const row = tree.querySelector(`.tree-row[data-node-id="${CSS.escape(node.id)}"]`);
+      const line = row?.querySelector(".tree-line");
+      if (row && line) beginInlineNodeRename(node, row, line, node.type);
+      return;
     }
-    renderTree();
-    markSaving();
+    showWriterDialog({
+      title: "Переименовать выбранные элементы",
+      description: "Введи общее название. К нему автоматически добавятся номера.",
+      value: "Сцена",
+      confirmText: "Переименовать",
+      onConfirm: prefix => {
+        nodes.forEach((node, index) => {
+          node.title = `${prefix} ${index + 1}`;
+          if (node.id === currentNodeId) chapterTitle.value = node.title;
+        });
+        renderTree();
+        markSaving();
+      }
+    });
   }
 
   function deleteNodeIds(ids) {
@@ -256,25 +398,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const headline = nodes.length === 1
       ? `«${nodes[0].title}»${totalChildren ? ` и всё содержимое (${totalChildren} вложенных элементов)` : ""}`
       : `${nodes.length} выбранных элементов`;
-    if (!confirm(`Точно удалить ${headline}? Это действие нельзя отменить.`)) return;
 
-    ids.forEach(id => removeNodeById(book.structure, id));
-    selectedNodeIds.clear();
-    multiSelectMode = false;
-    activeContextMenu?.remove();
-    activeContextMenu = null;
+    showWriterDialog({
+      title: "Удалить элементы?",
+      description: `Точно удалить ${headline}? Все вложенные главы и текст будут удалены. Это действие нельзя отменить.`,
+      value: null,
+      confirmText: "Удалить",
+      danger: true,
+      onConfirm: () => {
+        ids.forEach(id => removeNodeById(book.structure, id));
+        selectedNodeIds.clear();
+        multiSelectMode = false;
+        closeNodeContextMenu();
 
-    if (!flattenChapters(book).length) {
-      book.structure.push(makeChapter("Глава 1"));
-    }
-    if (!findNode(book, currentNodeId) || findNode(book, currentNodeId)?.type !== "chapter") {
-      currentNodeId = flattenChapters(book)[0]?.chapter.id || null;
-    }
+        if (!flattenChapters(book).length) book.structure.push(makeChapter("Глава 1"));
+        if (!findNode(book, currentNodeId) || findNode(book, currentNodeId)?.type !== "chapter") {
+          currentNodeId = flattenChapters(book)[0]?.chapter.id || null;
+        }
 
-    updateSelectionBar();
-    if (currentNodeId) selectChapter(currentNodeId);
-    else renderTree();
-    persistNow();
+        updateSelectionBar();
+        if (currentNodeId) selectChapter(currentNodeId);
+        else renderTree();
+        persistNow();
+      }
+    });
   }
 
   function addChildNode(node) {
@@ -301,6 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showNodeContextMenu(node, event) {
     event.preventDefault();
+    event.stopPropagation();
     closeNodeContextMenu();
     const menu = document.createElement("div");
     menu.className = "tree-context-menu";
@@ -312,9 +460,8 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     document.body.appendChild(menu);
     activeContextMenu = menu;
-    const nodeRect = event.currentTarget.getBoundingClientRect();
-    const left = Math.max(8, Math.min(nodeRect.right + 5, window.innerWidth - menu.offsetWidth - 8));
-    const top = Math.max(8, Math.min(nodeRect.top, window.innerHeight - menu.offsetHeight - 8));
+    const left = Math.max(8, Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 8));
+    const top = Math.max(8, Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 8));
     menu.style.left = `${left}px`;
     menu.style.top = `${top}px`;
 
