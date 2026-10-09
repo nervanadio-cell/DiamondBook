@@ -261,8 +261,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const current = chapters[chapterIndex];
     pages = buildPages(current?.chapter.content || "<p></p>");
     if (lastPage) {
-      pageIndex = Math.max(0, pages.length - pagesPerSpread());
-      if (!isNarrow()) pageIndex -= pageIndex % 2;
+      pageIndex = isNarrow()
+        ? Math.max(0, pages.length - 1)
+        : Math.floor(Math.max(0, pages.length - 1) / 2) * 2;
     }
     renderSpread(direction);
     return true;
