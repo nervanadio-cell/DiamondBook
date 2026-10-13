@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const openCreate = () => location.href = "create.html";
   document.getElementById("newBookButton").addEventListener("click", openCreate);
-  document.getElementById("heroCreateButton").addEventListener("click", openCreate);
+  document.getElementById("heroCreateButton")?.addEventListener("click", openCreate);
   document.getElementById("emptyCreateButton").addEventListener("click", openCreate);
   document.getElementById("importButton").addEventListener("click", () => document.getElementById("fileInput").click());
 
