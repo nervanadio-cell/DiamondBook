@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let resizeTimer = null;
   let turnTimer = null;
   let renderedPage = -1;
+  let lastTreeChapterId = null;
 
   bookTitle.textContent = book.title;
   document.getElementById("readerContentsTitle").textContent = book.title;
@@ -247,7 +248,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("nextPartButton").disabled = getPartIndex() < 0 || getPartIndex() >= buildPartGroups().length - 1;
     document.getElementById("backToEditor").href =
       `editor.html?id=${encodeURIComponent(book.id)}&chapter=${encodeURIComponent(item.chapter.id)}`;
-    renderTree();
+    if (lastTreeChapterId !== item.chapter.id) {
+      renderTree();
+      lastTreeChapterId = item.chapter.id;
+    }
     renderedPage = pageIndex;
   }
 
@@ -352,6 +356,21 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     renderNodes(book.structure, tree);
   }
+
+  let touchStart = null;
+  stage.addEventListener("pointerdown", event => {
+    if (event.pointerType !== "touch" || event.isPrimary === false) return;
+    touchStart = { x:event.clientX, y:event.clientY, id:event.pointerId };
+  });
+  stage.addEventListener("pointerup", event => {
+    if (!touchStart || touchStart.id !== event.pointerId) return;
+    const dx=event.clientX-touchStart.x,dy=event.clientY-touchStart.y;
+    touchStart=null;
+    if (Math.abs(dx)>55 && Math.abs(dx)>Math.abs(dy)*1.5) {
+      flip(dx<0 ? "next" : "prev");
+    }
+  });
+  stage.addEventListener("pointercancel", () => { touchStart=null; });
 
   document.getElementById("prevButton").addEventListener("click", () => flip("prev"));
   document.getElementById("nextButton").addEventListener("click", () => flip("next"));

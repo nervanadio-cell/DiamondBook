@@ -714,12 +714,47 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target === exportModal) exportModal.classList.add("hidden");
   });
 
-  document.getElementById("addRootButton").addEventListener("click", () => {
-    const chapter = makeChapter(`Глава ${flattenChapters(book).length + 1}`);
-    book.structure.push(chapter);
-    currentNodeId = chapter.id;
-    selectChapter(chapter.id);
+  const rootAddButton = document.getElementById("addRootButton");
+  const rootMenu = document.createElement("div");
+  rootMenu.className = "root-create-menu";
+  rootMenu.hidden = true;
+  rootMenu.innerHTML = `
+    <button type="button" data-kind="chapter">＋ Глава</button>
+    <button type="button" data-kind="part">＋ Часть</button>
+    <button type="button" data-kind="volume">＋ Том</button>
+  `;
+  rootAddButton.parentElement.appendChild(rootMenu);
+  rootAddButton.setAttribute("aria-expanded","false");
+  rootAddButton.setAttribute("aria-label","Создать раздел");
+  rootAddButton.addEventListener("click", event => {
+    event.stopPropagation();
+    rootMenu.hidden = !rootMenu.hidden;
+    rootAddButton.setAttribute("aria-expanded",String(!rootMenu.hidden));
+  });
+  rootMenu.addEventListener("click", event => {
+    const kind = event.target.closest("[data-kind]")?.dataset.kind;
+    if (!kind) return;
+    let node;
+    if (kind === "volume") {
+      node = makeVolume(`Том ${allNodes().filter(n=>n.type==="volume").length + 1}`,1,1);
+    } else if (kind === "part") {
+      node = makePart(`Часть ${allNodes().filter(n=>n.type==="part").length + 1}`,1);
+    } else {
+      node = makeChapter(`Глава ${flattenChapters(book).length + 1}`);
+    }
+    book.structure.push(node);
+    const target = flattenChapters({structure:[node]})[0]?.chapter;
+    rootMenu.hidden=true;
+    rootAddButton.setAttribute("aria-expanded","false");
+    renderTree();
+    if(target) selectChapter(target.id);
     markSaving();
+  });
+  document.addEventListener("click", event => {
+    if (!rootMenu.hidden && !rootMenu.contains(event.target) && event.target!==rootAddButton) {
+      rootMenu.hidden=true;
+      rootAddButton.setAttribute("aria-expanded","false");
+    }
   });
 
   document.addEventListener("keydown", event => {
@@ -731,7 +766,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (event.key === "Escape") {
       exportModal.classList.add("hidden");
-      sidebar.classList.remove("open");
+      setSidebarOpen(false);
+      rootMenu.hidden = true;
     }
   });
 

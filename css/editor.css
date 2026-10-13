@@ -340,3 +340,16 @@
   .editor-actions #readerButton,.editor-actions #exportButton,.editor-actions #coverOpen,.editor-actions a[href="index.html"] {width:30px;height:32px;flex-basis:30px;}
   .book-name-button {max-width:74px;}
 }
+
+/* Add volume/part/chapter without native dialogs */
+.sidebar-heading {position:relative;}
+.root-create-menu {
+  position:absolute;top:48px;right:0;z-index:25;min-width:145px;padding:6px;
+  border:1px solid rgba(223,177,108,.35);border-radius:10px;
+  background:linear-gradient(150deg,rgba(67,45,26,.98),rgba(21,24,17,.99));
+  box-shadow:0 15px 36px rgba(0,0,0,.45);
+}
+.root-create-menu[hidden]{display:none!important;}
+.root-create-menu button {display:block;width:100%;padding:10px;border:0;border-radius:6px;background:transparent;color:#e9d5b5;text-align:left;font:500 12px system-ui,sans-serif;cursor:pointer;}
+.root-create-menu button:hover {background:rgba(223,177,108,.2);}
+#addRootButton {color:#e9d5b5;background:#44311e;min-width:32px;min-height:32px;}

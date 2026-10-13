@@ -264,3 +264,22 @@
   .reader-control {width:36px;height:29px;}
   .reader-spread.turn-next::after,.reader-spread.turn-prev::after {width:100%;}
 }
+
+/* Small-screen touch reading, zero sideways overflow */
+.reader-stage {touch-action:pan-y;overscroll-behavior-x:contain;}
+.reader-spread {min-width:0;max-width:100%;}
+.reader-sheet {max-width:100%;}
+.reader-page-content {overflow-wrap:anywhere;word-break:normal;}
+.reader-page-content a {color:#896435;text-decoration:underline;text-underline-offset:3px;}
+@media(max-width:620px){
+  .reader-page-content {font-size:clamp(15px,4.3vw,18px);}
+  .reader-sheet {padding-left:clamp(16px,5vw,24px);padding-right:clamp(16px,5vw,24px);}
+  .reader-progress {min-width:78px;}
+  .reader-controls {max-width:calc(100vw - 8px);}
+}
+@media(max-height:420px){
+  .reader-sheet-head {height:42px;min-height:42px;flex-basis:42px;}
+  .reader-sheet-head h1 {font-size:20px;margin:0 0 5px;}
+  .reader-main {padding-bottom:58px;}
+  .reader-page-content {line-height:1.45;}
+}
