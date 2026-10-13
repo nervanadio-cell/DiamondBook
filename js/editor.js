@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveChapterTitleButton = document.getElementById("saveChapterTitle");
   const cancelChapterTitleButton = document.getElementById("cancelChapterTitle");
 
-  let currentNodeId = flattenChapters(book)[0]?.chapter.id || null;
+  let currentNodeId = flattenChapters(book).find(item => item.chapter.id === params.get("chapter"))?.chapter.id || flattenChapters(book)[0]?.chapter.id || null;
   let saveTimer = null;
   let saveErrorShown = false;
   let multiSelectMode = false;
@@ -614,8 +614,8 @@ document.addEventListener("DOMContentLoaded", () => {
     syncChapterTitleButtons();
     editor.innerHTML = node.content || "<p></p>";
     renderTree();
-    editor.focus();
-    sidebar.classList.remove("open");
+    if (!window.matchMedia("(pointer: coarse)").matches) editor.focus({ preventScroll: true });
+    setSidebarOpen(false);
   }
 
   function syncChapterTitleButtons() {
