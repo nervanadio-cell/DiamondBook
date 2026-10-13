@@ -10,6 +10,7 @@
 <body class="editor-page">
   <header class="editor-topbar">
     <div class="editor-left">
+      <button type="button" id="outlineToggle" class="icon-button outline-toggle" aria-expanded="false" aria-controls="sidebar" aria-label="Открыть содержание">☰</button>
       <a class="brand" href="index.html">Book<span>Creator</span></a>
       <span class="divider"></span>
       <button class="book-name-button" id="bookNameButton">Книга</button>
@@ -18,8 +19,8 @@
       <span class="save-status" id="saveStatus">Сохранено</span>
     </div>
     <div class="editor-actions">
-      <button class="icon-button" id="readerButton" title="Режим чтения">◉</button>
-      <button class="ghost-button" id="exportButton">Экспорт / импорт</button>
+      <button class="icon-button" id="readerButton" title="Режим чтения" aria-label="Читать книгу">◉</button>
+      <button class="ghost-button" id="exportButton" aria-label="Импорт и экспорт">Экспорт / импорт</button>
       <a class="ghost-button link-button" href="index.html">Библиотека</a>
     </div>
   </header>
@@ -35,6 +36,7 @@
       </div>
       <div id="tree" class="tree"></div>
     </aside>
+    <button type="button" class="sidebar-backdrop" id="sidebarBackdrop" aria-label="Закрыть содержание" hidden></button>
 
     <section class="writing-area">
       <div class="editor-toolbar">

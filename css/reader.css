@@ -248,3 +248,19 @@
 @keyframes oakLeafNext {0%{transform:rotateY(0);opacity:1}48%{opacity:.98}100%{transform:rotateY(-178deg);opacity:.88}}
 @keyframes oakLeafPrev {0%{transform:rotateY(0);opacity:1}48%{opacity:.98}100%{transform:rotateY(178deg);opacity:.88}}
 @media(max-width:620px) {.reader-spread.turn-next::after,.reader-spread.turn-prev::after {width:100%;}}
+
+
+/* Landscape-phone fallback and compact controls */
+@media (max-width:900px) and (max-height:500px){
+  .reader-main {padding:5px 7px 62px;}
+  .reader-spread {grid-template-columns:minmax(0,1fr);width:min(660px,calc(100vw - 16px));height:calc(100dvh - 126px);max-height:calc(100dvh - 126px);min-height:0;}
+  .reader-spine,.reader-sheet-right {display:none!important;}
+  .reader-sheet {padding:12px 25px 20px;}
+  .reader-sheet-head {height:50px;min-height:50px;flex-basis:50px;}
+  .reader-sheet-head h1 {font-size:24px;max-height:38px;}
+  .reader-page-content {font-size:14px;line-height:1.5;}
+  .reader-page-number {bottom:4px;}
+  .reader-controls {bottom:3px;padding:3px 5px;}
+  .reader-control {width:36px;height:29px;}
+  .reader-spread.turn-next::after,.reader-spread.turn-prev::after {width:100%;}
+}

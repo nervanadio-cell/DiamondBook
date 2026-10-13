@@ -292,3 +292,51 @@
 }
 .writer-dialog-actions .writer-dialog-confirm {background-image:linear-gradient(120deg,#d2b17a,#a7804a);}
 .writer-dialog-actions .writer-dialog-confirm.danger {background-image:linear-gradient(120deg,#985447,#633026);}
+
+
+/* v2.4 mobile authoring: drawer, touch-friendly chapter actions and compact tools */
+.outline-toggle {display:none;flex:0 0 36px;align-items:center;justify-content:center;background:#3f2d1b;color:#f1ddbc;border:1px solid #9a7645;width:36px;height:36px;position:relative;}
+.sidebar-backdrop {position:fixed;inset:56px 0 0;z-index:38;border:0;background:rgba(5,7,4,.65);backdrop-filter:blur(2px);cursor:pointer;}
+.sidebar-backdrop[hidden] {display:none!important;}
+.tree-more {font-weight:800;font-size:19px;line-height:1;color:#ead8b7!important;}
+.editor-toolbar {min-height:52px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;flex:0 0 52px;}
+.editor-toolbar > * {flex-shrink:0;}
+.editor-page .chapter-editor {overflow-x:hidden;overscroll-behavior-y:contain;}
+.editor-page .chapter-title-input {overflow:hidden;text-overflow:ellipsis;}
+@media(max-width:850px){
+  .editor-topbar {height:56px;padding:0 8px;display:flex;justify-content:space-between;gap:6px;}
+  .editor-left {flex:1 1 auto;min-width:0;gap:5px;}
+  .editor-left .brand,.editor-left .divider {display:none;}
+  .outline-toggle {display:flex;}
+  .book-name-button {font-size:12px;max-width:clamp(90px,23vw,200px);text-align:left;}
+  .editor-layout {height:calc(100dvh - 56px);}
+  .sidebar {top:56px;bottom:0;width:min(330px,90vw);padding:16px 11px;z-index:41;}
+  .editor-actions {flex:0 0 auto;gap:5px;}
+  .editor-actions #readerButton,.editor-actions #exportButton,
+  .editor-actions #coverOpen,.editor-actions a[href="index.html"] {
+    display:flex!important;align-items:center;justify-content:center;
+    flex:0 0 34px;width:34px;height:34px;padding:0;border-radius:8px;
+    border:1px solid rgba(220,176,114,.3);background:rgba(47,36,24,.94);
+    color:#f0dbba;font-size:0!important;
+  }
+  .editor-actions #readerButton {font-size:17px!important;}
+  .editor-actions #exportButton::before {content:"⇄";font-size:20px;}
+  .editor-actions #coverOpen::before {content:"▧";font-size:19px;}
+  .editor-actions a[href="index.html"]::before {content:"⌂";font-size:21px;}
+  .editor-toolbar {padding:0 10px;gap:3px;min-height:48px;flex-basis:48px;}
+  .tool-button {width:33px;height:34px;flex:0 0 33px;}
+  .line-spacing-control {margin-left:0;}
+  .tree-node-actions > .tree-action:not(.tree-more) {display:none!important;}
+  .tree-node-actions {opacity:1!important;visibility:visible!important;}
+  .tree-action.tree-more {width:32px;flex-basis:32px;}
+  .tree-context-menu {min-width:215px;max-width:calc(100vw - 18px);}
+  .chapter-editor {width:calc(100% - 16px)!important;padding:28px 18px 75px!important;margin:8px auto 16px!important;}
+  .chapter-title-input {font-size:clamp(25px,7vw,38px)!important;letter-spacing:-.025em;}
+  .rich-editor {min-height:50vh;font-size:16px!important;line-height:1.75;overflow-wrap:anywhere;}
+  .writer-dialog-backdrop {padding:8px;}
+  .writer-dialog {max-height:calc(100dvh - 24px);overflow-y:auto;}
+}
+@media(max-width:350px){
+  .editor-actions #readerButton,.editor-actions #exportButton,.editor-actions #coverOpen,.editor-actions a[href="index.html"] {width:30px;height:32px;flex-basis:30px;}
+  .book-name-button {max-width:74px;}
+}

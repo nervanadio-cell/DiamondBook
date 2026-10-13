@@ -14,6 +14,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const chapterTitle = document.getElementById("chapterTitle");
   const saveStatus = document.getElementById("saveStatus");
   const sidebar = document.getElementById("sidebar");
+  const outlineToggle = document.getElementById("outlineToggle");
+  const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+  function setSidebarOpen(open) {
+    sidebar.classList.toggle("open", open);
+    if (sidebarBackdrop) sidebarBackdrop.hidden = !open;
+    if (outlineToggle) {
+      outlineToggle.setAttribute("aria-expanded", String(open));
+      outlineToggle.setAttribute("aria-label", open ? "Закрыть содержание" : "Открыть содержание");
+    }
+  }
+  outlineToggle?.addEventListener("click", () => setSidebarOpen(!sidebar.classList.contains("open")));
+  sidebarBackdrop?.addEventListener("click", () => setSidebarOpen(false));
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && sidebar.classList.contains("open")) setSidebarOpen(false);
+  });
+
   const exportModal = document.getElementById("exportModal");
   const formatList = document.getElementById("formatList");
   const formatSearch = document.getElementById("formatSearch");
@@ -324,6 +340,24 @@ document.addEventListener("DOMContentLoaded", () => {
           event.stopPropagation();
           beginInlineNodeRename(node, row, line, typeLabel);
         });
+
+        const moreButton = document.createElement("button");
+        moreButton.type = "button";
+        moreButton.className = "tree-action tree-more";
+        moreButton.title = "Действия с разделом";
+        moreButton.setAttribute("aria-label", `Действия: ${node.title}`);
+        moreButton.textContent = "⋮";
+        moreButton.addEventListener("click", event => {
+          event.stopPropagation();
+          const rect = moreButton.getBoundingClientRect();
+          showNodeContextMenu(node, {
+            preventDefault() {},
+            stopPropagation() {},
+            clientX: Math.min(window.innerWidth - 20, rect.left + 12),
+            clientY: rect.bottom
+          });
+        });
+        nodeActions.appendChild(moreButton);
         nodeActions.appendChild(renameButton);
 
         const deleteButton = document.createElement("button");
