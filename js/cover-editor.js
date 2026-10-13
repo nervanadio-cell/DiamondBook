@@ -130,7 +130,7 @@
       const corner=corners.find(([,x,y])=>Math.abs(p.x-x)<=handleSize&&Math.abs(p.y-y)<=handleSize);
       if(corner)drag={mode:"resize",handle:corner[0],start:p,original:{...crop}};
       else if(inside)drag={mode:"move",start:p,original:{...crop}};
-      else {drag={mode:"draw",start:p,original:null};crop={x:p.x,y:p.y,w:1,h:1};}
+      else {drag={mode:"pending",start:p,original:crop?{...crop}:null};}
       canvas.setPointerCapture(e.pointerId);draw();
     };
     canvas.onpointermove=e=>{
@@ -156,6 +156,10 @@
         }
         crop={x:left,y:top,w:right-left,h:bottom-top};
       }else{
+        if(drag.mode==="pending"){
+          if(Math.hypot(p.x-drag.start.x,p.y-drag.start.y)<10)return;
+          drag.mode="draw";
+        }
         let w=Math.abs(p.x-drag.start.x),h=Math.abs(p.y-drag.start.y);
         if(ratio){if(h>0&&w/h>ratio)h=w/ratio;else w=h*ratio;}
         w=Math.min(w,canvas.width);h=Math.min(h,canvas.height);
