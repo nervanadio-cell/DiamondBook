@@ -128,6 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const captionInput=document.querySelector('.book-image-overlay [data-setting="caption"]');
     if(captionInput) captionInput.value=caption;
+    const alignInput=document.querySelector('.book-image-overlay [data-setting="align"]');
+    if(alignInput) alignInput.value=["left","center","right"].includes(figure.style.textAlign)?figure.style.textAlign:"center";
   });
 
   toolbar.addEventListener("pointerdown", event => {
@@ -154,12 +156,13 @@ document.addEventListener("DOMContentLoaded", () => {
   queueStats();
 
   if (fontSelect) {
-    const size = Number(localStorage.getItem(fontKey)) || 19;
+    const size = Number(getBook(bookId)?.editorFontSize) || Number(localStorage.getItem(fontKey)) || 19;
     fontSelect.value = ["15", "17", "19", "21", "23"].includes(String(size)) ? String(size) : "19";
     editor.style.fontSize = fontSelect.value + "px";
     fontSelect.addEventListener("change", () => {
       editor.style.fontSize = fontSelect.value + "px";
       try { localStorage.setItem(fontKey, fontSelect.value); } catch {}
+      window.dispatchEvent(new CustomEvent("diamond-editor-fontsize",{detail:{size:Number(fontSelect.value)}}));
     });
   }
 
