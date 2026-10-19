@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   toolbar.addEventListener("pointerdown", event => {
-    if (event.target.closest("button[data-command], #insertDivider")) event.preventDefault();
+    if (event.pointerType !== "touch" && event.target.closest("button[data-command], #insertDivider")) event.preventDefault();
   }, true);
 
   toolbar.addEventListener("click", event => {
