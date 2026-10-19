@@ -3,19 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Новая книга — Book Creator</title>
+  <meta name="theme-color" content="#201810">
+  <title>Новая книга — DiamondBook</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/create.css">
+  <link rel="stylesheet" href="css/refinement.css">
 </head>
-<body>
-  <div class="app-shell"><header class="topbar"><a class="brand" href="index.html">Book<span>Creator</span></a><a class="ghost-button link-button" href="index.html">Отмена</a></header>
-  <main class="create-page"><div class="create-container"><div class="create-heading"><p class="eyebrow">Новая история</p><h1>Как назовём<br><em>твою книгу?</em></h1></div>
-  <form id="createForm" class="create-form"><label class="field-label" for="bookTitle">Название книги</label><input id="bookTitle" class="text-input large" type="text" maxlength="120" placeholder="Например, «Спеши любить»" required>
-  <label class="field-label" for="bookAuthor">Автор <span>необязательно</span></label><input id="bookAuthor" class="text-input" type="text" maxlength="120" placeholder="Твоё имя или псевдоним">
-  <div class="structure-card"><div class="structure-title"><div><h2>Структура книги</h2><p>Можно начать с готовой структуры или настроить всё позже.</p></div></div>
-  <label class="structure-row"><span class="check-wrap"><input type="checkbox" id="useVolumes"><span class="custom-check"></span></span><span class="row-copy"><strong>Тома</strong><small>Большие самостоятельные части книги</small></span><input class="count-input" id="volumeCount" type="number" min="1" max="20" value="1" disabled></label>
-  <label class="structure-row"><span class="check-wrap"><input type="checkbox" id="useParts"><span class="custom-check"></span></span><span class="row-copy"><strong>Части</strong><small>Группы глав внутри тома</small></span><input class="count-input" id="partCount" type="number" min="1" max="50" value="1" disabled></label>
-  <label class="structure-row"><span class="check-wrap"><input type="checkbox" id="useChapters" checked><span class="custom-check"></span></span><span class="row-copy"><strong>Главы</strong><small>Основные страницы для текста</small></span><input class="count-input" id="chapterCount" type="number" min="1" max="100" value="5"></label></div>
-  <div class="create-actions"><a class="ghost-button link-button" href="index.html">Вернуться</a><button class="primary-button" type="submit">Создать книгу →</button></div></form></div></main></div>
-  <script src="js/storage.js"></script><script src="js/create.js"></script>
-</body></html>
+<body class="create-screen">
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html">Diamond<span>Book</span></a>
+      <nav class="top-actions"><a class="ghost-button link-button" href="index.html">← К полке</a></nav>
+    </header>
+    <main class="create-page">
+      <div class="create-container">
+        <section class="create-main">
+          <header class="create-heading">
+            <p class="eyebrow">НОВАЯ КНИГА · ШАГ 1 ИЗ 1</p>
+            <h1>Начало твоей <em>истории</em></h1>
+            <p class="create-description">Название, автор и удобная структура. Всё это можно изменить позже.</p>
+          </header>
+          <form id="createForm" class="create-form">
+            <label class="field-label" for="bookTitle">Название книги <span class="field-required">обязательно</span></label>
+            <input id="bookTitle" class="text-input large" type="text" maxlength="120" placeholder="Например, Тихие страницы" autocomplete="off" required autofocus>
+            <label class="field-label" for="bookAuthor">Автор <span>необязательно</span></label>
+            <input id="bookAuthor" class="text-input" type="text" maxlength="120" placeholder="Имя или псевдоним" autocomplete="off">
+            <section class="create-presets" aria-label="Быстрая структура">
+              <div class="create-section-top"><strong>Быстрый старт</strong><small>Выбери подходящий вариант</small></div>
+              <div class="preset-grid">
+                <button type="button" class="preset-button active" data-preset="novel" aria-pressed="true"><span class="preset-icon">▣</span><strong>Роман</strong><small>5 глав</small></button>
+                <button type="button" class="preset-button" data-preset="saga" aria-pressed="false"><span class="preset-icon">▤</span><strong>Сага</strong><small>Тома и части</small></button>
+                <button type="button" class="preset-button" data-preset="notes" aria-pressed="false"><span class="preset-icon">✎</span><strong>Заметки</strong><small>1 глава</small></button>
+              </div>
+            </section>
+            <section class="structure-card" aria-labelledby="structureHeading">
+              <div class="structure-title"><h2 id="structureHeading">Структура книги</h2><p>Отметь уровни и количество разделов.</p></div>
+              <div class="structure-row"><label class="structure-choice" for="useVolumes"><span class="check-wrap"><input type="checkbox" id="useVolumes"><span class="custom-check"></span></span><span class="row-copy"><strong>Тома</strong><small>Для больших циклов</small></span></label><label class="count-label" for="volumeCount">Кол-во</label><input class="count-input" id="volumeCount" type="number" min="1" max="20" value="1" disabled></div>
+              <div class="structure-row"><label class="structure-choice" for="useParts"><span class="check-wrap"><input type="checkbox" id="useParts"><span class="custom-check"></span></span><span class="row-copy"><strong>Части</strong><small>Объединяют главы</small></span></label><label class="count-label" for="partCount">Кол-во</label><input class="count-input" id="partCount" type="number" min="1" max="50" value="1" disabled></div>
+              <div class="structure-row"><label class="structure-choice" for="useChapters"><span class="check-wrap"><input type="checkbox" id="useChapters" checked><span class="custom-check"></span></span><span class="row-copy"><strong>Главы</strong><small>Здесь ты пишешь текст</small></span></label><label class="count-label" for="chapterCount">Кол-во</label><input class="count-input" id="chapterCount" type="number" min="1" max="100" value="5"></div>
+            </section>
+            <div class="create-actions"><a class="ghost-button link-button" href="index.html">Отмена</a><button class="primary-button create-submit" type="submit">Создать и открыть редактор <span aria-hidden="true">→</span></button></div>
+          </form>
+        </section>
+        <aside class="create-preview-column" aria-label="Предпросмотр обложки">
+          <div class="create-preview-caption"><span class="eyebrow">ПРЕДПРОСМОТР</span><span>Твоя первая обложка</span></div>
+          <div class="create-book-preview"><div class="preview-border">
+            <span class="preview-label">DIAMONDBOOK EDITION</span>
+            <strong id="previewTitle">Название твоей книги</strong>
+            <span id="previewAuthor">Твоё имя</span>
+          </div></div>
+          <div class="create-preview-summary"><span>Содержание</span><strong id="previewStructure">5 глав</strong></div>
+          <p class="preview-note">Обложку и название можно поменять в редакторе.</p>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="js/storage.js"></script>
+  <script src="js/create.js"></script>
+</body>
+</html>

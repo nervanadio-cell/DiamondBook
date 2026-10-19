@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#111318">
-  <title>Book Creator — Мои книги</title>
+  <title>DiamondBook — Библиотека</title>
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/refinement.css">
 </head>
-<body>
+<body class="library-screen">
   <div class="app-shell">
     <header class="topbar">
       <a class="brand" href="index.html">Book<span>Creator</span></a>
@@ -20,8 +21,27 @@
     <main class="library-page">
 
       <section class="library-section">
-        <div class="section-heading"><div><h2>Мои книги</h2><p id="bookCount">0 книг</p></div></div>
+        <div class="library-heading">
+          <div class="library-heading-copy">
+            <p class="eyebrow">ЛИЧНАЯ БИБЛИОТЕКА</p>
+            <h1>Мои книги<span class="library-heading-ornament" aria-hidden="true">✦</span></h1>
+            <p class="library-subtitle">Твои истории — на дубовых полках. Всё сохраняется в этом браузере.</p>
+          </div>
+          <div class="library-heading-stat"><span id="bookCount">0 книг</span><small>в библиотеке</small></div>
+        </div>
+        <div class="library-tools">
+          <label class="library-search">
+            <span aria-hidden="true">⌕</span><input id="librarySearch" type="search" placeholder="Название книги или автор…" aria-label="Поиск книг" autocomplete="off">
+            <kbd>/</kbd>
+          </label>
+          <label class="library-sort"><span>Порядок</span><select id="librarySort" aria-label="Сортировка книг">
+            <option value="recent">Недавно изменённые</option>
+            <option value="title">По названию</option>
+            <option value="oldest">Сначала старые</option>
+          </select></label>
+        </div>
         <div class="books-grid" id="booksGrid"></div>
+        <p class="library-no-results" id="libraryNoResults" hidden>Ничего не найдено. Попробуй другое название.</p>
         <div class="empty-state" id="emptyState"><div class="empty-icon">✦</div><h3>Здесь пока тихо</h3><p>Создай первую книгу и начни писать свою историю.</p><button class="primary-button" id="emptyCreateButton">Создать первую книгу</button></div>
       </section>
     </main>
