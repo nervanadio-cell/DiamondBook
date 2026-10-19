@@ -811,14 +811,6 @@ document.addEventListener("DOMContentLoaded", () => {
   rootMenu.addEventListener("click", event => {
     const kind = event.target.closest("[data-kind]")?.dataset.kind;
     if (!kind) return;
-    let node;
-    if (kind === "volume") {
-      node = makeVolume(nextNodeName("volume",book.structure),0,0);
-    } else if (kind === "part") {
-      node = makePart(nextNodeName("part",book.structure),0);
-    } else {
-      node = makeChapter(nextNodeName("chapter",book.structure));
-    }
     // Each root choice inserts exactly one item of the chosen type.
     rootMenu.hidden=true;
     rootAddButton.setAttribute("aria-expanded","false");
@@ -946,7 +938,6 @@ document.addEventListener("DOMContentLoaded", () => {
     editor.setAttribute("contenteditable","false");
     renderTree();
   }
-  const originalSelectChapter=selectChapter;
   // Keep editor writable only when an actual chapter is selected.
   renderTree();
   if(currentNodeId) {
