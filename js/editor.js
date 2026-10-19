@@ -687,6 +687,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentNodeId = nodeId;
     chapterTitle.disabled=false;
     editor.setAttribute("contenteditable","true");
+    document.getElementById("insertImageButton")?.removeAttribute("disabled");
     chapterTitle.value = node.title;
     syncChapterTitleButtons();
     editor.innerHTML = node.content || "<p></p>";
@@ -936,6 +937,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chapterTitle.disabled=true;
     editor.innerHTML='<p class="empty-editor-hint">Здесь пока нет главы. Нажми + в содержании и выбери «Глава», либо создай её внутри тома или части.</p>';
     editor.setAttribute("contenteditable","false");
+    document.getElementById("insertImageButton")?.setAttribute("disabled","true");
     renderTree();
   }
   // Keep editor writable only when an actual chapter is selected.
