@@ -49,10 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="book-meta">${escapeHtml(book.author || "Без автора")}<br><span>${chapters} глав</span></div>
           </div>
           <div class="book-card-bottom">
-            <a class="book-open" href="editor.html?id=${encodeURIComponent(book.id)}">Открыть</a>
-            <button type="button" class="edit-cover" data-id="${escapeHtml(book.id)}" title="Загрузить фото обложки">Фото</button>
-            <button type="button" class="edit-cover-text" data-id="${escapeHtml(book.id)}" title="Расположение надписей на обложке">Текст</button>
-            <button type="button" class="delete-book" data-id="${escapeHtml(book.id)}" aria-label="Удалить книгу">×</button>
+            <a class="book-open" href="editor.html?id=${encodeURIComponent(book.id)}">✎ Редактор</a>
+            <button type="button" class="book-menu-trigger" data-id="${escapeHtml(book.id)}" aria-label="Действия с книгой" aria-expanded="false" aria-haspopup="menu">⋯</button>
+            <div class="book-actions-popover" role="menu" hidden>
+              <button type="button" role="menuitem" class="edit-cover" data-id="${escapeHtml(book.id)}">▧ Изменить фото</button>
+              <button type="button" role="menuitem" class="edit-cover-text" data-id="${escapeHtml(book.id)}">✎ Надписи и шрифт</button>
+              <button type="button" role="menuitem" class="delete-book" data-id="${escapeHtml(book.id)}">⌫ Удалить книгу</button>
+            </div>
           </div>`;
         const cover = card.querySelector(".book-cover");
         if (book.coverDataUrl && /^data:image\/(?:jpeg|png|webp);base64,/.test(book.coverDataUrl)) {
@@ -80,7 +83,27 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("emptyCreateButton").addEventListener("click", openCreate);
   document.getElementById("importButton").addEventListener("click", () => document.getElementById("fileInput").click());
 
+  function closeBookMenus(exception=null) {
+    grid.querySelectorAll(".book-actions-popover").forEach(menu=>{
+      if(menu!==exception)menu.hidden=true;
+    });
+    grid.querySelectorAll(".book-menu-trigger").forEach(button=>{
+      if(button.parentElement.querySelector(".book-actions-popover")!==exception) button.setAttribute("aria-expanded","false");
+    });
+  }
   grid.addEventListener("click", event => {
+    const trigger=event.target.closest(".book-menu-trigger");
+    if(trigger){
+      event.preventDefault();
+      const menu=trigger.parentElement.querySelector(".book-actions-popover");
+      const opening=menu.hidden;
+      closeBookMenus();
+      menu.hidden=!opening;
+      trigger.setAttribute("aria-expanded",String(opening));
+      return;
+    }
+    const bookMenuAction=event.target.closest(".book-actions-popover button");
+    if(bookMenuAction)closeBookMenus();
     const openLink = event.target.closest(".book-open, .book-open-cover");
     if (openLink) {
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -110,6 +133,12 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   });
 
+  document.addEventListener("click",event=>{
+    if(!event.target.closest?.(".book-card-bottom"))closeBookMenus();
+  });
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape")closeBookMenus();
+  });
   search?.addEventListener("input",render);
   sort?.addEventListener("change",render);
   const sortTrigger=document.getElementById("librarySortTrigger");

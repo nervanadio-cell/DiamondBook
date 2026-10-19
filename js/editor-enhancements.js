@@ -119,6 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
         figure.replaceWith(newFigure);
         editor.dispatchEvent(new Event("input",{bubbles:true}));
         queueStats();
+      },
+      onDelete(){
+        figure.remove();
+        editor.dispatchEvent(new Event("input",{bubbles:true}));
+        queueStats();
       }
     });
     const captionInput=document.querySelector('.book-image-overlay [data-setting="caption"]');

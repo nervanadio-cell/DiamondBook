@@ -2,7 +2,7 @@
 (function() {
   const formats=["image/jpeg","image/png","image/webp","image/bmp"];
   let overlay=null;
-  function open({src=null,onSave}) {
+  function open({src=null,onSave,onDelete=null}) {
     overlay?.remove();
     overlay=document.createElement("div");
     overlay.className="book-image-overlay";
@@ -27,9 +27,19 @@
       '<option value="right">По правому краю</option></select></label>',
       '<p class="book-image-storage-hint">Готовое изображение сжимается для локальной библиотеки.</p>',
       '</div></div><footer><button type="button" data-close>Отмена</button>',
+      '<button type="button" class="book-image-delete" hidden>⌫ Удалить из главы</button>',
       '<button type="button" class="book-image-insert">✓ Вставить в главу</button></footer></section>'
     ].join("");
     document.body.appendChild(overlay);
+    const deleteButton=overlay.querySelector(".book-image-delete");
+    if(onDelete) {
+      deleteButton.hidden=false;
+      deleteButton.addEventListener("click",()=>{
+        if(!confirm("Удалить иллюстрацию из главы?"))return;
+        onDelete();
+        close();
+      });
+    }
     const canvas=overlay.querySelector(".book-image-canvas");
     const context=canvas.getContext("2d",{willReadFrequently:false});
     const fileInput=overlay.querySelector(".book-image-input");

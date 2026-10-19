@@ -75,3 +75,40 @@
   .library-screen .edit-cover-text {min-height:32px;padding:7px 8px;font-size:10px;}
   .library-screen .book-card-bottom {gap:4px;}
 }
+
+/* Compact, accessible book actions instead of four tiny buttons under covers. */
+.library-screen .book-card-bottom {position:relative;display:flex;align-items:center;justify-content:center;gap:7px;}
+.library-screen .book-menu-trigger {
+  min-width:39px;min-height:37px;border-radius:9px;
+  background:linear-gradient(135deg,#44321f,#231b14);
+  border:1px solid #c99a6059;color:#f0d8ac;font:700 21px Georgia,serif;
+  cursor:pointer;
+}
+.library-screen .book-menu-trigger:hover,.library-screen .book-menu-trigger[aria-expanded="true"] {
+  border-color:#e3b980;background:#654829;
+}
+.library-screen .book-open {font-size:12px;padding:10px 13px;min-height:37px;white-space:nowrap;}
+.library-screen .book-actions-popover {
+  position:absolute;z-index:75;right:0;bottom:calc(100% + 7px);width:190px;
+  display:flex;flex-direction:column;gap:2px;padding:7px;
+  border:1px solid #d9ac7363;border-radius:11px;
+  background:linear-gradient(140deg,#4c3622,#242019);
+  box-shadow:0 15px 36px rgba(0,0,0,.6);
+}
+.library-screen .book-actions-popover[hidden]{display:none!important;}
+.library-screen .book-actions-popover button{
+  width:100%;display:block;min-height:39px;padding:10px;text-align:left;
+  border:0;border-radius:6px;background:transparent;color:#efdbba;
+  font:600 12px system-ui;cursor:pointer;
+}
+.library-screen .book-actions-popover button:hover{background:#d0a36d2e;}
+.library-screen .book-actions-popover .delete-book{color:#f3b4a9;}
+@media(max-width:720px){
+ .library-screen .book-card-bottom{gap:5px;}
+ .library-screen .book-menu-trigger{min-width:35px;min-height:34px;}
+ .library-screen .book-open{font-size:11px;padding:8px 11px;min-height:34px;}
+ .library-screen .book-actions-popover{right:-8px;width:180px;}
+}
+
+.book-image-delete {border-color:#ad665777!important;color:#f0b1a6!important;margin-right:auto;}
+.book-image-delete[hidden]{display:none!important;}
