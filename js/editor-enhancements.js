@@ -38,11 +38,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function restoreSelection() {
     editor.focus({ preventScroll: true });
-    if (!rememberedRange || !editor.contains(rememberedRange.startContainer) || !editor.contains(rememberedRange.endContainer)) return;
-    const selection = window.getSelection();
-    if (!selection) return;
+    const selection=window.getSelection();
+    if(!selection)return;
+    if(rememberedRange && editor.contains(rememberedRange.startContainer) && editor.contains(rememberedRange.endContainer)){
+      selection.removeAllRanges();
+      selection.addRange(rememberedRange);
+      return;
+    }
+    // A chapter change invalidates a stored range. Fallback to the end of
+    // the current chapter instead of inserting into a detached element.
+    const range=document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
     selection.removeAllRanges();
-    selection.addRange(rememberedRange);
+    selection.addRange(range);
   }
 
   function syncStates() {
@@ -68,14 +77,23 @@ document.addEventListener("DOMContentLoaded", () => {
   function escapeAttribute(text) {
     return String(text || "").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
   }
-  function makeFigure({src,caption="",align="center"}) {
+  function makeFigure({src,caption="",align="center",size=75}) {
     const figure=document.createElement("figure");
     figure.className="book-figure";
     figure.setAttribute("contenteditable","false");
-    figure.style.textAlign=["center","left","right"].includes(align)?align:"center";
+    const safeAlign=["left","center","right"].includes(align)?align:"center";
+    const safeSize=[50,75,100].includes(Number(size))?Number(size):75;
+    figure.dataset.align=safeAlign;
+    figure.dataset.size=String(safeSize);
+    figure.style.width=safeSize+"%";
+    figure.style.maxWidth="100%";
+    figure.style.textAlign=safeAlign;
+    figure.style.marginLeft=safeAlign==="right"?"auto":safeAlign==="left"?"0":"auto";
+    figure.style.marginRight=safeAlign==="left"?"auto":safeAlign==="right"?"0":"auto";
     const img=document.createElement("img");
     img.src=src;
     img.alt=caption || "Иллюстрация";
+    img.loading="eager";
     img.draggable=false;
     figure.appendChild(img);
     if(caption){
@@ -89,11 +107,22 @@ document.addEventListener("DOMContentLoaded", () => {
     restoreSelection();
     const figure=makeFigure(options);
     const selection=window.getSelection();
-    if(selection && selection.rangeCount && editor.contains(selection.anchorNode)){
-      // insertHTML lets the browser lift block-level figures out of a paragraph.
-      const success=document.execCommand("insertHTML",false,figure.outerHTML+"<p><br></p>");
-      if(!success) editor.appendChild(figure);
-    }else editor.appendChild(figure);
+    // Insert as a standalone block immediately after the paragraph where the
+    // caret sits; this avoids invalid <p><figure> nesting and split images.
+    let block=selection?.anchorNode?.nodeType===Node.ELEMENT_NODE
+      ? selection.anchorNode : selection?.anchorNode?.parentElement;
+    while(block && block.parentElement!==editor)block=block.parentElement;
+    const nextParagraph=document.createElement("p");
+    nextParagraph.appendChild(document.createElement("br"));
+    if(block && block.parentElement===editor && block!==figure) {
+      block.after(figure,nextParagraph);
+    }else editor.append(figure,nextParagraph);
+    const range=document.createRange();
+    range.selectNodeContents(nextParagraph);
+    range.collapse(true);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    rememberedRange=range.cloneRange();
     editor.dispatchEvent(new Event("input",{bubbles:true}));
     queueStats();
   }
@@ -114,6 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // unchanged until the user confirms.
     window.DiamondImageEditor.open({
       src:currentImg.src,
+      initialCaption:caption,
+      initialAlign:figure.dataset.align || figure.style.textAlign || "center",
+      initialSize:figure.dataset.size || "75",
       onSave(options){
         const newFigure=makeFigure(options);
         figure.replaceWith(newFigure);
@@ -126,10 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
         queueStats();
       }
     });
-    const captionInput=document.querySelector('.book-image-overlay [data-setting="caption"]');
-    if(captionInput) captionInput.value=caption;
-    const alignInput=document.querySelector('.book-image-overlay [data-setting="align"]');
-    if(alignInput) alignInput.value=["left","center","right"].includes(figure.style.textAlign)?figure.style.textAlign:"center";
   });
 
   toolbar.addEventListener("pointerdown", event => {
