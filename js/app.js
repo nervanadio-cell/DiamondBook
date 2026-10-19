@@ -2,6 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const grid = document.getElementById("booksGrid");
   const emptyState = document.getElementById("emptyState");
   const count = document.getElementById("bookCount");
+  const search = document.getElementById("librarySearch");
+  const sort = document.getElementById("librarySort");
+  const noResults = document.getElementById("libraryNoResults");
 
   function coverTexture(book) {
     const seed = String(book.id || book.title || "book");
@@ -11,14 +14,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function render() {
-    const books = getBooks();
+    const allBooks = getBooks();
+    const query = (search?.value || "").trim().toLocaleLowerCase("ru");
+    const books = allBooks.filter(book => [book.title, book.author].some(value => String(value || "").toLocaleLowerCase("ru").includes(query)));
+    const mode = sort?.value || "recent";
+    if (mode === "title") books.sort((a,b) => String(a.title || "").localeCompare(String(b.title || ""), "ru"));
+    else if (mode === "oldest") books.sort((a,b) => (Date.parse(a.createdAt || 0) || 0) - (Date.parse(b.createdAt || 0) || 0));
+    else books.sort((a,b) => (Date.parse(b.updatedAt || b.createdAt || 0) || 0) - (Date.parse(a.updatedAt || a.createdAt || 0) || 0));
     grid.innerHTML = "";
-    count.textContent = `${books.length} ${books.length === 1 ? "книга" : books.length < 5 ? "книги" : "книг"}`;
-    emptyState.classList.toggle("hidden", books.length > 0);
-
+    count.textContent = `${allBooks.length} ${allBooks.length === 1 ? "книга" : allBooks.length < 5 ? "книги" : "книг"}`;
+    emptyState.classList.toggle("hidden", allBooks.length > 0);
+    if (noResults) noResults.hidden = !allBooks.length || !!books.length;
     if (!books.length) return;
-
-    const perShelf = window.matchMedia("(max-width: 720px)").matches ? 2 : 5;
+    const perShelf = window.matchMedia("(max-width: 720px)").matches ? 2 : window.matchMedia("(max-width: 1000px)").matches ? 3 : 5;
     for (let start = 0; start < books.length; start += perShelf) {
       const shelf = document.createElement("section");
       shelf.className = "bookshelf-row";
@@ -95,6 +103,16 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   });
 
+  search?.addEventListener("input",render);
+  sort?.addEventListener("change",render);
+  document.addEventListener("keydown",event => {
+    const typing = event.target.closest?.("input,textarea,select,[contenteditable]");
+    if (!typing && event.key === "/" && search) {
+      event.preventDefault();search.focus();
+    } else if (event.key === "Escape" && document.activeElement === search) {
+      search.value = "";search.blur();render();
+    }
+  });
   document.addEventListener("bookcoverchange", render);
   window.addEventListener("resize", () => {
     clearTimeout(window.__bookshelfResizeTimer);
