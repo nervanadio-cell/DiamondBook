@@ -231,3 +231,17 @@ button:disabled {cursor:not-allowed;}
 @media(prefers-reduced-motion:reduce){
   .create-book-preview,.preset-button,.book-card,.primary-button {transition:none!important;}
 }
+
+/* Readable book typography selector */
+.editor-page .writer-font-family {
+  display:flex;align-items:center;gap:7px;margin:0;padding:0 5px;
+  flex:0 0 auto;white-space:nowrap;color:#ffecd0;font:11px system-ui;
+}
+.editor-page .writer-font-family select {
+  min-width:108px;max-width:145px;border:1px solid #e6b88159;
+  border-radius:7px;background:#493018;color:#ffe9c6;padding:7px;
+  font:12px system-ui;cursor:pointer;
+}
+@media(max-width:720px){
+  .editor-page .writer-font-family select{min-width:103px;max-width:112px;}
+}

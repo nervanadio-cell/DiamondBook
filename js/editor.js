@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const formatTabs = [...document.querySelectorAll(".format-tab")];
   const bookNameButton = document.getElementById("bookNameButton");
   const lineSpacingSelect = document.getElementById("lineSpacingSelect");
+  const fontFamilySelect = document.getElementById("editorFontFamily");
   const saveChapterTitleButton = document.getElementById("saveChapterTitle");
   const cancelChapterTitleButton = document.getElementById("cancelChapterTitle");
 
@@ -86,6 +87,31 @@ document.addEventListener("DOMContentLoaded", () => {
     if(event.detail?.bookId!==book.id)return;
     const saved=getBook(book.id);
     if(saved){book.coverDesign=saved.coverDesign;book.coverDataUrl=saved.coverDataUrl;}
+  });
+
+  const bookFonts={
+    georgia:"Georgia, serif",garamond:"Garamond, Georgia, serif",
+    palatino:"Palatino, Georgia, serif",cambria:"Cambria, Georgia, serif",
+    bookman:"'Bookman Old Style', Georgia, serif",times:"'Times New Roman', serif",
+    trebuchet:"'Trebuchet MS', Arial, sans-serif",verdana:"Verdana, sans-serif",
+    arial:"Arial, sans-serif",tahoma:"Tahoma, sans-serif",
+    courier:"'Courier New', monospace",handwriting:"'Segoe Print', cursive"
+  };
+  if(fontFamilySelect) {
+    const family=Object.hasOwn(bookFonts,book.editorFontFamily)?book.editorFontFamily:"georgia";
+    fontFamilySelect.value=family;
+    editor.style.fontFamily=bookFonts[family];
+    fontFamilySelect.addEventListener("change",()=>{
+      const selected=fontFamilySelect.value;
+      if(!Object.hasOwn(bookFonts,selected))return;
+      book.editorFontFamily=selected;
+      editor.style.fontFamily=bookFonts[selected];
+      markSaving();
+    });
+  }
+  window.addEventListener("diamond-editor-fontsize",event=>{
+    book.editorFontSize=Number(event.detail?.size) || 19;
+    markSaving();
   });
 
   function persistNow() {

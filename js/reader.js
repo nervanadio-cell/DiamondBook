@@ -22,6 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const runningRight = document.getElementById("readerRunningRight");
   const contentLeft = document.getElementById("readerContentLeft");
   const contentRight = document.getElementById("readerContentRight");
+  const readerFonts={
+    georgia:"Georgia, serif",garamond:"Garamond, Georgia, serif",
+    palatino:"Palatino, Georgia, serif",cambria:"Cambria, Georgia, serif",
+    bookman:"'Bookman Old Style', Georgia, serif",times:"'Times New Roman', serif",
+    trebuchet:"'Trebuchet MS', Arial, sans-serif",verdana:"Verdana, sans-serif",
+    arial:"Arial, sans-serif",tahoma:"Tahoma, sans-serif",
+    courier:"'Courier New', monospace",handwriting:"'Segoe Print', cursive"
+  };
+  if(Object.hasOwn(readerFonts,book.editorFontFamily)) {
+    contentLeft.style.fontFamily=readerFonts[book.editorFontFamily];
+    contentRight.style.fontFamily=readerFonts[book.editorFontFamily];
+  }
   const bookLineHeight = Number(book.editorLineHeight);
   if (Number.isFinite(bookLineHeight) && bookLineHeight >= 1.2 && bookLineHeight <= 3) {
     contentLeft.style.lineHeight = String(bookLineHeight);
