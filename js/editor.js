@@ -425,19 +425,7 @@ document.addEventListener("DOMContentLoaded", () => {
           addButton.textContent = "+";
           addButton.addEventListener("click", event => {
             event.stopPropagation();
-            node.children ||= [];
-            if (node.type === "volume") {
-              const part = makePart(`Часть ${node.children.length + 1}`, 1);
-              node.children.push(part);
-              const firstChapter = flattenChapters({ structure: [part] })[0]?.chapter;
-              if (firstChapter) selectChapter(firstChapter.id);
-            } else {
-              const chapter = makeChapter(`Глава ${flattenChapters(book).length + 1}`);
-              node.children.push(chapter);
-              selectChapter(chapter.id);
-            }
-            renderTree();
-            markSaving();
+            addChildNode(node,node.type==="volume"?"part":"chapter");
           });
           nodeActions.appendChild(addButton);
         }
@@ -458,6 +446,12 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     renderNodes(book.structure, tree);
+    if(!book.structure.length) {
+      const hint=document.createElement("div");
+      hint.className="tree-empty-state";
+      hint.textContent="Содержание пустое. Нажми + и выбери, что добавить.";
+      tree.appendChild(hint);
+    }
   }
 
   function updateSelectionBar() {
@@ -537,34 +531,68 @@ document.addEventListener("DOMContentLoaded", () => {
         multiSelectMode = false;
         closeNodeContextMenu();
 
-        if (!flattenChapters(book).length) book.structure.push(makeChapter("Глава 1"));
+        if (!flattenChapters(book).length && !book.structure.length) {
+          // Empty structure is allowed; the user explicitly chooses the next section.
+        }
         if (!findNode(book, currentNodeId) || findNode(book, currentNodeId)?.type !== "chapter") {
           currentNodeId = flattenChapters(book)[0]?.chapter.id || null;
         }
 
         updateSelectionBar();
         if (currentNodeId) selectChapter(currentNodeId);
-        else renderTree();
+        else showNoChapter();
         persistNow();
       }
     });
   }
 
-  function addChildNode(node) {
-    node.children ||= [];
-    if (node.type === "volume") {
-      const part = makePart(`Часть ${node.children.length + 1}`, 1);
-      node.children.push(part);
-      const firstChapter = flattenChapters({ structure: [part] })[0]?.chapter;
-      if (firstChapter) currentNodeId = firstChapter.id;
-    } else if (node.type === "part") {
-      const chapter = makeChapter(`Глава ${flattenChapters(book).length + 1}`);
-      node.children.push(chapter);
-      currentNodeId = chapter.id;
-    }
+  function nextNodeName(type,nodes=[]) {
+    const label=type==="volume"?"Том":type==="part"?"Часть":"Глава";
+    const existing=(nodes||[]).filter(n=>n.type===type);
+    const used=new Set(existing.map(n=>String(n.title||"").match(new RegExp("^"+label+"\\s+(\\d+)"))?.[1]).filter(Boolean).map(Number));
+    let number=1;
+    while(used.has(number))number++;
+    return `${label} ${number}`;
+  }
+
+  function createSection(kind,parent=null) {
+    if(!["volume","part","chapter"].includes(kind))return;
+    if(parent?.type==="chapter" || (parent?.type==="part" && kind!=="chapter") ||
+      (parent?.type==="volume" && kind==="volume"))return;
+    const siblings=parent?(parent.children ||= []):book.structure;
+    let node;
+    if(kind==="volume") node=makeVolume(nextNodeName("volume",siblings),0,0);
+    else if(kind==="part") node=makePart(nextNodeName("part",siblings),0);
+    else node=makeChapter(nextNodeName("chapter",siblings));
+    siblings.push(node);
     renderTree();
-    if (currentNodeId) selectChapter(currentNodeId);
+    if(node.type==="chapter")selectChapter(node.id);
+    else {
+      const row=tree.querySelector(`.tree-row[data-node-id="${CSS.escape(node.id)}"]`);
+      row?.classList.add("tree-new-node");
+      row?.scrollIntoView({block:"nearest",behavior:"smooth"});
+      showTreeTip(`Создана ${kind==="volume"?"новая книга-том":"часть"} без скрытых глав. Нажми + для заполнения.`);
+    }
     markSaving();
+  }
+
+  function showTreeTip(message) {
+    let tip=document.getElementById("treeHint");
+    if(!tip){
+      tip=document.createElement("div");
+      tip.id="treeHint";
+      tip.className="tree-inline-hint";
+      tree.parentElement.insertBefore(tip,tree);
+    }
+    tip.textContent=message;
+    tip.hidden=false;
+    clearTimeout(showTreeTip.timer);
+    showTreeTip.timer=setTimeout(()=>{tip.hidden=true;},5000);
+  }
+
+  function addChildNode(node,kind=null) {
+    const type=kind || (node.type==="volume"?"part":"chapter");
+    createSection(type,node);
   }
 
   function closeNodeContextMenu() {
@@ -581,7 +609,8 @@ document.addEventListener("DOMContentLoaded", () => {
     menu.innerHTML = `
       <button type="button" data-action="rename">✎ <span>Переименовать</span></button>
       <button type="button" data-action="multi">☷ <span>${multiSelectMode ? "Выключить мультивыбор" : "Выбрать несколько"}</span></button>
-      <button type="button" data-action="add" ${node.type === "chapter" ? "hidden" : ""}>＋ <span>Добавить вложенное</span></button>
+      <button type="button" data-action="add-part" ${node.type !== "volume" ? "hidden" : ""}>＋ <span>Добавить часть в том</span></button>
+      <button type="button" data-action="add-chapter" ${node.type === "chapter" ? "hidden" : ""}>＋ <span>Добавить главу сюда</span></button>
       <button type="button" data-action="delete" class="danger">⌫ <span>Удалить</span></button>
     `;
     document.body.appendChild(menu);
@@ -608,10 +637,12 @@ document.addEventListener("DOMContentLoaded", () => {
       renderTree();
       updateSelectionBar();
     });
-    menu.querySelector('[data-action="add"]').addEventListener("click", () => {
-      closeNodeContextMenu();
-      addChildNode(node);
-    });
+    for(const kind of ["part","chapter"]){
+      menu.querySelector(`[data-action="add-${kind}"]`).addEventListener("click", () => {
+        closeNodeContextMenu();
+        addChildNode(node,kind);
+      });
+    }
     menu.querySelector('[data-action="delete"]').addEventListener("click", () => {
       closeNodeContextMenu();
       deleteNodeIds(new Set([node.id]));
@@ -654,6 +685,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     currentNodeId = nodeId;
+    chapterTitle.disabled=false;
+    editor.setAttribute("contenteditable","true");
     chapterTitle.value = node.title;
     syncChapterTitleButtons();
     editor.innerHTML = node.content || "<p></p>";
@@ -780,19 +813,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!kind) return;
     let node;
     if (kind === "volume") {
-      node = makeVolume(`Том ${allNodes().filter(n=>n.type==="volume").length + 1}`,1,1);
+      node = makeVolume(nextNodeName("volume",book.structure),0,0);
     } else if (kind === "part") {
-      node = makePart(`Часть ${allNodes().filter(n=>n.type==="part").length + 1}`,1);
+      node = makePart(nextNodeName("part",book.structure),0);
     } else {
-      node = makeChapter(`Глава ${flattenChapters(book).length + 1}`);
+      node = makeChapter(nextNodeName("chapter",book.structure));
     }
-    book.structure.push(node);
-    const target = flattenChapters({structure:[node]})[0]?.chapter;
+    // Each root choice inserts exactly one item of the chosen type.
     rootMenu.hidden=true;
     rootAddButton.setAttribute("aria-expanded","false");
-    renderTree();
-    if(target) selectChapter(target.id);
-    markSaving();
+    createSection(kind);
   });
   document.addEventListener("click", event => {
     if (!rootMenu.hidden && !rootMenu.contains(event.target) && event.target!==rootAddButton) {
@@ -907,15 +937,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  function showNoChapter() {
+    currentNodeId=null;
+    chapterTitle.value="";
+    chapterTitle.placeholder="Добавь или выбери главу слева";
+    chapterTitle.disabled=true;
+    editor.innerHTML='<p class="empty-editor-hint">Здесь пока нет главы. Нажми + в содержании и выбери «Глава», либо создай её внутри тома или части.</p>';
+    editor.setAttribute("contenteditable","false");
+    renderTree();
+  }
+  const originalSelectChapter=selectChapter;
+  // Keep editor writable only when an actual chapter is selected.
   renderTree();
-
-  if (currentNodeId) {
+  if(currentNodeId) {
     selectChapter(currentNodeId);
-  } else {
-    const chapter = makeChapter("Глава 1");
-    book.structure.push(chapter);
-    currentNodeId = chapter.id;
-    selectChapter(chapter.id);
-    persistNow();
+  }else{
+    showNoChapter();
   }
 });
