@@ -104,6 +104,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return figure;
   }
   function insertFigure(options) {
+    if(!editor.isContentEditable) {
+      alert("Сначала добавь главу через содержание слева.");
+      return;
+    }
     restoreSelection();
     const figure=makeFigure(options);
     const selection=window.getSelection();
@@ -128,6 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   const insertImageButton=document.getElementById("insertImageButton");
   function openImageInsert(){
+    if(!editor.isContentEditable) return;
     rememberSelection();
     if(!window.DiamondImageEditor?.open){alert("Не удалось открыть редактор изображения.");return;}
     window.DiamondImageEditor.open({onSave:insertFigure});
