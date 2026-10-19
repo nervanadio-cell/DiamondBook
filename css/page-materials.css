@@ -57,3 +57,21 @@
 .create-screen .preview-border #previewTitle,.create-screen .preview-border #previewAuthor {color:#f5dfb7;line-height:1.1;text-shadow:0 2px 10px #0009;}
 @media(max-width:720px){.library-sort-custom {justify-content:space-between;}.library-sort-menu-wrap{min-width:190px;}.reader-page .theme-panel{max-width:calc(100vw - 20px);}}
 @media(max-width:430px){.library-sort-menu-wrap{min-width:175px;}.editor-page .page-texture-select{font-size:10px;}.editor-page .page-texture-select select{max-width:100px;}}
+
+/* Individual book actions share the same oak button treatment. */
+.library-screen .edit-cover-text {
+  min-height:35px;padding:8px 10px;border-radius:7px;
+  border:1px solid #9c744c65;background:#211b14;color:#f0d5ab;
+  font:600 11px system-ui,sans-serif;cursor:pointer;
+  transition:background .2s,transform .2s;
+}
+.library-screen .edit-cover-text:hover {background:#564029;transform:translateY(-1px);}
+.library-screen .book-card-bottom {display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
+.library-screen .book-card-bottom > * {flex:0 0 auto;}
+.shortcut-guide-grid .shortcuts-category,.shortcuts-category {
+  margin:17px 0 0;color:#d9b27d;font:700 11px system-ui,sans-serif;letter-spacing:.06em;
+}
+@media(max-width:720px){
+  .library-screen .edit-cover-text {min-height:32px;padding:7px 8px;font-size:10px;}
+  .library-screen .book-card-bottom {gap:4px;}
+}
