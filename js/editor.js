@@ -282,6 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const row = document.createElement("div");
         row.className = "tree-row";
         row.dataset.nodeId = node.id;
+        row.dataset.nodeType = node.type;
 
         const line = document.createElement("button");
         line.type = "button";
