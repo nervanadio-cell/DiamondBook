@@ -50,7 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div class="book-card-bottom">
             <a class="book-open" href="editor.html?id=${encodeURIComponent(book.id)}">Открыть</a>
-            <button type="button" class="edit-cover" data-id="${escapeHtml(book.id)}">Обложка</button>
+            <button type="button" class="edit-cover" data-id="${escapeHtml(book.id)}" title="Загрузить фото обложки">Фото</button>
+            <button type="button" class="edit-cover-text" data-id="${escapeHtml(book.id)}" title="Расположение надписей на обложке">Текст</button>
             <button type="button" class="delete-book" data-id="${escapeHtml(book.id)}" aria-label="Удалить книгу">×</button>
           </div>`;
         const cover = card.querySelector(".book-cover");
@@ -61,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
           cover.classList.add("cover-custom");
           card.classList.add("has-custom-cover");
         }
+        window.DiamondCoverDesign?.apply(cover,book.coverDesign);
         booksWrap.appendChild(card);
       });
 
@@ -86,6 +88,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = openLink.closest(".book-card");
       if (card) card.classList.add("book-opening");
       window.setTimeout(() => { location.href = openLink.href; }, 390);
+      return;
+    }
+    const designButton = event.target.closest(".edit-cover-text");
+    if (designButton) {
+      window.DiamondCoverDesign?.openBook(designButton.dataset.id,render);
       return;
     }
     const coverButton = event.target.closest(".edit-cover");

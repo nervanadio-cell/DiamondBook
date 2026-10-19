@@ -192,6 +192,11 @@
       const button=document.createElement("button");button.type="button";button.id="coverOpen";button.className="ghost-button";button.textContent="Обложка";
       button.addEventListener("click",()=>window.openBookCoverEditor(book.id,()=>{const status=document.getElementById("saveStatus");if(status)status.textContent="Обложка сохранена";}));
       actions.insertBefore(button,actions.firstChild);
+      const textButton=document.createElement("button");
+      textButton.type="button";textButton.className="ghost-button";textButton.id="coverTextOpen";
+      textButton.textContent="Надписи";
+      textButton.addEventListener("click",()=>window.DiamondCoverDesign?.openBook(book.id));
+      actions.insertBefore(textButton,button.nextSibling);
     }
   });
 })();

@@ -72,6 +72,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   });
+  const previewBorder=document.querySelector(".create-book-preview .preview-border");
+  const designButton=document.getElementById("draftCoverDesignButton");
+  function renderCoverDesign() { window.DiamondCoverDesign?.apply(previewBorder,window.DiamondCoverDesign.getDraft()); }
+  designButton?.addEventListener("click",()=>window.DiamondCoverDesign?.openDraft(titleInput.value.trim(),authorInput.value.trim()));
+  window.addEventListener("diamond-cover-draft-change",renderCoverDesign);
+  renderCoverDesign();
   updatePreview();
 
   const getCount = (id, fallback) => {
@@ -142,7 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
       author,
       createdAt: now,
       updatedAt: now,
-      structure
+      structure,
+      coverDesign:window.DiamondCoverDesign?.getDraft()
     };
 
     try {
