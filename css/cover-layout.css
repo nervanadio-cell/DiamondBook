@@ -1,0 +1,29 @@
+.book-cover .book-cover-title,.book-cover .book-cover-author {margin:0!important;padding:0!important;pointer-events:none;}
+.book-cover::before{display:none!important;}
+.cover-design-overlay{position:fixed;inset:0;z-index:10002;display:grid;place-items:center;padding:12px;background:rgba(5,6,4,.85);backdrop-filter:blur(9px)}
+.cover-design-dialog{width:min(930px,100%);max-height:96dvh;overflow-y:auto;padding:clamp(15px,2.6vw,27px);border-radius:17px;border:1px solid rgba(218,176,111,.48);background:linear-gradient(145deg,rgba(49,36,22,.97),rgba(18,19,14,.97)),url("../assets/oak-bark.svg");background-size:cover,850px auto;color:#eddab8;box-shadow:0 32px 95px rgba(0,0,0,.75)}
+.cover-design-dialog header{display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid #c79d624b;padding-bottom:15px}
+.cover-design-dialog header small{letter-spacing:.14em;color:#d1a46c;font:700 10px system-ui}
+.cover-design-dialog h2{margin:6px 0 5px;font:400 clamp(24px,3vw,33px) Georgia,serif}
+.cover-design-dialog header p{font:12px/1.5 system-ui;color:#b9a68a;margin:0}
+.cover-design-dialog button{border:1px solid #be975e59;background:#382a1b;color:#f4dcb6;border-radius:9px;padding:9px 11px;cursor:pointer;font:600 12px system-ui}
+.cover-design-dialog button:hover{background:#5e452b}
+.cover-design-close{height:35px;min-width:35px;font-size:19px!important}
+.cover-design-layout{display:grid;grid-template-columns:minmax(250px,1fr) minmax(225px,.75fr);gap:28px;padding:23px 0}
+.cover-design-stage{display:flex;flex-direction:column;align-items:center;gap:12px}
+.cover-design-face{width:min(265px,100%);aspect-ratio:2/3;position:relative;background:radial-gradient(ellipse at 65% 20%,#bc996444,transparent 45%),linear-gradient(135deg,#635039,#2d251b 67%,#1c1813);border:1px solid #bf985b70;border-radius:4px 13px 13px 4px;box-shadow:inset 10px 0 15px #0007,14px 18px 30px #0009;overflow:hidden}
+.cover-design-face::before{content:"";position:absolute;inset:0 auto 0 7px;width:3px;background:#e0b67d55}
+.cover-design-title,.cover-design-author{cursor:grab;user-select:none;touch-action:none;display:block;color:#fff4d8;text-shadow:0 2px 11px rgba(0,0,0,.95);padding:6px 2px;border:1px dashed transparent;border-radius:5px}
+.cover-design-title.selected,.cover-design-author.selected{border-color:#f2ce95;background:#16120d36}
+.cover-design-stage p{font:11px/1.5 system-ui;color:#b9a68a;text-align:center;margin:0}
+.cover-design-controls{display:flex;flex-direction:column;gap:13px}
+.cover-design-kind{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.cover-design-kind button.active{border-color:#ecc38c;background:#74512c;color:#ffedca}
+.cover-design-controls label{display:grid;grid-template-columns:1fr auto;gap:6px;color:#dcc5a5;font:12px system-ui}
+.cover-design-controls label select{grid-column:1/-1;border-radius:7px;padding:10px;background:#231b13;color:#ebd7b9;border:1px solid #b88d5866;font:12px system-ui}
+.cover-design-controls output{color:#f3d09a;font-variant-numeric:tabular-nums}
+.cover-design-controls input[type=range]{grid-column:1/-1;accent-color:#d6ac76;width:100%;cursor:pointer}
+.cover-design-controls .cover-design-reset{margin-top:3px}
+.cover-design-dialog footer{display:flex;justify-content:flex-end;gap:10px;border-top:1px solid #c79d623e;padding-top:17px}
+.cover-design-save{background:linear-gradient(135deg,#e2bd88,#ae814b)!important;color:#2c1b0e!important;font-weight:700!important}
+@media(max-width:640px){.cover-design-layout{grid-template-columns:1fr;gap:16px}.cover-design-face{width:min(220px,66vw)}.cover-design-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}.cover-design-kind,.cover-design-reset{grid-column:1/-1}.cover-design-dialog{max-height:98dvh}.cover-design-stage p{font-size:10px}}
