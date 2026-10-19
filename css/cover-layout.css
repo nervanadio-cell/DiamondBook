@@ -27,3 +27,49 @@
 .cover-design-dialog footer{display:flex;justify-content:flex-end;gap:10px;border-top:1px solid #c79d623e;padding-top:17px}
 .cover-design-save{background:linear-gradient(135deg,#e2bd88,#ae814b)!important;color:#2c1b0e!important;font-weight:700!important}
 @media(max-width:640px){.cover-design-layout{grid-template-columns:1fr;gap:16px}.cover-design-face{width:min(220px,66vw)}.cover-design-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}.cover-design-kind,.cover-design-reset{grid-column:1/-1}.cover-design-dialog{max-height:98dvh}.cover-design-stage p{font-size:10px}}
+/* One proportional cover coordinate system on library, draft and modal. */
+.book-cover,.cover-design-face,.create-book-preview .preview-border {
+  container-type:inline-size;
+}
+.library-screen .book-cover {
+  aspect-ratio:2/3!important;
+  height:auto!important;
+  min-height:0!important;
+  display:block;
+  overflow:hidden;
+  position:relative;
+}
+.create-screen .preview-border {
+  inset:0!important;
+  padding:0!important;
+  border:0!important;
+  display:block!important;
+}
+.create-screen .preview-label {
+  position:absolute;
+  top:3%;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:7px;
+  max-width:90%;
+  white-space:nowrap;
+  pointer-events:none;
+  z-index:1;
+}
+.diamond-cover-face .book-cover-title,
+.diamond-cover-face .book-cover-author,
+.diamond-cover-face #previewTitle,
+.diamond-cover-face #previewAuthor {
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  text-wrap:pretty;
+  color:#fff0d3;
+  text-shadow:0 2px 7px rgba(0,0,0,.85);
+}
+.book-cover .book-cover-title,.book-cover .book-cover-author {white-space:normal;}
+.library-screen .book-cover::after {pointer-events:none;}
+@media(max-width:640px){
+ .cover-design-face{width:min(240px,70vw);}
+}
