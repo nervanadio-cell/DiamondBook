@@ -190,6 +190,17 @@ document.addEventListener("DOMContentLoaded", () => {
         continue;
       }
       if (current.length) finish();
+      if (node.querySelector?.("img") || node.tagName === "IMG") {
+        const image=node.tagName === "IMG" ? node : node.querySelector("img");
+        if(image) {
+          image.style.maxHeight=Math.max(95,Math.floor(height*.54))+"px";
+          image.style.maxWidth="100%";
+          image.style.objectFit="contain";
+        }
+        if(node.classList) node.classList.add("reader-illustration");
+        keep(node);
+        continue;
+      }
       if (fits(node)) {
         keep(node);
         continue;

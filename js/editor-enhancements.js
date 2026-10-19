@@ -65,6 +65,66 @@ document.addEventListener("DOMContentLoaded", () => {
     queueStats();
   }
 
+  function escapeAttribute(text) {
+    return String(text || "").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+  }
+  function makeFigure({src,caption="",align="center"}) {
+    const figure=document.createElement("figure");
+    figure.className="book-figure";
+    figure.setAttribute("contenteditable","false");
+    figure.style.textAlign=["center","left","right"].includes(align)?align:"center";
+    const img=document.createElement("img");
+    img.src=src;
+    img.alt=caption || "Иллюстрация";
+    img.draggable=false;
+    figure.appendChild(img);
+    if(caption){
+      const cap=document.createElement("figcaption");
+      cap.textContent=caption;
+      figure.appendChild(cap);
+    }
+    return figure;
+  }
+  function insertFigure(options) {
+    restoreSelection();
+    const figure=makeFigure(options);
+    const selection=window.getSelection();
+    if(selection && selection.rangeCount && editor.contains(selection.anchorNode)){
+      // insertHTML lets the browser lift block-level figures out of a paragraph.
+      const success=document.execCommand("insertHTML",false,figure.outerHTML+"<p><br></p>");
+      if(!success) editor.appendChild(figure);
+    }else editor.appendChild(figure);
+    editor.dispatchEvent(new Event("input",{bubbles:true}));
+    queueStats();
+  }
+  const insertImageButton=document.getElementById("insertImageButton");
+  function openImageInsert(){
+    rememberSelection();
+    if(!window.DiamondImageEditor?.open){alert("Не удалось открыть редактор изображения.");return;}
+    window.DiamondImageEditor.open({onSave:insertFigure});
+  }
+  insertImageButton?.addEventListener("click",openImageInsert);
+  editor.addEventListener("click",event=>{
+    const figure=event.target.closest?.("figure.book-figure");
+    if(!figure||!editor.contains(figure))return;
+    const currentImg=figure.querySelector("img");
+    if(!currentImg||!window.DiamondImageEditor?.open)return;
+    const caption=figure.querySelector("figcaption")?.textContent || "";
+    // The editor re-crops the saved image; the inserted chapter image remains
+    // unchanged until the user confirms.
+    window.DiamondImageEditor.open({
+      src:currentImg.src,
+      onSave(options){
+        const newFigure=makeFigure(options);
+        figure.replaceWith(newFigure);
+        editor.dispatchEvent(new Event("input",{bubbles:true}));
+        queueStats();
+      }
+    });
+    const captionInput=document.querySelector('.book-image-overlay [data-setting="caption"]');
+    if(captionInput) captionInput.value=caption;
+  });
+
   toolbar.addEventListener("pointerdown", event => {
     if (event.pointerType !== "touch" && event.target.closest("button[data-command], #insertDivider")) event.preventDefault();
   }, true);
@@ -157,6 +217,10 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       document.getElementById("readerButton")?.click();
       return;
+    }
+
+    if(modifier && event.altKey && !event.shiftKey && code==="KeyM" && !isInput) {
+      event.preventDefault();openImageInsert();return;
     }
 
     if (modifier && event.altKey && !event.shiftKey && code === "KeyN" && !isInput) {

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/refinement.css">
   <link rel="stylesheet" href="css/cover-layout.css">
   <link rel="stylesheet" href="css/page-materials.css">
+  <link rel="stylesheet" href="css/image-editor.css">
 </head>
 <body class="editor-page">
   <header class="editor-topbar">
@@ -65,6 +66,7 @@
         </div>
         <span class="toolbar-divider"></span>
         <div class="toolbar-group">
+          <button type="button" class="image-toolbar-button" id="insertImageButton" title="Вставить картинку · Ctrl+Alt+M" aria-label="Вставить изображение с обрезкой и нуаром">▧ Фото</button>
           <button type="button" class="tool-button" id="insertDivider" title="Разделительная линия · Ctrl+Alt+H" aria-label="Разделительная линия">—</button>
           <button type="button" class="tool-button" data-command="removeFormat" title="Очистить форматирование" aria-label="Очистить форматирование">Tx</button>
           <button type="button" class="tool-button" data-command="undo" title="Отменить · Ctrl+Z" aria-label="Отменить">↶</button>
@@ -132,7 +134,7 @@
         <div><span>Жирный</span><kbd>Ctrl+B</kbd></div><div><span>Курсив</span><kbd>Ctrl+I</kbd></div>
         <div><span>Подчёркивание</span><kbd>Ctrl+U</kbd></div><div><span>Заголовок</span><kbd>Ctrl+Alt+2</kbd></div>
         <div><span>Абзац</span><kbd>Ctrl+Alt+0</kbd></div><div><span>Список</span><kbd>Ctrl+Shift+7</kbd></div>
-        <div><span>Нумерация</span><kbd>Ctrl+Shift+8</kbd></div><div><span>Линия</span><kbd>Ctrl+Alt+H</kbd></div>
+        <div><span>Нумерация</span><kbd>Ctrl+Shift+8</kbd></div><div><span>Линия</span><kbd>Ctrl+Alt+H</kbd></div><div><span>Картинка</span><kbd>Ctrl+Alt+M</kbd></div>
         <div><span>Сохранить</span><kbd>Ctrl+S</kbd></div><div><span>Читать</span><kbd>Ctrl+Enter</kbd></div>
         <div><span>Новая глава</span><kbd>Ctrl+Alt+N</kbd></div><div><span>След. глава</span><kbd>Alt+↓</kbd></div>
         <div><span>Пред. глава</span><kbd>Alt+↑</kbd></div><div><span>Подсказка</span><kbd>F1</kbd></div>
@@ -167,5 +169,6 @@
   <script src="js/cover-layout.js"></script>
   <script src="js/cover-editor.js"></script>
   <script src="js/editor-enhancements.js"></script>
+  <script src="js/image-editor.js"></script>
 </body>
 </html>
