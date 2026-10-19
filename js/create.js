@@ -19,6 +19,61 @@ document.addEventListener("DOMContentLoaded", () => {
     sync();
   });
 
+  const presetButtons = [...document.querySelectorAll("[data-preset]")];
+  const titleInput = document.getElementById("bookTitle");
+  const authorInput = document.getElementById("bookAuthor");
+  const previewTitle = document.getElementById("previewTitle");
+  const previewAuthor = document.getElementById("previewAuthor");
+  const previewStructure = document.getElementById("previewStructure");
+  function updatePreview() {
+    previewTitle.textContent = titleInput.value.trim() || "Название твоей книги";
+    previewAuthor.textContent = authorInput.value.trim() || "Твоё имя";
+    const volume = document.getElementById("useVolumes").checked ? Number(document.getElementById("volumeCount").value) || 1 : 0;
+    const part = document.getElementById("useParts").checked ? Number(document.getElementById("partCount").value) || 1 : 0;
+    const chapter = document.getElementById("useChapters").checked ? Number(document.getElementById("chapterCount").value) || 1 : 0;
+    previewStructure.textContent = [
+      volume ? volume + " том." : "",
+      part ? part + " част." : "",
+      chapter ? chapter + " глав." : ""
+    ].filter(Boolean).join(" · ") || "1 глава";
+  }
+
+  const presets = {
+    novel: {useVolumes:false,volumeCount:1,useParts:false,partCount:1,useChapters:true,chapterCount:5},
+    saga: {useVolumes:true,volumeCount:2,useParts:true,partCount:2,useChapters:true,chapterCount:5},
+    notes:{useVolumes:false,volumeCount:1,useParts:false,partCount:1,useChapters:true,chapterCount:1}
+  };
+  presetButtons.forEach(button => button.addEventListener("click", () => {
+    const preset = presets[button.dataset.preset];
+    if (!preset) return;
+    Object.entries(preset).forEach(([key,value]) => {
+      const element = document.getElementById(key);
+      if (!element) return;
+      if (element.type === "checkbox") element.checked = value;
+      else element.value = String(value);
+    });
+    toggles.forEach(([checkId,inputId]) => {
+      document.getElementById(inputId).disabled = !document.getElementById(checkId).checked;
+    });
+    presetButtons.forEach(item => {
+      const active = item === button;
+      item.classList.toggle("active",active);
+      item.setAttribute("aria-pressed",String(active));
+    });
+    updatePreview();
+  }));
+  [titleInput,authorInput,...toggles.flatMap(([a,b]) => [document.getElementById(a),document.getElementById(b)])].forEach(field => {
+    field?.addEventListener("input", updatePreview);
+    field?.addEventListener("change", () => {
+      updatePreview();
+      if (field !== titleInput && field !== authorInput) presetButtons.forEach(button => {
+        button.classList.remove("active");
+        button.setAttribute("aria-pressed","false");
+      });
+    });
+  });
+  updatePreview();
+
   const getCount = (id, fallback) => {
     const value = Number.parseInt(document.getElementById(id).value, 10);
     return Number.isFinite(value) && value > 0 ? value : fallback;
