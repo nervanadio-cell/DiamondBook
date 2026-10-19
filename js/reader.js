@@ -380,6 +380,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("closeSidebar").addEventListener("click", () => sidebar.classList.remove("open"));
   document.getElementById("themeButton").addEventListener("click", () => themePanel.classList.toggle("hidden"));
   themePanel.addEventListener("click", event => {
+    const texture=event.target.dataset.texture;
+    if(texture && ["smooth","rough","damp","aged"].includes(texture)) {
+      book.pageTexture=texture;
+      page.dataset.pageTexture=texture;
+      try{saveBook(book);}catch(error){showToast("Не удалось сохранить фактуру страницы.");}
+      themePanel.querySelectorAll("[data-texture]").forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.texture===texture)));
+      return;
+    }
     const theme = event.target.dataset.theme;
     if (!theme) return;
     page.classList.remove("theme-paper", "theme-night", "theme-warm");
@@ -388,11 +396,23 @@ document.addEventListener("DOMContentLoaded", () => {
     themePanel.classList.add("hidden");
   });
 
+  const pageTextures=["smooth","rough","damp","aged"];
+  page.dataset.pageTexture=pageTextures.includes(book.pageTexture)?book.pageTexture:"smooth";
+  themePanel.querySelectorAll("[data-texture]").forEach(button=>{
+    button.setAttribute("aria-pressed",String(button.dataset.texture===page.dataset.pageTexture));
+  });
+
   const savedTheme = localStorage.getItem("bookCreator.readerTheme") || "paper";
   if (savedTheme !== "paper") page.classList.add(`theme-${savedTheme}`);
 
   document.addEventListener("keydown", event => {
-    if (event.target?.matches?.("input,textarea,[contenteditable='true']")) return;
+    if(event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && event.code==="Digit0") {
+      event.preventDefault();
+      page.classList.add("reader-closing");
+      setTimeout(()=>{location.href=document.getElementById("backToEditor").href;},260);
+      return;
+    }
+    if (event.target?.matches?.("input,textarea,select,[contenteditable='true']")) return;
     const key = event.key.toLowerCase();
     if (key === "d" || key === "arrowright" || key === " ") { event.preventDefault(); flip("next"); }
     if (key === "a" || key === "arrowleft" || key === "backspace") { event.preventDefault(); flip("prev"); }

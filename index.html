@@ -35,11 +35,22 @@
             <span aria-hidden="true">⌕</span><input id="librarySearch" type="search" placeholder="Название книги или автор…" aria-label="Поиск книг" autocomplete="off">
             <kbd>/</kbd>
           </label>
-          <label class="library-sort"><span>Порядок</span><select id="librarySort" aria-label="Сортировка книг">
-            <option value="recent">Недавно изменённые</option>
-            <option value="title">По названию</option>
-            <option value="oldest">Сначала старые</option>
-          </select></label>
+          <div class="library-sort-custom">
+            <span>Порядок</span>
+            <select id="librarySort" class="library-sort-original" aria-label="Сортировка книг" tabindex="-1">
+              <option value="recent">Недавно изменённые</option><option value="title">По названию</option><option value="oldest">Сначала старые</option>
+            </select>
+            <div class="library-sort-menu-wrap">
+              <button type="button" id="librarySortTrigger" aria-haspopup="listbox" aria-expanded="false">
+                <span id="librarySortLabel">Недавно изменённые</span><span aria-hidden="true">⌄</span>
+              </button>
+              <div class="library-sort-options" id="librarySortOptions" role="listbox" aria-label="Сортировка книг" hidden>
+                <button type="button" role="option" aria-selected="true" data-sort="recent">◷ Недавно изменённые</button>
+                <button type="button" role="option" aria-selected="false" data-sort="title">↕ По названию</button>
+                <button type="button" role="option" aria-selected="false" data-sort="oldest">⌛ Сначала старые</button>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="books-grid" id="booksGrid"></div>
         <p class="library-no-results" id="libraryNoResults" hidden>Ничего не найдено. Попробуй другое название.</p>

@@ -112,6 +112,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   search?.addEventListener("input",render);
   sort?.addEventListener("change",render);
+  const sortTrigger=document.getElementById("librarySortTrigger");
+  const sortOptions=document.getElementById("librarySortOptions");
+  const sortLabel=document.getElementById("librarySortLabel");
+  function closeSortMenu() {
+    if(sortOptions)sortOptions.hidden=true;
+    sortTrigger?.setAttribute("aria-expanded","false");
+  }
+  function openSortMenu() {
+    if(!sortOptions)return;
+    sortOptions.hidden=!sortOptions.hidden;
+    sortTrigger?.setAttribute("aria-expanded",String(!sortOptions.hidden));
+  }
+  sortTrigger?.addEventListener("click",openSortMenu);
+  sortOptions?.addEventListener("click",event=>{
+    const opt=event.target.closest("[data-sort]");
+    if(!opt)return;
+    sort.value=opt.dataset.sort;
+    sortLabel.textContent=sort.selectedOptions[0]?.textContent || "";
+    sortOptions.querySelectorAll("[data-sort]").forEach(item=>item.setAttribute("aria-selected",String(item===opt)));
+    closeSortMenu();
+    sort.dispatchEvent(new Event("change",{bubbles:true}));
+    sortTrigger?.focus();
+  });
+  document.addEventListener("click",event=>{
+    if(!event.target.closest?.(".library-sort-menu-wrap"))closeSortMenu();
+  });
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape" && sortOptions && !sortOptions.hidden) {closeSortMenu();sortTrigger.focus();}
+  });
   document.addEventListener("keydown",event => {
     const typing = event.target.closest?.("input,textarea,select,[contenteditable]");
     if (!typing && event.key === "/" && search) {

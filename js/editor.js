@@ -71,6 +71,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const textureSelect=document.getElementById("pageTextureSelect");
+  const allowedTextures=["smooth","rough","damp","aged"];
+  document.body.dataset.pageTexture=allowedTextures.includes(book.pageTexture)?book.pageTexture:"smooth";
+  if(textureSelect) {
+    textureSelect.value=document.body.dataset.pageTexture;
+    textureSelect.addEventListener("change",()=>{
+      book.pageTexture=allowedTextures.includes(textureSelect.value)?textureSelect.value:"smooth";
+      document.body.dataset.pageTexture=book.pageTexture;
+      markSaving();
+    });
+  }
+  document.addEventListener("bookcoverchange",event=>{
+    if(event.detail?.bookId!==book.id)return;
+    const saved=getBook(book.id);
+    if(saved){book.coverDesign=saved.coverDesign;book.coverDataUrl=saved.coverDataUrl;}
+  });
+
   function persistNow() {
     try {
       saveBook(book);

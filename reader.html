@@ -7,6 +7,7 @@
   <title>Чтение — DiamondBook</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/reader.css">
+  <link rel="stylesheet" href="css/page-materials.css">
 </head>
 <body class="reader-page">
   <header class="reader-topbar" id="readerTopbar">
@@ -51,7 +52,11 @@
   </footer>
 
   <div class="theme-panel hidden" id="themePanel">
+    <div class="reader-settings-heading">Тема</div>
     <button data-theme="paper">Бумага</button><button data-theme="night">Ночь</button><button data-theme="warm">Тёплый дуб</button>
+    <div class="reader-settings-heading">Фактура страницы</div>
+    <button data-texture="smooth">Гладкая</button><button data-texture="rough">Шершавая</button>
+    <button data-texture="damp">Сыроватая</button><button data-texture="aged">Старая</button>
   </div>
 
   <script src="js/storage.js"></script>

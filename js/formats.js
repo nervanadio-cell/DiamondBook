@@ -1315,6 +1315,8 @@ function makeBookFromImported(rawBook, fallbackTitle = "Импортирован
     title: String(source.title || fallbackTitle),
     author: String(source.author || ""),
     coverDataUrl: typeof source.coverDataUrl === "string" && /^data:image\/(?:jpeg|png|webp);base64,/.test(source.coverDataUrl) ? source.coverDataUrl : "",
+    coverDesign: source.coverDesign && typeof source.coverDesign==="object" ? (window.DiamondCoverDesign?.normalize(source.coverDesign) || source.coverDesign) : undefined,
+    pageTexture: ["smooth","rough","damp","aged"].includes(source.pageTexture) ? source.pageTexture : "smooth",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     structure: Array.isArray(source.structure) ? source.structure : []
