@@ -130,6 +130,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (helpOverlay && !helpOverlay.hidden) return;
 
+    // Editing shortcuts: Shift+1…5 for text; Alt+1…5 for paragraphs.
+    // Alt+0 opens the reading spread even when the writing area has focus.
+    if (!modifier && event.altKey && !event.shiftKey && code === "Digit0") {
+      event.preventDefault();
+      document.getElementById("readerButton")?.click();
+      return;
+    }
+    if (editing && !modifier && !isInput && /^Digit[1-5]$/.test(code)) {
+      const number=Number(code.slice(5));
+      if (event.shiftKey && !event.altKey) {
+        event.preventDefault();
+        const textActions=["bold","italic","underline","strikeThrough","formatBlock"];
+        executeCommand(textActions[number-1],number===5?"h2":null);
+        return;
+      }
+      if (event.altKey && !event.shiftKey) {
+        event.preventDefault();
+        const paragraphActions=["formatBlock","insertUnorderedList","insertOrderedList","justifyCenter","justifyLeft"];
+        executeCommand(paragraphActions[number-1],number===1?"p":null);
+        return;
+      }
+    }
+
     if (modifier && !event.shiftKey && !event.altKey && event.key === "Enter" && !isInput) {
       event.preventDefault();
       document.getElementById("readerButton")?.click();

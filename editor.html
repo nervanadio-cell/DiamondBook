@@ -45,17 +45,17 @@
       <div class="editor-toolbar" role="toolbar" aria-label="Форматирование текста">
         <span class="toolbar-section-label">Текст</span>
         <div class="toolbar-group">
-          <button type="button" class="tool-button" data-command="bold" title="Жирный · Ctrl+B" aria-label="Жирный Ctrl+B"><b>B</b></button>
-          <button type="button" class="tool-button" data-command="italic" title="Курсив · Ctrl+I" aria-label="Курсив Ctrl+I"><i>I</i></button>
-          <button type="button" class="tool-button" data-command="underline" title="Подчёркнутый · Ctrl+U" aria-label="Подчёркнутый Ctrl+U"><u>U</u></button>
-          <button type="button" class="tool-button" data-command="strikeThrough" title="Зачёркнутый" aria-label="Зачёркнутый"><s>S</s></button>
+          <button type="button" class="tool-button" data-command="bold" title="Жирный · Shift+1 / Ctrl+B" aria-label="Жирный Ctrl+B"><b>B</b></button>
+          <button type="button" class="tool-button" data-command="italic" title="Курсив · Shift+2 / Ctrl+I" aria-label="Курсив Ctrl+I"><i>I</i></button>
+          <button type="button" class="tool-button" data-command="underline" title="Подчёркнутый · Shift+3 / Ctrl+U" aria-label="Подчёркнутый Ctrl+U"><u>U</u></button>
+          <button type="button" class="tool-button" data-command="strikeThrough" title="Зачёркнутый · Shift+4" aria-label="Зачёркнутый"><s>S</s></button>
         </div>
         <span class="toolbar-divider"></span>
         <div class="toolbar-group">
-          <button type="button" class="tool-button" data-command="formatBlock" data-value="h2" title="Заголовок · Ctrl+Alt+2" aria-label="Заголовок">H₂</button>
-          <button type="button" class="tool-button" data-command="formatBlock" data-value="p" title="Обычный абзац · Ctrl+Alt+0" aria-label="Обычный абзац">¶</button>
-          <button type="button" class="tool-button" data-command="insertUnorderedList" title="Маркированный список · Ctrl+Shift+7" aria-label="Маркированный список">☷</button>
-          <button type="button" class="tool-button" data-command="insertOrderedList" title="Нумерованный список · Ctrl+Shift+8" aria-label="Нумерованный список">1.</button>
+          <button type="button" class="tool-button" data-command="formatBlock" data-value="h2" title="Заголовок · Shift+5 / Ctrl+Alt+2" aria-label="Заголовок">H₂</button>
+          <button type="button" class="tool-button" data-command="formatBlock" data-value="p" title="Обычный абзац · Alt+1 / Ctrl+Alt+0" aria-label="Обычный абзац">¶</button>
+          <button type="button" class="tool-button" data-command="insertUnorderedList" title="Маркированный список · Alt+2" aria-label="Маркированный список">☷</button>
+          <button type="button" class="tool-button" data-command="insertOrderedList" title="Нумерованный список · Alt+3" aria-label="Нумерованный список">1.</button>
         </div>
         <span class="toolbar-divider"></span>
         <div class="toolbar-group">
@@ -101,7 +101,7 @@
         <div id="editor" class="rich-editor" role="textbox" aria-label="Текст главы" aria-multiline="true" contenteditable="true" spellcheck="true" data-placeholder="Начни писать здесь..."></div>
       </div>
       <footer class="writer-statusbar" aria-label="Информация о главе">
-        <span class="writer-status-hint">Выдели текст, затем выбери инструмент. <kbd>F1</kbd> — клавиши</span>
+        <span class="writer-status-hint">Выдели текст • <kbd>Shift+1–5</kbd> оформление • <kbd>Alt+1–5</kbd> абзацы • <kbd>Alt+0</kbd> чтение • <kbd>F1</kbd> помощь</span>
         <div class="writer-stats"><span id="writerWordCount">0 слов</span><span aria-hidden="true">·</span><span id="writerCharCount">0 знаков</span></div>
       </footer>
     </section>
@@ -110,6 +110,24 @@
   <div class="writer-shortcut-overlay" id="shortcutGuideOverlay" hidden>
     <section class="writer-shortcut-dialog" role="dialog" aria-modal="true" aria-labelledby="shortcutGuideTitle">
       <header><h2 id="shortcutGuideTitle">Сочетания клавиш</h2><button type="button" id="shortcutGuideClose" aria-label="Закрыть подсказку">×</button></header>
+      <p class="shortcuts-category">Shift + цифра: оформление текста</p>
+      <div class="shortcut-guide-grid">
+        <div><span>Жирный</span><kbd>Shift+1</kbd></div>
+        <div><span>Курсив</span><kbd>Shift+2</kbd></div>
+        <div><span>Подчёркивание</span><kbd>Shift+3</kbd></div>
+        <div><span>Зачёркивание</span><kbd>Shift+4</kbd></div>
+        <div><span>Заголовок</span><kbd>Shift+5</kbd></div>
+      </div>
+      <p class="shortcuts-category">Alt + цифра: абзацы и расположение</p>
+      <div class="shortcut-guide-grid">
+        <div><span>Обычный абзац</span><kbd>Alt+1</kbd></div>
+        <div><span>Маркированный список</span><kbd>Alt+2</kbd></div>
+        <div><span>Нумерованный список</span><kbd>Alt+3</kbd></div>
+        <div><span>По центру</span><kbd>Alt+4</kbd></div>
+        <div><span>По левому краю</span><kbd>Alt+5</kbd></div>
+        <div><span>Читать книгу</span><kbd>Alt+0</kbd></div>
+      </div>
+      <p class="shortcuts-category">Дополнительно</p>
       <div class="shortcut-guide-grid">
         <div><span>Жирный</span><kbd>Ctrl+B</kbd></div><div><span>Курсив</span><kbd>Ctrl+I</kbd></div>
         <div><span>Подчёркивание</span><kbd>Ctrl+U</kbd></div><div><span>Заголовок</span><kbd>Ctrl+Alt+2</kbd></div>
