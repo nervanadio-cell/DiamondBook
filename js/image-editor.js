@@ -2,26 +2,29 @@
 (function() {
   const formats=["image/jpeg","image/png","image/webp","image/bmp"];
   let overlay=null;
-  function open({src=null,onSave,onDelete=null}) {
+  function open({src=null,onSave,onDelete=null,initialCaption="",initialAlign="center",initialSize="75"}) {
     overlay?.remove();
     overlay=document.createElement("div");
     overlay.className="book-image-overlay";
     overlay.innerHTML=[
       '<section class="book-image-dialog" role="dialog" aria-modal="true" aria-labelledby="imageDialogTitle">',
       '<header><div><small>DIAMONDBOOK · ИЛЛЮСТРАЦИЯ</small><h2 id="imageDialogTitle">Редактор изображения</h2>',
-      '<p>Сначала обрежь и обработай фото, потом вставь его в книгу.</p></div><button type="button" data-close aria-label="Закрыть">×</button></header>',
+      '<p>Фото откроется целиком. Для обрезки двигай рамку. Сразу доступен нуар.</p></div><button type="button" data-close aria-label="Закрыть">×</button></header>',
       '<div class="book-image-layout"><div class="book-image-stage">',
       '<div class="book-image-canvas-wrap"><canvas class="book-image-canvas" hidden></canvas><p class="book-image-empty">Выбери изображение JPG, PNG или WebP.</p></div>',
-      '<p class="book-image-help">Перемещай выделение; тяни угловые маркеры, чтобы изменить размер.</p></div>',
+      '<p class="book-image-help">Рамка не сбрасывается от касания. Для обрезки потяни угол.</p></div>',
       '<div class="book-image-controls">',
       '<input class="book-image-input" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,.jpg,.jpeg,.png,.bmp,.webp" hidden>',
-      '<button type="button" class="book-image-pick">▧ Загрузить изображение</button>',
+      '<button type="button" class="book-image-pick">▧ Выбрать фото</button>',
+      '<button type="button" class="book-image-reset">↺ Показать целиком</button>',
       '<label>Пропорции<select data-setting="ratio"><option value="free">Свободно</option><option value="1.5">3:2</option>',
       '<option value="1.333333">4:3</option><option value="1">Квадрат</option><option value="1.7777778">16:9</option></select></label>',
       '<label>Обработка<select data-setting="filter"><option value="original">Оригинал</option><option value="noir">Нуар — контрастный Ч/Б</option>',
       '<option value="mono">Чёрно-белое</option><option value="sepia">Старинное сепия</option></select></label>',
       '<label>Контраст <output class="book-image-contrast-label">100%</output><input data-setting="contrast" type="range" min="65" max="180" step="5" value="100"></label>',
       '<label>Яркость <output class="book-image-brightness-label">100%</output><input data-setting="brightness" type="range" min="60" max="150" step="5" value="100"></label>',
+      '<label>Размер в книге<select data-setting="size"><option value="50">Небольшая</option>',
+      '<option value="75" selected>Средняя</option><option value="100">На всю страницу</option></select></label>',
       '<label>Подпись (необязательно)<input data-setting="caption" maxlength="160" type="text" placeholder="Например, Иллюстрация к главе 2"></label>',
       '<label>Расположение<select data-setting="align"><option value="center">По центру</option><option value="left">По левому краю</option>',
       '<option value="right">По правому краю</option></select></label>',
@@ -51,6 +54,10 @@
     const brightnessInput=overlay.querySelector('[data-setting="brightness"]');
     const captionInput=overlay.querySelector('[data-setting="caption"]');
     const alignInput=overlay.querySelector('[data-setting="align"]');
+    const sizeInput=overlay.querySelector('[data-setting="size"]');
+    captionInput.value=initialCaption;
+    alignInput.value=["left","center","right"].includes(initialAlign)?initialAlign:"center";
+    sizeInput.value=["50","75","100"].includes(String(initialSize))?String(initialSize):"75";
     let image=null,crop=null,scale=1,drag=null,objectUrl=null;
     function close() {
       document.removeEventListener("keydown",onKey);
@@ -63,6 +70,7 @@
     overlay.querySelectorAll("[data-close]").forEach(el=>el.addEventListener("click",close));
     overlay.addEventListener("click",event=>{if(event.target===overlay)close();});
     pick.addEventListener("click",()=>fileInput.click());
+    overlay.querySelector(".book-image-reset").addEventListener("click",resetCrop);
     function filterCSS(){
       const filters={
         original:"",
@@ -75,7 +83,7 @@
     function ratioValue(){return ratioInput.value==="free"?null:Number(ratioInput.value);}
     function resetCrop(){
       if(!image)return;
-      const ratio=ratioValue();let w=canvas.width*.84,h=canvas.height*.84;
+      const ratio=ratioValue();let w=canvas.width,h=canvas.height;
       if(ratio){if(w/h>ratio)w=h*ratio;else h=w/ratio;}
       crop={x:(canvas.width-w)/2,y:(canvas.height-h)/2,w,h};
       draw();
@@ -125,6 +133,7 @@
       objectUrl=URL.createObjectURL(file);loadURL(objectUrl);
     });
     if(src&&/^data:image\/(?:jpeg|png|webp);base64,/.test(src))loadURL(src);
+    else fileInput.click();
     for(const input of [filterInput,contrastInput,brightnessInput])input.addEventListener("input",()=>{
       overlay.querySelector(".book-image-contrast-label").textContent=contrastInput.value+"%";
       overlay.querySelector(".book-image-brightness-label").textContent=brightnessInput.value+"%";
@@ -134,8 +143,10 @@
       if(!crop){resetCrop();return;}
       const ratio=ratioValue();if(!ratio){draw();return;}
       const cx=crop.x+crop.w/2,cy=crop.y+crop.h/2;
-      const w=Math.min(crop.w,canvas.width,canvas.height*ratio);
-      const h=Math.min(w/ratio,canvas.height);
+      let w=Math.min(crop.w,canvas.width),h=w/ratio;
+      if(h>crop.h){h=crop.h;w=h*ratio;}
+      if(h>canvas.height){h=canvas.height;w=h*ratio;}
+      w=Math.max(1,Math.min(w,canvas.width));h=Math.max(1,Math.min(h,canvas.height));
       crop={x:Math.max(0,Math.min(canvas.width-w,cx-w/2)),
         y:Math.max(0,Math.min(canvas.height-h,cy-h/2)),w,h};
       draw();
@@ -204,7 +215,7 @@
         ctx.filter=filterCSS();
         ctx.drawImage(image,crop.x/scale,crop.y/scale,sw,sh,0,0,out.width,out.height);
         const dataUrl=out.toDataURL("image/jpeg",.78);
-        onSave?.({src:dataUrl,caption:captionInput.value.trim(),align:alignInput.value});
+        onSave?.({src:dataUrl,caption:captionInput.value.trim(),align:alignInput.value,size:Number(sizeInput.value) || 75});
         close();
       }catch(error){alert(error.message||"Не удалось обработать фото.");}
     });
