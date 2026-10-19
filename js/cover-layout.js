@@ -1,6 +1,22 @@
 /* Individual title placement is serialized in book.coverDesign. */
 (function() {
-  const FONTS = { classic:"Georgia, serif", elegant:"Palatino, Georgia, serif", modern:"Trebuchet MS, Arial, sans-serif", sans:"Arial, sans-serif", mono:"Courier New, monospace" };
+  const FONTS = {
+    classic:"Georgia, serif",
+    elegant:"'Palatino Linotype', Palatino, Georgia, serif",
+    modern:"'Trebuchet MS', Arial, sans-serif",
+    sans:"Arial, Helvetica, sans-serif",
+    mono:"'Courier New', Courier, monospace",
+    garamond:"Garamond, 'Times New Roman', serif",
+    baskerville:"Baskerville, Georgia, serif",
+    cambria:"Cambria, Georgia, serif",
+    bookman:"'Bookman Old Style', Georgia, serif",
+    times:"'Times New Roman', Times, serif",
+    verdana:"Verdana, sans-serif",
+    tahoma:"Tahoma, sans-serif",
+    century:"'Century Gothic', 'Trebuchet MS', sans-serif",
+    impact:"Impact, 'Arial Narrow', sans-serif",
+    handwriting:"'Segoe Print', 'Comic Sans MS', cursive"
+  };
   const DEFAULT = { title:{x:50,y:34,size:23,opacity:1,font:"classic"},author:{x:50,y:85,size:11,opacity:.93,font:"modern"} };
   const clamp = (value,min,max,fallback) => {const n=Number(value);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):fallback;};
   function normalize(data) {
@@ -15,15 +31,44 @@
   }
   function apply(face,data) {
     if(!face)return;
-    const normalized=normalize(data);
+    const d=normalize(data);
+    face.classList.add("diamond-cover-face");
     for(const kind of ["title","author"]) {
       const el=face.querySelector(kind==="title"?".book-cover-title, #previewTitle, .cover-design-title":".book-cover-author, #previewAuthor, .cover-design-author");
       if(!el)continue;
-      const s=normalized[kind];
-      Object.assign(el.style,{position:"absolute",left:s.x+"%",top:s.y+"%",transform:"translate(-50%, -50%)",
-        maxWidth:"90%",width:"max-content",overflowWrap:"anywhere",textAlign:"center",fontSize:s.size+"px",
-        lineHeight:"1.14",opacity:String(s.opacity),fontFamily:FONTS[s.font],zIndex:"4"});
+      const p=d[kind];
+      // cqw ensures exact proportional typography in the cover editor, bookshelf
+      // and new-book preview rather than copying a fixed 23px onto a 150px cover.
+      Object.assign(el.style,{
+        position:"absolute",left:p.x+"%",top:p.y+"%",transform:"translate(-50%, -50%)",
+        maxWidth:"86%",width:"max-content",overflowWrap:"anywhere",whiteSpace:"normal",
+        textAlign:"center",fontSize:(p.size/2.65).toFixed(3)+"cqw",
+        lineHeight:"1.17",opacity:String(p.opacity),fontFamily:FONTS[p.font],zIndex:"4"
+      });
     }
+    const title=face.querySelector(".book-cover-title, #previewTitle, .cover-design-title");
+    const author=face.querySelector(".book-cover-author, #previewAuthor, .cover-design-author");
+    if(!title||!author)return;
+    // Keep the title and author readable even if the two anchors were placed
+    // close together. Apply the same rule to every cover representation.
+    const separate=()=>{
+      if(!face.isConnected || !title.isConnected)return;
+      author.style.top=d.author.y+"%";
+      title.style.top=d.title.y+"%";
+      const a=author.getBoundingClientRect(),t=title.getBoundingClientRect(),f=face.getBoundingClientRect();
+      if(!f.height || !a.height || !t.height || t.bottom+4<a.top || a.bottom+4<t.top)return;
+      const gap=Math.max(5,f.width*.025);
+      if(d.author.y>=d.title.y){
+        const y=100*(t.bottom+gap+a.height/2-f.top)/f.height;
+        author.style.top=Math.min(93,y)+"%";
+      }else{
+        const y=100*(a.bottom+gap+t.height/2-f.top)/f.height;
+        title.style.top=Math.min(91,y)+"%";
+      }
+    };
+    separate();
+    // Fonts can settle after the current layout or a resize.
+    requestAnimationFrame(separate);
   }
   function openPanel(opts) {
     document.querySelector(".cover-design-overlay")?.remove();
@@ -33,7 +78,7 @@
     overlay.innerHTML=[
       '<section class="cover-design-dialog" role="dialog" aria-modal="true" aria-labelledby="coverDesignHeading">',
       '<header><div><small>ОФОРМЛЕНИЕ КНИГИ</small><h2 id="coverDesignHeading">Надписи на обложке</h2>',
-      '<p>Меняй шрифт, прозрачность и расположение названия или автора.</p></div>',
+      '<p>15 шрифтов, прозрачность и свободное расположение. Если надписи близко, они автоматически раздвинутся.</p></div>',
       '<button type="button" class="cover-design-close" aria-label="Закрыть">×</button></header>',
       '<div class="cover-design-layout"><div class="cover-design-stage"><div class="cover-design-face">',
       '<span class="cover-design-title" tabindex="0" role="button" aria-label="Переместить название"></span>',
@@ -41,8 +86,12 @@
       '</div><p>Перетащи надпись мышью или пальцем. Стрелки тоже работают.</p></div>',
       '<form class="cover-design-controls" onsubmit="return false">',
       '<div class="cover-design-kind"><button type="button" data-kind="title">Название</button><button type="button" data-kind="author">Автор</button></div>',
-      '<label>Шрифт<select data-field="font"><option value="classic">Книжный</option><option value="elegant">Изящный</option>',
-      '<option value="modern">Современный</option><option value="sans">Простой</option><option value="mono">Печатный</option></select></label>',
+      '<label>Шрифт<select data-field="font"><option value="classic">Книжный — Georgia</option><option value="elegant">Palatino</option>',
+      '<option value="garamond">Garamond</option><option value="baskerville">Baskerville</option><option value="cambria">Cambria</option>',
+      '<option value="bookman">Bookman</option><option value="times">Times</option><option value="modern">Trebuchet</option>',
+      '<option value="sans">Arial</option><option value="verdana">Verdana</option><option value="tahoma">Tahoma</option>',
+      '<option value="century">Century Gothic</option><option value="impact">Impact</option><option value="handwriting">Рукописный</option>',
+      '<option value="mono">Печатная машинка</option></select></label>',
       '<label>Размер <output data-output="size"></output><input data-field="size" type="range" min="9" max="40" step="1"></label>',
       '<label>Прозрачность <output data-output="opacity"></output><input data-field="opacity" type="range" min=".2" max="1" step=".05"></label>',
       '<label>По горизонтали <output data-output="x"></output><input data-field="x" type="range" min="10" max="90" step="1"></label>',
