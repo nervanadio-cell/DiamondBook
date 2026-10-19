@@ -26,13 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
     emptyState.classList.toggle("hidden", allBooks.length > 0);
     if (noResults) noResults.hidden = !allBooks.length || !!books.length;
     if (!books.length) return;
-    const perShelf = window.matchMedia("(max-width: 720px)").matches ? 2 : window.matchMedia("(max-width: 1000px)").matches ? 3 : 5;
+    const perShelf = window.matchMedia("(max-width: 720px)").matches ? 2 : window.matchMedia("(max-width: 1120px)").matches ? 3 : 4;
     for (let start = 0; start < books.length; start += perShelf) {
       const shelf = document.createElement("section");
       shelf.className = "bookshelf-row";
       shelf.setAttribute("aria-label", `Полка ${Math.floor(start / perShelf) + 1}`);
       const booksWrap = document.createElement("div");
       booksWrap.className = "bookshelf-books";
+      const detailsWrap = document.createElement("div");
+      detailsWrap.className = "shelf-details";
 
       books.slice(start, start + perShelf).forEach((book, offset) => {
         const index = start + offset;
@@ -66,13 +68,20 @@ document.addEventListener("DOMContentLoaded", () => {
           card.classList.add("has-custom-cover");
         }
         window.DiamondCoverDesign?.apply(cover,book.coverDesign);
+        const details = document.createElement("div");
+        details.className = "shelf-book-details";
+        details.append(
+          card.querySelector(".book-meta"),
+          card.querySelector(".book-card-bottom")
+        );
         booksWrap.appendChild(card);
+        detailsWrap.appendChild(details);
       });
 
       const board = document.createElement("div");
       board.className = "shelf-board";
       board.setAttribute("aria-hidden", "true");
-      shelf.append(booksWrap, board);
+      shelf.append(booksWrap, board, detailsWrap);
       grid.appendChild(shelf);
     }
   }
