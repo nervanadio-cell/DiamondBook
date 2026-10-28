@@ -1,12 +1,29 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(location.search);
-  const book = getBook(params.get("id")) || getCurrentBook();
-  if (!book) { location.href = "index.html"; return; }
+  const publicId = params.get("public");
+  const isPublic = !!publicId;
+  let book = null;
+  if (isPublic) {
+    if (!/^[0-9a-f-]{36}$/.test(publicId)) { location.href="index.html#community"; return; }
+    try {
+      const response = await fetch("/api/books/"+encodeURIComponent(publicId),{credentials:"same-origin"});
+      if (!response.ok) throw Error("Книга недоступна.");
+      const data = await response.json();
+      book = data.book;
+    } catch (error) {
+      alert(error.message || "Не удалось открыть книгу сообщества.");
+      location.href="index.html#community";
+      return;
+    }
+  } else {
+    book = getBook(params.get("id")) || getCurrentBook();
+  }
+  if (!book) { location.href = isPublic ? "index.html#community" : "index.html"; return; }
 
   let chapters = flattenChapters(book);
   if (!chapters.length) {
     book.structure = [makeChapter("Глава 1")];
-    saveBook(book);
+    if(!isPublic) saveBook(book);
     chapters = flattenChapters(book);
   }
 
@@ -58,8 +75,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bookTitle.textContent = book.title;
   document.getElementById("readerContentsTitle").textContent = book.title;
-  document.getElementById("backToEditor").href =
-    `editor.html?id=${encodeURIComponent(book.id)}&chapter=${encodeURIComponent(chapters[chapterIndex]?.chapter.id || "")}`;
+  const backLink = document.getElementById("backToEditor");
+  if(isPublic){
+    backLink.href="index.html#community";
+    backLink.textContent="К общей библиотеке";
+    document.querySelector(".reader-topbar .brand").href="index.html#community";
+    document.title=book.title+" — DiamondBook";
+  } else {
+    backLink.href="editor.html?id="+encodeURIComponent(book.id)+"&chapter="+encodeURIComponent(chapters[chapterIndex]?.chapter.id || "");
+  }
 
   function partIdentity(item) {
     const ancestors = item.parents || [];
@@ -108,15 +132,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function sanitizeHtml(html) {
     const doc = new DOMParser().parseFromString(String(html || ""), "text/html");
-    doc.querySelectorAll("script,iframe,object,embed,form,video,audio").forEach(node => node.remove());
-    doc.querySelectorAll("*").forEach(node => {
-      [...node.attributes].forEach(attr => {
-        const name = attr.name.toLowerCase();
-        const value = attr.value.trim();
-        if (name.startsWith("on")) node.removeAttribute(attr.name);
-        if ((name === "href" || name === "src") && /^javascript:/i.test(value)) node.removeAttribute(attr.name);
+    doc.querySelectorAll("script,iframe,object,embed,form,video,audio,svg,math,style,link,meta,template").forEach(n => n.remove());
+    if(isPublic){
+      const allowed=new Set(["p","b","strong","i","em","u","s","del","br","ul","ol","li","h1","h2","h3","blockquote","figure","figcaption","img","hr","span","div"]);
+      [...doc.body.querySelectorAll("*")].forEach(node=>{
+        if(!node.isConnected)return;
+        const tag=node.tagName.toLowerCase();
+        if(!allowed.has(tag)){node.replaceWith(...node.childNodes);return;}
+        const src=node.getAttribute("src"),alt=node.getAttribute("alt")||"";
+        const validImage=tag==="img" && typeof src==="string" && src.length<100000 &&
+          /^(data:image\/(?:png|jpeg|webp);base64,)[a-z0-9+/=]+$/i.test(src);
+        for(const attr of [...node.attributes])node.removeAttribute(attr.name);
+        if(tag==="img"){
+          if(!validImage){node.remove();return;}
+          node.setAttribute("src",src);
+          node.setAttribute("alt",alt.slice(0,120));
+          node.setAttribute("loading","lazy");
+        }else if(tag==="figure"){node.className="book-figure";}
       });
-    });
+    }else{
+      doc.querySelectorAll("*").forEach(node=>[...node.attributes].forEach(attr=>{
+        const key=attr.name.toLowerCase(),value=attr.value.trim();
+        if(key.startsWith("on") || (["href","src"].includes(key)&& /^javascript:/i.test(value)))node.removeAttribute(attr.name);
+      }));
+    }
     return doc.body;
   }
 
@@ -407,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if(texture && ["smooth","rough","damp","aged"].includes(texture)) {
       book.pageTexture=texture;
       page.dataset.pageTexture=texture;
-      try{saveBook(book);}catch(error){showToast("Не удалось сохранить фактуру страницы.");}
+      if(!isPublic){try{saveBook(book);}catch(error){showToast("Не удалось сохранить фактуру страницы.");}}
       themePanel.querySelectorAll("[data-texture]").forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.texture===texture)));
       return;
     }
