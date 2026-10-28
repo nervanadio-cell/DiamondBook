@@ -11,12 +11,14 @@
   <link rel="stylesheet" href="css/page-materials.css">
   <link rel="stylesheet" href="css/shelf-rework.css">
   <link rel="stylesheet" href="css/wood-realism.css">
+  <link rel="stylesheet" href="css/community.css">
 </head>
 <body class="library-screen">
   <div class="app-shell">
     <header class="topbar">
       <a class="brand" href="index.html">Diamond<span>Book</span></a>
       <nav class="top-actions">
+        <button type="button" id="accountButton" class="account-entry" aria-label="Войти или зарегистрироваться"><span class="account-entry-avatar">✦</span><span id="accountButtonLabel">Войти / Регистрация</span></button>
         <button class="ghost-button" id="importButton">Импорт</button>
         <button class="primary-button" id="newBookButton">+ Создать книгу</button>
         <input id="fileInput" type="file" accept=".json,.txt,.md,.markdown,.html,.htm,.xhtml,.mhtml,.adoc,.asciidoc,.org,.rst,.djot,.bbcode,.textile,.wiki,.fountain,.rtf,.fb2,.epub,.pdf,.docx,.odt,.xml,.jsonld,.yaml,.yml,.csv,.tsv,.opml,.srt,.vtt" hidden>
@@ -59,7 +61,60 @@
         <p class="library-no-results" id="libraryNoResults" hidden>Ничего не найдено. Попробуй другое название.</p>
         <div class="empty-state" id="emptyState"><div class="empty-icon">✦</div><h3>Здесь пока тихо</h3><p>Создай первую книгу и начни писать свою историю.</p><button class="primary-button" id="emptyCreateButton">Создать первую книгу</button></div>
       </section>
+
+      <section class="library-section community-section" id="community" aria-labelledby="communityHeading">
+        <div class="library-heading community-heading">
+          <div class="library-heading-copy">
+            <p class="eyebrow">ОТКРЫТАЯ КНИЖНАЯ ПОЛКА · DIAMONDBOOK</p>
+            <h2 id="communityHeading">Библиотека пользователей<span class="library-heading-ornament" aria-hidden="true">✦</span></h2>
+            <p class="library-subtitle">Истории авторов сообщества. Читай, находи новые голоса и публикуй свои книги.</p>
+          </div>
+          <div class="library-heading-stat"><span id="communityCount">0 книг</span><small>опубликовано</small></div>
+        </div>
+        <div class="community-search-layout">
+          <label class="library-search community-search"><span aria-hidden="true">⌕</span>
+            <input id="communitySearch" type="search" placeholder="Книга, автор или никнейм…" aria-label="Поиск в общей библиотеке">
+          </label>
+          <label class="community-filter-label">Жанр
+            <select id="communityCategory">
+              <option value="">Все жанры</option><option value="fantasy">Фэнтези</option>
+              <option value="romance">Романтика</option><option value="scifi">Фантастика</option>
+              <option value="detective">Детектив</option><option value="horror">Ужасы</option>
+              <option value="adventure">Приключения</option><option value="poetry">Поэзия</option>
+              <option value="nonfiction">Документальная</option><option value="other">Другое</option>
+            </select>
+          </label>
+          <label class="community-filter-label">Сортировка
+            <select id="communitySort"><option value="new">Сначала новые</option><option value="title">По названию</option></select>
+          </label>
+          <button type="button" id="publishOwnBook" class="community-publish-button">＋ Опубликовать</button>
+        </div>
+        <div id="communityCategories" class="community-categories" aria-label="Выбор жанра">
+          <button type="button" class="active" data-category="">Все</button>
+          <button type="button" data-category="fantasy">Фэнтези</button>
+          <button type="button" data-category="romance">Романтика</button>
+          <button type="button" data-category="scifi">Фантастика</button>
+          <button type="button" data-category="detective">Детективы</button>
+          <button type="button" data-category="horror">Ужасы</button>
+          <button type="button" data-category="adventure">Приключения</button>
+          <button type="button" data-category="poetry">Поэзия</button>
+          <button type="button" data-category="nonfiction">Документальная</button>
+          <button type="button" data-category="other">Другое</button>
+        </div>
+        <div id="communityBooks" class="books-grid community-shelves" aria-live="polite"></div>
+        <div id="communityNotice" class="community-notice">Загружаем книги сообщества…</div>
+      </section>
     </main>
+  </div>
+
+  <div id="communityModal" class="community-modal" hidden>
+    <div class="community-dialog" role="dialog" aria-modal="true" aria-labelledby="communityDialogTitle">
+      <header class="community-dialog-header">
+        <div><p class="eyebrow">DIAMONDBOOK · КЛУБ АВТОРОВ</p><h2 id="communityDialogTitle">Аккаунт</h2></div>
+        <button id="communityDialogClose" type="button" aria-label="Закрыть">×</button>
+      </header>
+      <div id="communityDialogBody" class="community-dialog-body"></div>
+    </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
@@ -68,6 +123,7 @@
   <script src="js/formats.js"></script>
   <script src="js/cover-layout.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/community.js"></script>
   <script src="js/cover-editor.js"></script>
   <script src="js/import.js"></script>
 </body>
