@@ -1,0 +1,311 @@
+/* DiamondBook / natural oak finish.
+   Bark and board are repeatable SVG materials, sized with their native 1536:2048 and 1200:240 ratios.
+   Rules are intentionally last in the cascade to stabilize the older iterations. */
+:root {
+  --oak-ink:#f4e6ce;
+  --oak-gold:#ddb27a;
+  --oak-muted:#b9a48a;
+  --oak-shadow:rgba(9,7,5,.64);
+  --shelf-columns:4;
+  --shelf-gap:clamp(13px,2.3vw,30px);
+  --shelf-pad:clamp(8px,1.3vw,18px);
+}
+html {overflow-x:clip;}
+body {
+  min-height:100vh;
+  color:#efe1ca;
+  background-color:#221b15;
+  background-image:
+    radial-gradient(ellipse 110% 70% at 46% 2%,rgba(109,75,40,.04),rgba(5,5,4,.52) 90%),
+    linear-gradient(90deg,rgba(12,10,8,.57),rgba(14,11,8,.34) 48%,rgba(7,7,6,.65)),
+    url("../assets/oak-bark.svg");
+  background-size:100% 100%,100% 100%,clamp(680px,100vw,1536px) auto;
+  background-position:center center,center center,center top;
+  background-repeat:no-repeat,no-repeat,repeat;
+  background-attachment:fixed,fixed,fixed;
+}
+.app-shell {background:transparent;}
+.topbar,.editor-page .editor-topbar {
+  border-bottom:1px solid rgba(224,177,114,.42)!important;
+  background-image:
+    linear-gradient(180deg,rgba(21,14,9,.84),rgba(24,16,11,.91)),
+    url("../assets/oak-board.svg")!important;
+  background-position:center,center 47%!important;
+  background-size:100% 100%,600px 120px!important;
+  background-repeat:no-repeat,repeat-x!important;
+  box-shadow:inset 0 -2px 0 rgba(8,7,6,.42),0 10px 27px rgba(0,0,0,.29)!important;
+}
+.library-screen .library-heading h1,
+.create-screen .create-heading h1 {text-shadow:0 3px 18px rgba(0,0,0,.36);}
+.library-screen .library-section {background:transparent!important;}
+.library-screen .library-tools {position:relative;z-index:6;}
+.library-screen .books-grid {
+  display:flex!important;
+  flex-direction:column;
+  gap:clamp(22px,3.7vw,51px);
+  max-width:1380px;
+  margin:0 auto;
+  overflow:visible;
+}
+.library-screen .bookshelf-row {
+  --shelf-columns:4;
+  --shelf-gap:clamp(13px,2.3vw,30px);
+  position:relative;
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  padding:0 clamp(10px,1.6vw,21px)!important;
+  margin:0;
+  isolation:isolate;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.library-screen .bookshelf-books,
+.library-screen .shelf-details {
+  box-sizing:border-box;
+  display:grid!important;
+  grid-template-columns:repeat(var(--shelf-columns),minmax(0,1fr))!important;
+  align-items:end;
+  gap:var(--shelf-gap)!important;
+  padding-left:var(--shelf-pad)!important;
+  padding-right:var(--shelf-pad)!important;
+  width:100%;
+  max-width:100%;
+  margin:0;
+  justify-content:center;
+}
+.library-screen .bookshelf-books {
+  min-height:clamp(330px,28vw,371px);
+  padding-top:9px;
+  position:relative;
+  z-index:2;
+}
+.library-screen .bookshelf-books::before {
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  bottom:0;
+  left:4%;right:4%;
+  height:22px;
+  z-index:-1;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.17));
+}
+.library-screen .book-card {
+  box-sizing:border-box;
+  min-width:0;
+  width:100%;
+  height:auto;
+  align-self:end;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center;
+  justify-content:flex-end;
+  flex-direction:column;
+  background:none!important;
+  box-shadow:none!important;
+}
+.library-screen .book-card-main {
+  width:100%;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-direction:column;
+}
+.library-screen .book-cover {
+  box-sizing:border-box!important;
+  flex:0 0 auto;
+  position:relative;
+  width:min(100%,224px)!important;
+  max-width:224px!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:2/3!important;
+  margin:0 auto!important;
+  padding:0!important;
+  border:1px solid rgba(221,192,149,.36);
+  border-radius:3px 10px 5px 3px!important;
+  box-shadow:
+    inset 9px 0 11px rgba(10,8,6,.44),
+    inset 2px 0 rgba(255,249,228,.12),
+    inset -2px 0 rgba(2,2,2,.3),
+    3px 5px 1px rgba(7,6,5,.65),
+    0 13px 21px rgba(0,0,0,.56)!important;
+  transform-origin:bottom center;
+  backface-visibility:hidden;
+}
+.library-screen .book-cover::after {
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  top:0;bottom:0;left:5px;
+  width:5px;
+  background:linear-gradient(90deg,rgba(0,0,0,.52),rgba(213,183,143,.17),rgba(0,0,0,.15));
+}
+.library-screen .book-card:not(.book-opening):hover .book-cover {
+  box-shadow:
+    inset 9px 0 11px rgba(10,8,6,.44),
+    4px 6px 1px rgba(6,5,4,.62),
+    0 23px 29px rgba(0,0,0,.65)!important;
+  transform:translateY(-5px) scale(1.02);
+}
+.library-screen .shelf-board {
+  box-sizing:border-box!important;
+  position:relative;
+  width:calc(100% + 20px)!important;
+  height:34px!important;
+  margin:-1px -10px 0!important;
+  border-top:2px solid #c69a65!important;
+  border-left:2px solid #744823!important;
+  border-right:2px solid #724a2b!important;
+  border-bottom:6px solid #3d2817!important;
+  border-radius:3px 3px 5px 5px!important;
+  z-index:3;
+  background-color:#855b35!important;
+  background-image:
+    linear-gradient(180deg,rgba(252,220,167,.34),transparent 25%,rgba(51,26,11,.1) 50%,rgba(15,9,5,.44)),
+    url("../assets/oak-board.svg")!important;
+  background-repeat:no-repeat,repeat-x!important;
+  background-size:100% 100%,540px 108px!important;
+  background-position:center,0 49%!important;
+  box-shadow:
+    inset 0 2px rgba(248,210,150,.33),
+    inset 0 -4px 6px rgba(33,18,10,.42),
+    0 5px 1px rgba(27,16,10,.94),
+    0 13px 19px rgba(0,0,0,.53),
+    0 24px 37px rgba(0,0,0,.29)!important;
+}
+.library-screen .shelf-board::before {
+  content:"";
+  position:absolute;
+  left:2px;right:2px;top:-6px;height:7px;
+  background:linear-gradient(180deg,rgba(252,215,156,.62),rgba(163,107,55,.75),rgba(54,31,15,.27));
+  border-radius:2px 2px 0 0;
+  pointer-events:none;
+}
+.library-screen .shelf-board::after {
+  content:"";
+  position:absolute;
+  bottom:-9px;left:4px;right:4px;
+  height:7px;
+  background:linear-gradient(180deg,#4e321c,#24140b);
+  box-shadow:0 5px 9px rgba(0,0,0,.37);
+  pointer-events:none;
+}
+.library-screen .bookshelf-row:nth-child(2n) .shelf-board {
+  background-position:center,190px 58%!important;
+}
+.library-screen .bookshelf-row:nth-child(3n) .shelf-board {
+  background-position:center,330px 43%!important;
+}
+.library-screen .shelf-details {
+  align-items:start;
+  position:relative;
+  padding-top:18px!important;
+  z-index:4;
+}
+.library-screen .shelf-book-details {
+  box-sizing:border-box;
+  min-width:0;
+  width:100%;
+  text-align:center;
+}
+.library-screen .shelf-book-details .book-meta {
+  min-height:39px;
+  line-height:1.55;
+  color:#e4d4b9;
+  font-size:12px;
+  text-shadow:0 1px 6px rgba(0,0,0,.9);
+  overflow-wrap:anywhere;
+}
+.library-screen .shelf-book-details .book-card-bottom {
+  width:100%;
+  max-width:224px;
+  justify-content:center;
+  margin:7px auto 0!important;
+  gap:7px;
+}
+.library-screen .book-open,.library-screen .book-menu-trigger {
+  border:1px solid rgba(218,174,117,.36);
+  box-shadow:inset 0 1px rgba(255,246,214,.06),0 4px 12px rgba(0,0,0,.2);
+}
+/* Bark is visible but writing surfaces remain clean and readable. */
+.create-screen .create-main {
+  background-image:
+    linear-gradient(145deg,rgba(38,28,21,.96),rgba(20,20,16,.98)),
+    url("../assets/oak-bark.svg")!important;
+  background-repeat:no-repeat,repeat!important;
+  background-size:100% 100%,760px auto!important;
+  border-color:rgba(220,178,120,.37);
+  box-shadow:0 22px 65px rgba(3,4,3,.56),inset 0 1px rgba(251,224,184,.045);
+}
+.create-screen .create-preview-column {min-width:0;}
+.create-screen .create-book-preview {
+  border:1px solid rgba(226,184,123,.46);
+  box-shadow:inset 12px 0 15px rgba(0,0,0,.5),14px 23px 30px rgba(0,0,0,.66);
+}
+.editor-page .sidebar {
+  background-image:
+    linear-gradient(165deg,rgba(40,30,21,.95),rgba(21,21,17,.95)),
+    url("../assets/oak-bark.svg")!important;
+  background-repeat:no-repeat,repeat!important;
+  background-size:100% 100%,700px auto!important;
+}
+.editor-page .writing-area {
+  background-image:
+    linear-gradient(180deg,rgba(11,9,7,.72),rgba(15,10,8,.69)),
+    url("../assets/oak-bark.svg")!important;
+  background-size:100% 100%,840px auto!important;
+  background-position:center,center top!important;
+  background-repeat:no-repeat,repeat!important;
+}
+.editor-page .editor-toolbar {
+  background-image:
+    linear-gradient(180deg,rgba(72,49,29,.66),rgba(36,25,16,.78)),
+    url("../assets/oak-board.svg")!important;
+  background-size:100% 100%,460px 92px!important;
+  background-position:center,center 51%!important;
+  background-repeat:no-repeat,repeat-x!important;
+  box-shadow:inset 0 1px rgba(252,215,171,.13),0 7px 16px rgba(0,0,0,.44);
+}
+.editor-page .chapter-editor {
+  max-width:950px;
+  margin-left:auto;
+  margin-right:auto;
+  box-sizing:border-box;
+}
+@media(max-width:1120px){
+  .library-screen .bookshelf-row {--shelf-columns:3;}
+  .library-screen .bookshelf-books {min-height:336px;}
+}
+@media(max-width:720px){
+  body {
+    background-attachment:scroll,scroll,scroll!important;
+    background-size:100% 100%,100% 100%,780px auto!important;
+  }
+  .library-screen .bookshelf-row {--shelf-columns:2;--shelf-gap:clamp(9px,3vw,14px);padding:0 5px!important;}
+  .library-screen .bookshelf-books {min-height:clamp(230px,73vw,315px);padding-top:7px;}
+  .library-screen .book-cover {width:min(100%,192px)!important;max-width:192px!important;}
+  .library-screen .shelf-board {
+    width:calc(100% + 10px)!important;
+    margin:-1px -5px 0!important;
+    height:28px!important;
+    border-bottom-width:5px!important;
+    background-size:100% 100%,360px 72px!important;
+  }
+  .library-screen .shelf-details {padding-top:15px!important;}
+  .library-screen .shelf-book-details .book-meta {min-height:35px;font-size:11px;}
+  .library-screen .book-open,.library-screen .book-menu-trigger {min-height:35px;}
+  .editor-page .chapter-editor {max-width:calc(100vw - 18px);}
+}
+@media(max-width:390px){
+  .library-screen .bookshelf-books {min-height:238px;}
+  .library-screen .shelf-book-details .book-meta {font-size:10.5px;}
+  .library-screen .book-open {font-size:10px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .library-screen .book-cover {transition:none!important;}
+}
