@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="book-actions-popover" role="menu" hidden>
               <button type="button" role="menuitem" class="edit-cover" data-id="${escapeHtml(book.id)}">▧ Изменить фото</button>
               <button type="button" role="menuitem" class="edit-cover-text" data-id="${escapeHtml(book.id)}">✎ Надписи и шрифт</button>
+              <button type="button" role="menuitem" class="publish-book" data-id="${escapeHtml(book.id)}">✦ Опубликовать в сообществе</button>
               <button type="button" role="menuitem" class="delete-book" data-id="${escapeHtml(book.id)}">⌫ Удалить книгу</button>
             </div>
           </div>`;
@@ -125,6 +126,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const designButton = event.target.closest(".edit-cover-text");
     if (designButton) {
       window.DiamondCoverDesign?.openBook(designButton.dataset.id,render);
+      return;
+    }
+    const publishButton = event.target.closest(".publish-book");
+    if (publishButton) {
+      if (window.DiamondCommunity?.publish) window.DiamondCommunity.publish(publishButton.dataset.id);
+      else alert("Публикация недоступна. Обнови страницу.");
       return;
     }
     const coverButton = event.target.closest(".edit-cover");
