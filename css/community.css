@@ -1,0 +1,73 @@
+/* DiamondBook community / shared warm oak styling */
+.community-section{margin-top:clamp(75px,10vw,145px)!important;padding-top:22px!important;position:relative;isolation:isolate}
+.community-section::before{content:"";position:absolute;top:-40px;left:0;right:0;height:8px;background:linear-gradient(90deg,transparent,#d0a46d 20%,#6f4828 60%,transparent),url("../assets/oak-board.svg");background-size:100% 100%,430px 86px;box-shadow:0 9px 24px #0008}
+.community-heading{border-color:#caa06c66!important}
+.community-heading h2{font:400 clamp(31px,4.1vw,58px)/1.15 Georgia,serif;letter-spacing:-.042em;color:#f5e1bd;margin:5px 0 6px;text-shadow:0 3px 16px #0008}
+.community-search-layout{display:flex;align-items:end;gap:12px;margin:24px 0 12px;flex-wrap:wrap}
+.community-search{flex:1 1 260px;min-width:210px}
+.community-search-layout .community-filter-label{display:flex;flex:0 1 176px;flex-direction:column;gap:7px;color:#c7ad88;font:11px system-ui}
+.community-filter-label select{height:47px;max-width:100%;padding:0 12px;border:1px solid #b7936070;border-radius:10px;background:linear-gradient(145deg,#3d2d1d,#201c16);color:#ebd6b4;font:12px system-ui;cursor:pointer;outline-offset:2px}
+.community-publish-button,.account-entry{border:1px solid #dfb27783;border-radius:10px;background:linear-gradient(145deg,#77522d,#48311e);color:#f7e2be;cursor:pointer;font:700 12px system-ui;box-shadow:inset 0 1px #ffdfb62b,0 6px 16px #0006}
+.community-publish-button{min-height:47px;padding:0 18px;white-space:nowrap}
+.community-publish-button:hover,.account-entry:hover{background:linear-gradient(145deg,#956e3d,#563c25)}
+.account-entry{display:flex;align-items:center;gap:9px;height:38px;padding:4px 12px 4px 5px;max-width:170px;white-space:nowrap}
+.account-entry-avatar{display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border:1px solid #efc48d6b;border-radius:50%;background:#45311e;color:#e3b97e;font:15px Georgia,serif;overflow:hidden}
+.account-entry-avatar img{width:100%;height:100%;object-fit:cover}
+#accountButtonLabel{overflow:hidden;text-overflow:ellipsis}
+.community-categories{display:flex;align-items:center;gap:7px;padding:8px 0 28px;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#8c6238 transparent}
+.community-categories button{flex:0 0 auto;padding:8px 13px;border:1px solid #96734563;border-radius:99px;background:#241d17b8;color:#cab394;font:600 11px system-ui;cursor:pointer;transition:background .18s,transform .18s}
+.community-categories button.active{background:linear-gradient(125deg,#e3bd88,#ad7c40);color:#2d1c0e;border-color:#f3d3a0}
+.community-categories button:hover:not(.active){background:#614427}
+.community-shelves{min-height:130px;margin-top:0!important}
+.community-shelves .community-cover{display:block;overflow:hidden;background-color:#403024;cursor:pointer;text-decoration:none;position:relative}
+.community-shelves .community-cover .book-cover-title,.community-shelves .community-cover .book-cover-author{margin:0;max-width:86%;padding:0;text-align:center;color:#f5e1c1;text-shadow:0 2px 12px #0009}
+.community-shelves .community-cover .book-cover-title{font:400 20px/1.1 Georgia,serif}
+.community-shelves .community-cover .book-cover-author{font:11px Georgia,serif}
+.community-shelves .community-cover[data-cover]{background-size:cover;background-position:center}
+.community-shelves .shelf-book-details{display:flex;flex-direction:column;align-items:center}
+.community-shelves .community-author{background:none;border:0;cursor:pointer;color:#eacb9f;font:650 12px system-ui;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:4px 2px}
+.community-shelves .community-author:hover{text-decoration:underline}
+.community-shelves .community-caption{color:#ab9980;font:11px/1.5 system-ui;margin:2px 0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.community-shelves .community-read{display:inline-flex;justify-content:center;align-items:center;padding:8px 14px;border:1px solid #b48b5b7d;border-radius:8px;background:#3d2c1b;color:#e4c89e;text-decoration:none;font:650 11px system-ui;min-height:35px}
+.community-shelves .community-read:hover{background:#674624}
+.community-notice{padding:35px 16px;text-align:center;color:#bca586;font:13px/1.6 system-ui}
+.community-notice[hidden],.community-modal[hidden]{display:none!important}
+.community-modal{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;padding:16px;background:rgba(4,4,3,.8);backdrop-filter:blur(11px)}
+.community-dialog{width:min(700px,100%);max-height:95dvh;overflow:auto;background:linear-gradient(146deg,rgba(48,34,22,.99),rgba(22,22,17,.99)),url("../assets/oak-bark.svg");background-size:cover,700px auto;border:1px solid #cca36f76;border-radius:16px;box-shadow:0 25px 65px #000e;color:#f1dfbe}
+.community-dialog-header{display:flex;justify-content:space-between;align-items:start;padding:22px 25px 17px;border-bottom:1px solid #c1966050;gap:15px}
+.community-dialog-header h2{font:400 clamp(23px,3vw,32px) Georgia,serif;margin:4px 0 0}
+.community-dialog-header button{height:33px;width:33px;display:grid;place-items:center;background:#3b291c;color:#eed8b6;border:1px solid #c2966470;border-radius:7px;font-size:22px;cursor:pointer}
+.community-dialog-body{padding:23px 25px 27px}
+.community-form{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.community-form label,.community-profile-form label,.community-publish-form label{display:flex;flex-direction:column;gap:7px;color:#d9bf97;font:600 12px system-ui;min-width:0}
+.community-form input,.community-form select,.community-profile-form input,.community-profile-form select,.community-profile-form textarea,.community-publish-form select,.community-publish-form input,.community-publish-form textarea{box-sizing:border-box;width:100%;min-width:0;min-height:43px;background:#1b1b17;border:1px solid #ad855665;border-radius:9px;padding:10px 12px;color:#f1dcc0;font:13px system-ui}
+.community-form input:focus,.community-profile-form input:focus,.community-profile-form textarea:focus{outline:2px solid #d1a46d;outline-offset:2px}
+.community-form .full-row,.community-profile-form .full-row,.community-publish-form .full-row{grid-column:1/-1}
+.community-form textarea,.community-profile-form textarea,.community-publish-form textarea{resize:vertical;min-height:87px}
+.community-action{min-height:43px;padding:10px 16px;border:1px solid #e7bd8479;border-radius:9px;background:linear-gradient(145deg,#dcbc88,#ae824c);color:#271a0f;font:750 13px system-ui;cursor:pointer}
+.community-action:disabled{opacity:.5;cursor:wait}
+.community-ghost{background:#33271c;border:1px solid #ab865871;border-radius:8px;color:#e8d2b0;padding:10px 13px;font:600 12px system-ui;cursor:pointer}
+.community-dialog-status{margin:12px 0 0;min-height:18px;color:#e7ae91;font:12px/1.5 system-ui}
+.community-form-switch{margin:14px 0 0;color:#bdab90;font:12px system-ui}
+.community-inline-link{border:0;background:none;color:#e8bd82;text-decoration:underline;cursor:pointer;font:inherit;padding:2px 5px}
+.community-profile-cover{height:clamp(120px,20vw,170px);border:1px solid #e5bc8170;border-radius:11px;overflow:hidden;background:linear-gradient(145deg,#5e4b36,#241d17),url("../assets/oak-bark.svg");background-size:cover,500px auto;background-position:center}
+.community-profile-cover img{width:100%;height:100%;object-fit:cover}
+.community-profile-head{display:flex;align-items:center;gap:17px;margin:-32px 5px 16px;position:relative}
+.community-profile-avatar{width:82px;height:82px;flex:0 0 82px;display:grid;place-items:center;border-radius:50%;background:#56402a;border:4px solid #332418;box-shadow:0 5px 18px #0007;color:#e2c08d;font:37px Georgia,serif;overflow:hidden}
+.community-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.community-profile-head h3{font:400 26px Georgia,serif;margin:20px 0 2px}
+.community-profile-head p{color:#bca487;margin:0;font:12px system-ui}
+.community-profile-bio{font:13px/1.6 system-ui;color:#d8c4a8;margin:6px 0 18px;white-space:pre-wrap;overflow-wrap:anywhere}
+.community-profile-role{display:inline-flex;padding:5px 10px;border:1px solid #d1a77060;border-radius:99px;background:#87623545;font:11px system-ui;color:#efcd9b}
+.community-profile-form,.community-publish-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.community-profile-form .image-note{font:11px/1.55 system-ui;color:#b7a187}
+.community-profile-works{border-top:1px solid #d3ac7554;padding-top:16px;margin-top:18px}
+.community-profile-works h4{font:400 22px Georgia,serif;margin:0 0 11px}
+.community-profile-work{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:9px 0;border-bottom:1px solid #d2a36630;font:12px system-ui}
+.community-profile-work a{color:#f4d5a7;text-decoration:none}
+.community-profile-work button{border:1px solid #b46e5970;background:#3a2420;color:#e9b2a7;border-radius:6px;padding:7px 11px;cursor:pointer}
+.community-publish-lead{font:13px/1.6 system-ui;color:#c8b194;margin:0 0 16px}
+.community-publish-warning{font:11px/1.6 system-ui;color:#c8ae89;margin:0}
+.community-notice.error{color:#e5ac93}
+@media(max-width:750px){.community-heading h2{font-size:clamp(29px,7vw,42px)}.community-search-layout{gap:10px}.community-search-layout .community-filter-label{flex:1 1 150px}.community-search{flex:1 1 100%;max-width:none}.community-publish-button{flex:1 1 135px}.account-entry{max-width:53px;padding-right:6px;gap:0}.account-entry #accountButtonLabel{display:none}.community-dialog-body{padding:17px}.community-dialog-header{padding:19px 17px 15px}}
+@media(max-width:470px){.community-section{margin-top:75px!important}.community-heading{gap:7px}.community-heading h2{font-size:29px;line-height:1.14}.community-heading .library-heading-stat{padding:9px}.community-search-layout .community-filter-label{flex:1 1 42%;font-size:11px}.community-publish-button{flex:1 1 100%}.community-form,.community-profile-form,.community-publish-form{grid-template-columns:1fr}.community-form .full-row,.community-profile-form .full-row,.community-publish-form .full-row{grid-column:auto}.community-profile-avatar{width:67px;height:67px;flex-basis:67px}.community-profile-head h3{font-size:21px}}
