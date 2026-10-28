@@ -172,13 +172,13 @@ async function publicPayload(book,category,description){
  if(copy.coverDataUrl){cover=await shrink(await(await fetch(copy.coverDataUrl)).blob(),300,460,.67,125000);}
  return {title:copy.title,author:copy.author,category,description,cover,structure:copy.structure,coverDesign:copy.coverDesign||null,pageTexture:copy.pageTexture||"smooth",editorFontFamily:copy.editorFontFamily||"georgia"};
 }
-function publish(){
+function publish(selectedId=null){
  if(!me)return auth();
  const books=getBooks().filter(b=>flattenChapters(b).length);
  if(!books.length){open("Опубликовать книгу",'<p class="community-publish-lead">Сначала создай книгу и добавь хотя бы одну главу.</p><a class="community-action" href="create.html">Создать книгу</a>');return;}
  const html=['<p class="community-publish-lead">Только выбранная книга станет видна всем читателям. Локальный оригинал останется твоим.</p>',
  '<form id="communityPublishForm" class="community-publish-form">',
- '<label class="full-row">Выбери свою книгу<select name="bookId" required>'+books.map(b=>'<option value="'+esc(b.id)+'">'+esc(b.title)+'</option>').join("")+'</select></label>',
+ '<label class="full-row">Выбери свою книгу<select name="bookId" required>'+books.map(b=>'<option value="'+esc(b.id)+'"'+(b.id===selectedId?' selected':'')+'>'+esc(b.title)+'</option>').join("")+'</select></label>',
  '<label class="full-row">Категория<select name="category">'+Object.entries(cats).map(([id,label])=>'<option value="'+id+'">'+label+'</option>').join("")+'</select></label>',
  '<label class="full-row">Описание<textarea name="description" maxlength="600" placeholder="О чём твоя история?"></textarea></label>',
  '<label class="full-row"><span><input type="checkbox" name="consent" required style="width:auto;min-height:0"> Я согласен опубликовать текст и иллюстрации.</span></label>',
@@ -195,7 +195,7 @@ function publish(){
   }catch(ex){status(ex.message);}finally{btn.disabled=false;}
  });
 }
-$("publishOwnBook").onclick=publish;
+$("publishOwnBook").onclick=()=>publish();
 window.DiamondCommunity={publish,showProfile,refresh:loadBooks};
 let timer;window.addEventListener("resize",()=>{clearTimeout(timer);timer=setTimeout(()=>render(lastBooks),180);});
 setAccount();api("me").then(r=>{me=r.user;setAccount();}).catch(()=>{});
