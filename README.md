@@ -51,3 +51,5 @@ DiamondBook/
 ```
 
 Книги хранятся в браузере. Резервная копия — экспорт JSON.
+
+Сайт: https://diamondbook-nervanadio.pages.dev
