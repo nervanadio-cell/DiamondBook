@@ -4,7 +4,7 @@
  <linearGradient id="model" x1="0" x2="1"><stop stop-color="#0d0c0a" stop-opacity=".5"/><stop offset=".13" stop-color="#cf9860" stop-opacity=".14"/><stop offset=".58" stop-color="#19150f" stop-opacity=".17"/><stop offset=".84" stop-color="#d9ae72" stop-opacity=".08"/><stop offset="1" stop-color="#100e0b" stop-opacity=".46"/></linearGradient>
  <filter id="stoneNoise" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
   <feTurbulence type="fractalNoise" baseFrequency=".024 .083" numOctaves="3" stitchTiles="stitch" seed="16" result="n"/>
-  <feColorMatrix in="n" type="matrix" values="0 0 0 0 .48  0 0 0 0 .39  0 0 0 0 .28  0 0 0 .29 -.05" />
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 .48  0 0 0 0 .39  0 0 0 0 .28  .6 .28 .12 0 -.24" />
  </filter>
  <filter id="fineNoise" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".22 .28" numOctaves="2" seed="41"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .11"/></feComponentTransfer></filter>
 </defs>
