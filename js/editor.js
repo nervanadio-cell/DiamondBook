@@ -89,6 +89,28 @@ document.addEventListener("DOMContentLoaded", () => {
     if(saved){book.coverDesign=saved.coverDesign;book.coverDataUrl=saved.coverDataUrl;}
   });
 
+  document.addEventListener("diamond-book-style-change", event => {
+    if (event.detail?.bookId !== book.id) return;
+    const style=event.detail.style;
+    if(!style || typeof style !== "object")return;
+    book.bookStyle={...style};
+    book.editorFontFamily=style.font;
+    book.editorLineHeight=style.line;
+    book.editorFontSize=style.size;
+    editor.style.fontFamily={
+      georgia:"Georgia, serif",garamond:"Garamond, Georgia, serif",
+      palatino:"Palatino, Georgia, serif",cambria:"Cambria, Georgia, serif",
+      bookman:"'Bookman Old Style', Georgia, serif",times:"'Times New Roman', serif",
+      trebuchet:"'Trebuchet MS', Arial, sans-serif",verdana:"Verdana, sans-serif",
+      arial:"Arial, sans-serif",tahoma:"Tahoma, sans-serif",
+      courier:"'Courier New', monospace",handwriting:"'Segoe Print', cursive"
+    }[style.font] || "Georgia, serif";
+    editor.style.lineHeight=String(style.line);
+    if(fontFamilySelect)fontFamilySelect.value=style.font;
+    if(lineSpacingSelect && Array.from(lineSpacingSelect.options).some(option=>Number(option.value)===Number(style.line)))lineSpacingSelect.value=String(style.line);
+    markSaving();
+  });
+
   const bookFonts={
     georgia:"Georgia, serif",garamond:"Garamond, Georgia, serif",
     palatino:"Palatino, Georgia, serif",cambria:"Cambria, Georgia, serif",
