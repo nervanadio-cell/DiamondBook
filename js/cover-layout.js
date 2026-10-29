@@ -17,7 +17,7 @@
     impact:"Impact, 'Arial Narrow', sans-serif",
     handwriting:"'Segoe Print', 'Comic Sans MS', cursive"
   };
-  const DEFAULT = { title:{x:50,y:34,size:23,opacity:1,font:"classic"},author:{x:50,y:85,size:11,opacity:.93,font:"modern"} };
+  const DEFAULT = { title:{x:50,y:34,size:23,opacity:1,font:"classic",color:"#fff4d8"},author:{x:50,y:85,size:11,opacity:.93,font:"modern",color:"#fff4d8"} };
   const clamp = (value,min,max,fallback) => {const n=Number(value);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):fallback;};
   function normalize(data) {
     const result={};
@@ -25,7 +25,8 @@
       const part=data && typeof data[key]==="object" && data[key] ? data[key]:{};
       const def=DEFAULT[key];
       result[key]={x:clamp(part.x,10,90,def.x),y:clamp(part.y,9,91,def.y),size:clamp(part.size,9,40,def.size),
-        opacity:clamp(part.opacity,.2,1,def.opacity),font:Object.hasOwn(FONTS,part.font)?part.font:def.font};
+        opacity:clamp(part.opacity,.2,1,def.opacity),font:Object.hasOwn(FONTS,part.font)?part.font:def.font,
+        color:/^#[0-9a-fA-F]{6}$/.test(part.color||"")?part.color:def.color};
     }
     return result;
   }
@@ -43,7 +44,7 @@
         position:"absolute",left:p.x+"%",top:p.y+"%",transform:"translate(-50%, -50%)",
         maxWidth:"86%",width:"max-content",overflowWrap:"anywhere",whiteSpace:"normal",
         textAlign:"center",fontSize:(p.size/2.65).toFixed(3)+"cqw",
-        lineHeight:"1.17",opacity:String(p.opacity),fontFamily:FONTS[p.font],zIndex:"4"
+        lineHeight:"1.17",opacity:String(p.opacity),fontFamily:FONTS[p.font],color:p.color,zIndex:"4"
       });
     }
     const title=face.querySelector(".book-cover-title, #previewTitle, .cover-design-title");
@@ -92,6 +93,7 @@
       '<option value="sans">Arial</option><option value="verdana">Verdana</option><option value="tahoma">Tahoma</option>',
       '<option value="century">Century Gothic</option><option value="impact">Impact</option><option value="handwriting">Рукописный</option>',
       '<option value="mono">Печатная машинка</option></select></label>',
+      '<label>Цвет надписи<input data-field="color" type="color" aria-label="Цвет надписи" value="#fff4d8"></label>',
       '<label>Размер <output data-output="size"></output><input data-field="size" type="range" min="9" max="40" step="1"></label>',
       '<label>Прозрачность <output data-output="opacity"></output><input data-field="opacity" type="range" min=".2" max="1" step=".05"></label>',
       '<label>По горизонтали <output data-output="x"></output><input data-field="x" type="range" min="10" max="90" step="1"></label>',
@@ -117,10 +119,10 @@
     }
     function sync() {
       const s=value[selected];
-      for(const name of ["font","size","opacity","x","y"]) {
+      for(const name of ["font","color","size","opacity","x","y"]) {
         overlay.querySelector('[data-field="'+name+'"]').value=s[name];
       }
-      overlay.querySelector('[data-output="size"]').textContent=s.size+" px";
+      overlay.querySelector('[data-output="size"]').textContent=s.size+" (масштаб)";
       overlay.querySelector('[data-output="opacity"]').textContent=Math.round(s.opacity*100)+"%";
       overlay.querySelector('[data-output="x"]').textContent=Math.round(s.x)+"%";
       overlay.querySelector('[data-output="y"]').textContent=Math.round(s.y)+"%";
@@ -130,7 +132,7 @@
     overlay.querySelectorAll("[data-kind]").forEach(btn=>btn.addEventListener("click",()=>{selected=btn.dataset.kind;sync();}));
     overlay.querySelectorAll("[data-field]").forEach(input=>input.addEventListener("input",()=>{
       const name=input.dataset.field;
-      value[selected][name]=name==="font"?input.value:Number(input.value);
+      value[selected][name]=(name==="font" || name==="color")?input.value:Number(input.value);
       sync();
     }));
     overlay.querySelector(".cover-design-reset").onclick=()=>{value[selected]={...DEFAULT[selected]};sync();};
