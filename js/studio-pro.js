@@ -167,7 +167,7 @@
       var gap=parseFloat(styles.columnGap)||24;
       step=w+gap;
       visible=viewport.clientWidth>=w*2+gap-4?2:1;
-      total=Math.max(1,Math.ceil((flow.scrollWidth+gap-2)/step));
+      total=Math.max(1,1+Math.ceil(Math.max(0,flow.scrollWidth-(w+36)-2)/step));
     }
     function updatePagination(){
       pageMetrics();
