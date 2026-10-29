@@ -39,6 +39,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const runningRight = document.getElementById("readerRunningRight");
   const contentLeft = document.getElementById("readerContentLeft");
   const contentRight = document.getElementById("readerContentRight");
+  // Persisted page design is shared between the studio preview and real reader.
+  if(book.bookStyle && typeof book.bookStyle==="object"){
+    const bs=book.bookStyle;
+    const styles={georgia:"Georgia, serif",garamond:"Garamond, Georgia, serif",palatino:"Palatino, Georgia, serif",cambria:"Cambria, Georgia, serif",bookman:"'Bookman Old Style', Georgia, serif",times:"'Times New Roman', serif",trebuchet:"'Trebuchet MS', Arial, sans-serif",verdana:"Verdana, sans-serif",arial:"Arial, sans-serif",tahoma:"Tahoma, sans-serif",courier:"'Courier New', monospace",handwriting:"'Segoe Print', cursive"};
+    if(Object.prototype.hasOwnProperty.call(styles,bs.font))page.style.setProperty("--studio-font",styles[bs.font]);
+    if(["cream","ivory","white","slate"].includes(bs.paper))page.dataset.studioPaper=bs.paper;
+    const setNumeric=(key,value,low,high,unit)=>{
+      const n=Number(value);
+      if(Number.isFinite(n)&&n>=low&&n<=high)page.style.setProperty(key,String(n)+(unit||""));
+    };
+    setNumeric("--studio-reader-size",bs.size,15,24,"px");
+    setNumeric("--studio-mobile-size",Number(bs.size)*.89,13,22,"px");
+    setNumeric("--studio-line",bs.line,1.4,2.2);
+    setNumeric("--studio-spacing",bs.spacing,.6,1.8,"em");
+    setNumeric("--studio-indent",bs.indent,0,2,"em");
+    page.style.setProperty("--studio-align",bs.align==="justify"?"justify":"left");
+  }
   const readerFonts={
     georgia:"Georgia, serif",garamond:"Garamond, Georgia, serif",
     palatino:"Palatino, Georgia, serif",cambria:"Cambria, Georgia, serif",
