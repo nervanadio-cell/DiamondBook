@@ -25,7 +25,7 @@
         <header class="cover-head"><div><h2 id="coverTitle">Редактор обложки</h2><p>Загрузи фото и выдели нужный фрагмент.</p></div><button type="button" id="coverClose" aria-label="Закрыть">×</button></header>
         <div class="cover-grid"><div><div class="cover-stage"><canvas id="coverCanvas" hidden></canvas><p id="coverHint" class="cover-hint">JPG, PNG, WebP или BMP. GIF и видео не поддерживаются.</p></div><p class="cover-note">Потяни мышью или пальцем, чтобы выбрать кадр. Повторное выделение заменит предыдущий кадр.</p></div>
           <aside class="cover-controls"><input id="coverInput" type="file" accept="image/jpeg,image/png,image/webp,image/bmp,.jpg,.jpeg,.png,.webp,.bmp" hidden><button type="button" id="coverChoose" class="cover-primary">Выбрать фото…</button>
-            <div class="cover-ratios"><button type="button" data-ratio="0.6666667">2:3</button><button type="button" data-ratio="0.75">3:4</button><button type="button" data-ratio="1">1:1</button><button type="button" data-ratio="free" class="active">Свободно</button></div>
+            <div class="cover-ratios"><button type="button" data-ratio="0.6666667" class="active">2:3 · книга</button><button type="button" data-ratio="0.75">3:4</button><button type="button" data-ratio="1">1:1</button><button type="button" data-ratio="free">Свободно</button></div>
             <div class="cover-preview" id="coverPreview">Предпросмотр</div><button type="button" id="coverDownload">Скачать JPG</button><button type="button" id="coverRemove">Убрать обложку</button></aside>
         </div>
         <footer class="cover-foot"><button type="button" id="coverCancel">Отмена</button><button type="button" id="coverSave" class="cover-primary">Сохранить обложку</button></footer>
@@ -43,7 +43,7 @@
     const hint = root.querySelector("#coverHint");
     const input = root.querySelector("#coverInput");
     const preview = root.querySelector("#coverPreview");
-    let source = null, crop = null, scale = 1, ratio = null, drag = null;
+    let source = null, crop = null, scale = 1, ratio = 2/3, drag = null;
 
     function makeDataUrl() {
       if (!source || !crop || crop.w < 3 || crop.h < 3) throw new Error("Сначала выбери изображение и выдели область.");
@@ -69,7 +69,14 @@
         ctx.fillStyle="#f0c891";
         [[crop.x,crop.y],[crop.x+crop.w,crop.y],[crop.x,crop.y+crop.h],[crop.x+crop.w,crop.y+crop.h]].forEach(([x,y])=>ctx.fillRect(x-handle/2,y-handle/2,handle,handle));
       }
-      try { preview.innerHTML='<img alt="Предпросмотр обложки" src="'+makeDataUrl()+'">'; } catch { preview.textContent="Предпросмотр"; }
+      try {
+        const url=makeDataUrl();
+        const img=document.createElement("img");img.alt="Предпросмотр изображения";img.src=url;
+        const title=document.createElement("span");title.className="cover-design-title";title.textContent=book.title||"Название книги";
+        const author=document.createElement("span");author.className="cover-design-author";author.textContent=book.author||"Без автора";
+        preview.replaceChildren(img,title,author);
+        if(window.DiamondCoverDesign)window.DiamondCoverDesign.apply(preview,book.coverDesign);
+      } catch { preview.textContent="Предпросмотр"; }
     }
 
     function newCrop() {
@@ -87,8 +94,10 @@
       img.src=url;
     }
 
-    function close(){root.hidden=true;drag=null;}
+    function close(){root.hidden=true;drag=null;document.removeEventListener("keydown",escapeCover);}
+    function escapeCover(e){if(e.key==="Escape")close();}
     root.hidden=false;
+    document.addEventListener("keydown",escapeCover);
     if(book.coverDataUrl) loadData(book.coverDataUrl);
     else {source=null;crop=null;canvas.hidden=true;hint.hidden=false;preview.textContent="Предпросмотр";}
 
