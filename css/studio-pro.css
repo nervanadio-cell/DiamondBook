@@ -154,3 +154,9 @@
 .cover-dialog #coverPreview .cover-design-title,.cover-dialog #coverPreview .cover-design-author {max-width:86%;overflow-wrap:anywhere}
 .editor-page .chapter-editor .rich-editor hr {border:0;border-top:1px solid color-mix(in srgb,var(--studio-paper-ink) 24%,transparent);margin:1.5em auto}
 @media(max-width:420px) {.cover-dialog .cover-controls {grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}.cover-dialog .cover-dialog{max-width:100%}}
+
+/* Image crop + lettering are available from a single design workspace. */
+.studio-cover-actions {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.studio-cover-actions button {min-width:0;min-height:39px;padding:7px 5px;background:#483421;color:#f1d6ad;border:1px solid #b18b6266;border-radius:8px;font-size:11px;font-weight:600}
+.studio-cover-actions button:hover {background:#76512d}
+@media(max-width:750px){.studio-settings .studio-cover-actions{grid-column:1/-1}}
