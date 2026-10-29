@@ -90,7 +90,7 @@ async function handle({request:req,env}){
   if(!title||title.length>120||author.length>100||description.length>600||!CATEGORIES.includes(category))return fail("Проверь название, описание и категорию.");
   if(!validImage(b.cover,125000))return fail("Обложка слишком большая.");
   if(!Array.isArray(b.structure)||b.structure.length>45)return fail("Неверная структура книги.");
-  const content=JSON.stringify({title,author,structure:b.structure,coverDesign:b.coverDesign||null,pageTexture:b.pageTexture||"smooth",editorFontFamily:b.editorFontFamily||"georgia"});
+  const content=JSON.stringify({title,author,structure:b.structure,coverDesign:b.coverDesign||null,pageTexture:b.pageTexture||"smooth",editorFontFamily:b.editorFontFamily||"georgia",editorLineHeight:b.editorLineHeight||1.8,bookStyle:b.bookStyle&&typeof b.bookStyle==="object"?b.bookStyle:null});
   if(content.length>300000)return fail("Книга превышает лимит публикации 300 КБ.");
   const n=await db.prepare("SELECT COUNT(*) AS n FROM public_books WHERE owner_id=?").bind(me.id).first();if(n.n>=40)return fail("Лимит: 40 опубликованных книг.",429);
   const id=crypto.randomUUID();
