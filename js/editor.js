@@ -150,6 +150,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  document.addEventListener("diamond-book-save-request", () => {
+    clearTimeout(saveTimer);
+    persistNow();
+  });
+
   function markSaving() {
     saveStatus.textContent = "Сохраняется…";
     clearTimeout(saveTimer);
