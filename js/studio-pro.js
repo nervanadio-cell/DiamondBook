@@ -79,8 +79,9 @@
     var toolbar=document.querySelector(".editor-toolbar");
     if(!edit||!actions||!toolbar)return;
     var id=new URLSearchParams(location.search).get("id") || (getCurrentBook()||{}).id;
-    var book=getBook(id);
+    var book=getBook(id)||getCurrentBook();
     if(!book)return;
+    id=book.id;
     var style=normalize(book.bookStyle,book);
     var panel=document.createElement("div");
     panel.className="studio-overlay";
@@ -297,6 +298,29 @@
         };
       });
     }
+    var originalFont=document.getElementById("editorFontFamily");
+    var originalLine=document.getElementById("lineSpacingSelect");
+    originalFont?.addEventListener("change",function(){
+      if(fonts[originalFont.value] && style.font!==originalFont.value){
+        style.font=originalFont.value;writeStyle();queuePreview(false);
+      }
+    });
+    originalLine?.addEventListener("change",function(){
+      const n=Number(originalLine.value);
+      if(Number.isFinite(n) && n!==style.line){style.line=n;writeStyle();queuePreview(false);}
+    });
+    window.addEventListener("diamond-editor-fontsize",function(event){
+      const n=Number(event.detail?.size);
+      if(Number.isFinite(n)&&n>=15&&n<=24&&style.size!==n){style.size=n;writeStyle();queuePreview(false);}
+    });
+    panel.addEventListener("keydown",function(event){
+      if(event.key!=="Tab")return;
+      const focusables=Array.from(panel.querySelectorAll('button:not([disabled]),select,input')).filter(function(el){return el.getClientRects().length>0;});
+      if(!focusables.length)return;
+      const first=focusables[0],last=focusables[focusables.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    });
     var observer=new MutationObserver(function(records){
       records.forEach(function(record){
         record.addedNodes.forEach(function(node){
