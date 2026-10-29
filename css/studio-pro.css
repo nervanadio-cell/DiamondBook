@@ -160,3 +160,23 @@
 .studio-cover-actions button {min-width:0;min-height:39px;padding:7px 5px;background:#483421;color:#f1d6ad;border:1px solid #b18b6266;border-radius:8px;font-size:11px;font-weight:600}
 .studio-cover-actions button:hover {background:#76512d}
 @media(max-width:750px){.studio-settings .studio-cover-actions{grid-column:1/-1}}
+
+/* Crop dialog: balanced artwork and tool column; no clipped controls on short screens. */
+.cover-overlay .cover-dialog {width:min(1080px,100%);max-height:96dvh;padding:clamp(12px,2.5vw,25px);overflow-y:auto;border-radius:17px}
+.cover-dialog .cover-grid {grid-template-columns:minmax(0,1fr) minmax(235px,280px);gap:clamp(12px,2.3vw,25px);align-items:start}
+.cover-dialog .cover-stage {min-height:min(460px,62dvh);border:1px solid #bda88e;border-radius:12px;background:radial-gradient(ellipse at center,#ece3d4,#d1c6b5)}
+.cover-dialog .cover-controls {gap:10px}
+.cover-dialog .cover-ratios {gap:6px}
+.cover-dialog .cover-ratios button {padding:10px 6px}
+.cover-dialog .cover-ratios button.active {border-color:#8e683b;background:#d8bc94;color:#302214;font-weight:750}
+.cover-dialog .cover-foot {position:sticky;bottom:-1px;padding-top:13px;background:#f4efe4}
+.cover-dialog .cover-preview {width:min(100%,205px);margin-inline:auto;box-shadow:0 9px 22px #0002}
+.cover-dialog #coverChoose,.cover-dialog #coverSave {min-height:42px}
+@media(max-width:700px) {
+ .cover-dialog .cover-grid {grid-template-columns:1fr}
+ .cover-dialog .cover-stage {min-height:210px}
+ .cover-dialog .cover-controls {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .cover-dialog .cover-ratios,.cover-dialog #coverPreview {grid-column:1/-1}
+ .cover-dialog .cover-preview {width:min(180px,55vw)}
+ .cover-dialog .cover-dialog {max-height:98dvh}
+}
