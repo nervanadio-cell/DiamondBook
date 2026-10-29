@@ -170,7 +170,7 @@ async function publicPayload(book,category,description){
  await walk(copy.structure);
  let cover="";
  if(copy.coverDataUrl){cover=await shrink(await(await fetch(copy.coverDataUrl)).blob(),300,460,.67,125000);}
- return {title:copy.title,author:copy.author,category,description,cover,structure:copy.structure,coverDesign:copy.coverDesign||null,pageTexture:copy.pageTexture||"smooth",editorFontFamily:copy.editorFontFamily||"georgia"};
+ return {title:copy.title,author:copy.author,category,description,cover,structure:copy.structure,coverDesign:copy.coverDesign||null,pageTexture:copy.pageTexture||"smooth",editorFontFamily:copy.editorFontFamily||"georgia",editorLineHeight:copy.editorLineHeight||1.8,bookStyle:copy.bookStyle||null};
 }
 function publish(selectedId=null){
  if(!me)return auth();
