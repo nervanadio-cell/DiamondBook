@@ -92,6 +92,7 @@
       '<div class="studio-shell"><div class="studio-settings">'+
       '<div class="studio-subheading">Быстрый стиль</div>'+
       '<div class="studio-presets"><button type="button" data-preset="classic">Классика</button><button type="button" data-preset="airy">Воздух</button><button type="button" data-preset="noir">Нуар</button><button type="button" data-preset="compact">Компакт</button></div>'+
+      '<div class="studio-subheading">Обложка</div><div class="studio-cover-actions"><button type="button" id="studioCoverImage">▧ Изображение</button><button type="button" id="studioCoverText">Aa Надписи</button></div>'+
       '<div class="studio-subheading">Страницы книги</div>'+
       '<label>Шрифт<select data-studio="font"><option value="georgia">Georgia</option><option value="garamond">Garamond</option><option value="palatino">Palatino</option><option value="cambria">Cambria</option><option value="bookman">Bookman</option><option value="times">Times</option><option value="trebuchet">Trebuchet</option><option value="verdana">Verdana</option><option value="arial">Arial</option><option value="tahoma">Tahoma</option><option value="courier">Courier</option><option value="handwriting">Рукописный</option></select></label>'+
       '<label>Бумага<select data-studio="paper"><option value="cream">Сливочная</option><option value="ivory">Слоновая кость</option><option value="white">Белая</option><option value="slate">Тёмная</option></select></label>'+
@@ -248,6 +249,14 @@
     panel.querySelector("#studioPrev").onclick=function(){current=Math.max(0,current-visible);updatePagination();};
     panel.querySelector("#studioNext").onclick=function(){current=Math.min(Math.max(0,total-visible),current+visible);updatePagination();};
     panel.querySelector(".studio-open-reader").onclick=function(){document.getElementById("readerButton")?.click();};
+    panel.querySelector("#studioCoverImage").onclick=function(){
+      closeStudio();
+      if(window.openBookCoverEditor)window.openBookCoverEditor(book.id);
+    };
+    panel.querySelector("#studioCoverText").onclick=function(){
+      closeStudio();
+      if(window.DiamondCoverDesign)window.DiamondCoverDesign.openBook(book.id);
+    };
     edit.addEventListener("input",function(){queuePreview(false);});
     if(chapterTitle)chapterTitle.addEventListener("input",function(){queuePreview(false);});
     document.getElementById("tree")?.addEventListener("click",function(){queuePreview(true);});
