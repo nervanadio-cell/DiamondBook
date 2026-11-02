@@ -56,6 +56,9 @@ async function showProfile(handle){
  try{
   const data=await api("profile/"+encodeURIComponent(handle)),own=me?.handle===data.profile.handle;
   open("Профиль автора",profileMarkup(data.profile,own,data.books));
+  const goto=document.createElement("a");
+  goto.className="community-ghost community-profile-open-link";goto.href="profile.html?user="+encodeURIComponent(handle);
+  goto.textContent="Открыть страницу профиля →";body.append(goto);
   $("editCommunityProfile")?.addEventListener("click",editProfile);
   $("logoutCommunity")?.addEventListener("click",logout);
   body.querySelectorAll("[data-remove-book]").forEach(btn=>btn.onclick=async()=>{
@@ -105,6 +108,30 @@ function editProfile(){
  });
 }
 function render(books){
+ if(document.body.classList.contains("catalog-screen")){
+  grid.replaceChildren();
+  for(const b of books){
+   const article=document.createElement("article");article.className="catalog-book-card";
+   const link=document.createElement("a");link.className="catalog-book-cover";link.href="reader.html?public="+encodeURIComponent(b.id);
+   link.setAttribute("aria-label","Читать "+b.title);
+   if(/^data:image\/(?:png|jpeg|webp);base64,/.test(b.cover||"")){
+    link.style.backgroundImage='linear-gradient(180deg,transparent,rgba(0,0,0,.32)),url("'+b.cover+'")';
+    link.classList.add("has-image");
+   }else{
+    link.style.backgroundImage='linear-gradient(140deg,#4c302476,#15100bcc),url("assets/leather-cover.svg")';
+   }
+   const text=document.createElement("strong");text.className="catalog-book-cover-title";text.textContent=b.title;
+   const stamp=document.createElement("small");stamp.textContent="DIAMONDBOOK EDITION";
+   link.append(stamp,text);
+   const title=document.createElement("a");title.className="catalog-book-title";title.href=link.href;title.textContent=b.title;
+   const writer=document.createElement("a");writer.className="catalog-book-writer";writer.href="profile.html?user="+encodeURIComponent(b.handle);
+   writer.textContent="✒ "+(b.display_name||b.handle);
+   const meta=document.createElement("div");meta.className="catalog-book-meta";meta.textContent=cats[b.category]||"Книга";
+   article.append(link,title,writer,meta);grid.appendChild(article);
+  }
+  return;
+ }
+
  grid.replaceChildren();
  const per=window.innerWidth<=720?2:window.innerWidth<=1120?3:4;
  for(let i=0;i<books.length;i+=per){
