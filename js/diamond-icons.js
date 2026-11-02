@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded",function(){
   function action(el,kind){
     if(!el)return;
     el.classList.add("db-ornate-button");
-    prefix(el,kind,false);
+    prefix(el,kind,true);
   }
   document.querySelectorAll(".brand-gem").forEach(function(el){replace(el,"diamond");});
   var heroes=document.querySelectorAll(".hero-tile");
@@ -81,19 +81,23 @@ document.addEventListener("DOMContentLoaded",function(){
   action(document.querySelector(".auth-submit"),"diamond");
   action(document.querySelector(".profile-save"),"save");
   prefix(document.getElementById("profileEditButton"),"edit",true);
-  document.querySelectorAll(".db-preview-toggle").forEach(function(el){prefix(el,"eye",false);});
+  document.querySelectorAll(".db-preview-toggle").forEach(function(el){prefix(el,"eye",true);});
+  document.querySelectorAll(".db-mobile-drawer-extra a.db-mobile-create").forEach(function(el){prefix(el,"quill",true);});
   var panelKinds={"Текст":"quill","Дизайн":"diamond","Просмотр":"eye",
     "Сохранение":"save","Файлы":"file","Читать":"reader","Книжная полка":"home"};
   document.querySelectorAll(".editor-actions .db-action").forEach(function(el){
     var kind=panelKinds[el.title]||"star";
     var slot=el.querySelector(".db-action-icon");
-    if(slot)replace(slot,kind,false);else prefix(el,kind,false);
+    if(slot)replace(slot,kind,false);
+    else if(el.classList.contains("db-library-action"))replace(el,"home",false);
+    else prefix(el,kind,true);
   });
   document.querySelectorAll(".db-editor-tools-button").forEach(function(el){
     if(el.firstChild&&el.firstChild.nodeType===3)el.firstChild.textContent="Инструменты";
     prefix(el,"quill",false);
   });
   document.querySelectorAll(".db-editor-sheet-grid button").forEach(function(el,i){
+    if(el.firstChild&&el.firstChild.nodeType===3)el.firstChild.textContent=el.firstChild.textContent.replace(/^\s*(?:Aa|◇|◫|✓|⇄|▤)\s*/,"");
     prefix(el,["quill","diamond","eye","save","file","reader"][i]||"star",false);
   });
   document.querySelectorAll(".db-editor-sheet-grid a").forEach(function(el){prefix(el,"home",false);});
