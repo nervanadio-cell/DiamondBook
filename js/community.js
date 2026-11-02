@@ -40,7 +40,7 @@ function auth(register=false){
   }catch(ex){status(ex.message);}finally{btn.disabled=false;}
  });
 }
-$("accountButton").onclick=()=>me?showProfile(me.handle):auth();
+$("accountButton").onclick=()=>{location.href=me?"profile.html?user="+encodeURIComponent(me.handle):"auth.html";};
 async function logout(){try{await api("logout",{method:"POST",body:"{}"});}catch{}me=null;setAccount();close();}
 function profileMarkup(p,own,books){
  const avatar=p.avatar?'<img src="'+p.avatar+'" alt="Аватар">':esc(p.displayName?.charAt(0)||"✦");
