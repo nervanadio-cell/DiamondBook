@@ -174,8 +174,8 @@
     const outlineKey="diamondBook.workspace.outline."+book.id;
     function refreshOutline(){
       if(isMobile()){body.classList.remove("db-outline-collapsed");return;}
-      let preference="closed";
-      try{preference=localStorage.getItem(outlineKey)||"closed";}catch{}
+      let preference="open";
+      try{preference=localStorage.getItem(outlineKey)||"open";}catch{}
       const collapsed=preference!=="open";
       body.classList.toggle("db-outline-collapsed",collapsed);
       outline?.setAttribute("aria-expanded",String(!collapsed));
@@ -194,6 +194,9 @@
       try{localStorage.setItem(outlineKey,collapsed?"closed":"open");}catch{}
     },true);
     refreshOutline();
+    // Reference layout: contents on the left and text settings on the right,
+    // while preserving manual collapsing and keeping phones uncluttered.
+    if(window.matchMedia("(min-width:1250px)").matches)open("format",textButton);
     window.addEventListener("resize",()=>{refreshOutline();if(active)syncPanel();});
 
     const exportModal=document.getElementById("exportModal");
