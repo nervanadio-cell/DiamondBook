@@ -238,3 +238,44 @@ button{cursor:pointer}button:disabled{cursor:not-allowed}
  .hero-flicker,.hero-window-shine{animation:none}
  .hero-tile,.cinema-featured-card{transition:none}
 }
+
+/* Theme compatibility: keep book customization legible after the cinematic skin. */
+.editor-page .chapter-editor .rich-editor,
+.editor-page .chapter-editor .chapter-title-input{color:var(--studio-paper-ink,#302418)!important}
+.editor-page .chapter-editor[data-studio-paper="white"]{
+ background:linear-gradient(90deg,#e5e5e333,transparent 15%),#fdfbf4!important;--studio-paper-ink:#293039;
+}
+.editor-page .chapter-editor[data-studio-paper="ivory"]{
+ background:linear-gradient(90deg,#a16f4322,transparent 17%),url("../assets/paper-weathered.svg") center/100% 100%!important;
+ --studio-paper-ink:#34271b;
+}
+.editor-page .chapter-editor[data-studio-paper="slate"]{
+ background:linear-gradient(100deg,#192029,#303239 45%,#171c26)!important;
+ --studio-paper-ink:#eee2d0;
+ border-color:#66717e!important;
+}
+.editor-page[data-page-texture="rough"] .chapter-editor:not([data-studio-paper="slate"]),
+.reader-page[data-page-texture="rough"]:not(.theme-night) .reader-sheet{
+ background-image:repeating-linear-gradient(8deg,#5c402512 0 1px,transparent 1px 6px),url("../assets/paper-weathered.svg")!important;
+ background-size:auto,100% 100%!important;
+}
+.editor-page[data-page-texture="damp"] .chapter-editor:not([data-studio-paper="slate"]),
+.reader-page[data-page-texture="damp"]:not(.theme-night) .reader-sheet{
+ background-image:radial-gradient(ellipse at 70% 17%,#52695633,transparent 45%),radial-gradient(ellipse at 13% 75%,#586c6222,transparent 44%),url("../assets/paper-weathered.svg")!important;
+ background-size:auto,auto,100% 100%!important;
+}
+.editor-page[data-page-texture="aged"] .chapter-editor:not([data-studio-paper="slate"]),
+.reader-page[data-page-texture="aged"]:not(.theme-night) .reader-sheet{
+ background-image:radial-gradient(circle at 4% 9%,#996a3466,transparent 35%),radial-gradient(ellipse at 93% 88%,#9b734144,transparent 32%),url("../assets/paper-weathered.svg")!important;
+ background-size:auto,auto,100% 100%!important;
+}
+.reader-page.theme-night .reader-sheet{
+ background:linear-gradient(90deg,#11141766,transparent 35%,#1a151663),#282629!important;
+ color:#e7ddce!important;
+ border-top-color:#615445!important;border-bottom-color:#2c261f!important;
+}
+.reader-page.theme-night .reader-sheet .reader-page-content,
+.reader-page.theme-night .reader-sheet h1{color:#f2e4d2!important}
+.reader-page.theme-warm .reader-sheet{background-color:#dfc4a0}
+.profile-view:not(.is-own) .profile-bottom{grid-template-columns:1fr}
+.cinema-hero{background-position:calc(50% + var(--scene-x,0px)) calc(49% + var(--scene-y,0px))}
