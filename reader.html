@@ -12,10 +12,11 @@
   <link rel="stylesheet" href="css/editor-ux-fixes.css">
   <link rel="stylesheet" href="css/wood-realism.css">
   <link rel="stylesheet" href="css/studio-pro.css">
+  <link rel="stylesheet" href="css/cinematic-ui.css">
 </head>
 <body class="reader-page">
   <header class="reader-topbar" id="readerTopbar">
-    <a class="brand reader-close-link" href="index.html" title="Закрыть книгу"><span class="reader-brand-mark">‹</span> Библиотека</a>
+    <a class="brand reader-close-link" href="index.html" title="Закрыть книгу"><span class="reader-brand-mark">‹</span> К библиотеке</a>
     <div class="reader-book-info"><span id="readerBookTitle">Книга</span><small id="readerChapterTitle">Глава</small></div>
     <a class="ghost-button link-button reader-close-link" id="backToEditor" href="#">Редактор</a>
   </header>
@@ -27,7 +28,7 @@
 
   <main class="reader-main">
     <div class="reader-stage" id="readerStage">
-      <div class="reader-spread" id="readerSpread">
+      <div class="reader-spread" id="readerSpread"><span class="cinema-book-binding" aria-hidden="true"></span>
         <article class="reader-sheet reader-sheet-left" id="readerSheetLeft">
           <div class="reader-sheet-head" id="readerLeftHead"><p class="reader-kicker" id="readerKicker"></p><h1 id="readerTitle">Глава</h1><span id="readerRunningLeft" class="reader-running-title" hidden></span></div>
           <div class="reader-page-content" id="readerContentLeft"></div>

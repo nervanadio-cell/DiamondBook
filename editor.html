@@ -14,12 +14,13 @@
   <link rel="stylesheet" href="css/wood-realism.css">
   <link rel="stylesheet" href="css/studio-pro.css">
   <link rel="stylesheet" href="css/editor-workspace.css">
+  <link rel="stylesheet" href="css/cinematic-ui.css">
 </head>
 <body class="editor-page">
   <header class="editor-topbar">
     <div class="editor-left">
       <button type="button" id="outlineToggle" class="icon-button outline-toggle" aria-expanded="false" aria-controls="sidebar" aria-label="Открыть содержание">☰</button>
-      <a class="brand" href="index.html">Diamond<span>Book</span></a>
+      <a class="brand" href="index.html"><span class="brand-gem" aria-hidden="true">◇</span> Diamond<span>Book</span></a>
       <span class="divider"></span>
       <button class="book-name-button" id="bookNameButton">Книга</button>
     </div>
@@ -37,7 +38,7 @@
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-heading">
         <div>
-          <span class="eyebrow">Содержание</span>
+          <span class="eyebrow">СТРУКТУРА КНИГИ</span>
           <h2 id="sidebarBookTitle">Книга</h2>
         </div>
         <button class="icon-button small" id="addRootButton">＋</button>
@@ -106,7 +107,7 @@
         <button type="button" class="tool-button shortcut-guide-trigger" id="shortcutGuideButton" aria-label="Сочетания клавиш" title="Сочетания клавиш · F1">?</button>
       </div>
 
-      <div class="chapter-editor">
+      <div class="chapter-editor"><span class="cinema-page-corner cinema-top-left" aria-hidden="true">❧</span><span class="cinema-page-corner cinema-top-right" aria-hidden="true">❧</span>
         <div class="chapter-title-row">
           <input id="chapterTitle" class="chapter-title-input" type="text" maxlength="200" placeholder="Название главы" autocomplete="off">
           <div class="chapter-title-actions">
