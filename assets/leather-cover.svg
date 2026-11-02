@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 720" width="500" height="720">
+<defs><linearGradient id="leather"><stop stop-color="#170f0e"/><stop offset=".13" stop-color="#68432f"/><stop offset=".56" stop-color="#3c261d"/><stop offset="1" stop-color="#150f0c"/></linearGradient><filter id="grain"><feTurbulence baseFrequency=".13" numOctaves="4" seed="19" type="fractalNoise"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .18"/></feComponentTransfer></filter></defs>
+<rect width="500" height="720" fill="url(#leather)"/>
+<path d="M21 21H476V696H21Z" fill="none" stroke="#c6a16f" stroke-width="2" opacity=".62"/>
+<path d="M35 34H462V683H35Z" fill="none" stroke="#c6a16f" stroke-width="1" opacity=".28"/>
+<path d="M61 64Q255 80 440 62M61 654Q255 644 440 654" fill="none" stroke="#e5c08e" stroke-width="2" opacity=".28"/>
+<path d="M7 0H24V720H7Z" fill="#0d0a09" opacity=".68"/>
+<rect width="500" height="720" fill="#e5c89a" filter="url(#grain)"/>
+</svg>

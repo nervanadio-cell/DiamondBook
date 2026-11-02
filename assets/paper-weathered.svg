@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="800" height="1100">
+<defs><filter id="fibers"><feTurbulence type="fractalNoise" baseFrequency=".27 .29" numOctaves="3" seed="18"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .12"/></feComponentTransfer></filter>
+<radialGradient id="edge"><stop offset=".65" stop-color="#fff4db" stop-opacity="0"/><stop offset="1" stop-color="#9b7046" stop-opacity=".19"/></radialGradient></defs>
+<rect width="800" height="1100" fill="#edddbf"/><rect width="800" height="1100" fill="url(#edge)"/>
+<path d="M15 20Q80 4 161 17T309 15T520 23T785 13M20 1082Q120 1095 224 1080T460 1079T790 1083" stroke="#9f7853" opacity=".13" stroke-width="3" fill="none"/>
+<rect width="800" height="1100" fill="#fff" filter="url(#fibers)" opacity=".72"/>
+<g fill="#9f774d" opacity=".1"><circle cx="158" cy="226" r="9"/><circle cx="635" cy="772" r="15"/><circle cx="412" cy="1050" r="22"/><circle cx="22" cy="580" r="12"/></g></svg>
