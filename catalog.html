@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17100c"><title>Библиотека сообщества — DiamondBook</title>
+<link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/refinement.css"><link rel="stylesheet" href="css/cover-layout.css"><link rel="stylesheet" href="css/page-materials.css"><link rel="stylesheet" href="css/shelf-rework.css"><link rel="stylesheet" href="css/wood-realism.css"><link rel="stylesheet" href="css/community.css"><link rel="stylesheet" href="css/cinematic-ui.css"><link rel="stylesheet" href="css/cinematic-pages.css">
+</head><body class="library-screen catalog-screen">
+<div class="app-shell"><header class="topbar">
+<a class="brand" href="index.html"><span class="brand-gem">◇</span> Diamond<span>Book</span></a>
+<nav class="site-navigation" aria-label="Разделы сайта"><a href="index.html">Главная</a><a href="catalog.html" class="is-current">Библиотека</a><a href="index.html#myBooks">Мои книги</a><a href="index.html#community">Сообщество</a></nav>
+<nav class="top-actions"><button type="button" id="accountButton" class="account-entry" aria-label="Мой аккаунт"><span class="account-entry-avatar">✦</span><span id="accountButtonLabel">Войти / Регистрация</span></button><a class="primary-button link-button" href="create.html">＋ Создать книгу</a></nav></header>
+<main class="catalog-layout">
+<aside class="catalog-sidebar">
+<div class="catalog-sidebar-head"><span>✧</span><strong>Книжные полки</strong></div>
+<div class="catalog-sidebar-group"><h2>Коллекции</h2><a href="catalog.html" class="active">▤ Все книги</a><a href="index.html#myBooks">✎ Мои рукописи</a><a href="index.html#community">✦ Сообщество</a><a href="create.html">＋ Создать книгу</a></div>
+<div class="catalog-sidebar-group"><h2>Жанры</h2><div id="communityCategories" class="community-categories catalog-genre-list" aria-label="Жанры">
+<button type="button" class="active" data-category="">Все жанры</button><button type="button" data-category="fantasy">Фэнтези</button>
+<button type="button" data-category="romance">Романтика</button><button type="button" data-category="scifi">Научная фантастика</button>
+<button type="button" data-category="detective">Детективы</button><button type="button" data-category="horror">Ужасы</button>
+<button type="button" data-category="adventure">Приключения</button><button type="button" data-category="poetry">Поэзия</button>
+<button type="button" data-category="nonfiction">Документальная</button><button type="button" data-category="other">Другое</button></div></div>
+<div class="catalog-side-foot">В каждой книге — целый мир.<span>❦</span></div></aside>
+<section class="catalog-main" aria-labelledby="communityHeading">
+<div class="catalog-intro"><p class="eyebrow">СОБРАНИЕ ИСТОРИЙ DIAMONDBOOK</p><h1 id="communityHeading">Библиотека <em>книг пользователей</em></h1><p>Исследуй новые миры, находи любимых авторов и делись собственными историями.</p></div>
+<div class="catalog-toolrow">
+<label class="catalog-search-field"><span>⌕</span><input id="communitySearch" type="search" placeholder="Поиск по названию книги, автору, никнейму…" aria-label="Поиск книг"></label>
+<label class="catalog-filter"><span>Категория</span><select id="communityCategory" aria-label="Категория"><option value="">Все жанры</option><option value="fantasy">Фэнтези</option><option value="romance">Романтика</option><option value="scifi">Фантастика</option><option value="detective">Детектив</option><option value="horror">Ужасы</option><option value="adventure">Приключения</option><option value="poetry">Поэзия</option><option value="nonfiction">Документальная</option><option value="other">Другое</option></select></label>
+<label class="catalog-filter"><span>Сортировка</span><select id="communitySort" aria-label="Сортировка"><option value="new">По новизне</option><option value="title">По названию</option></select></label>
+</div>
+<div class="catalog-subhead"><span>✦ Найди свою следующую историю</span><span id="communityCount">0 книг</span></div>
+<div id="communityBooks" class="books-grid catalog-book-grid" aria-live="polite"></div><div id="communityNotice" class="community-notice">Загружаем книги сообщества…</div>
+<div class="catalog-publish-panel"><div><strong>Есть история, которой хочется поделиться?</strong><p>Опубликуй свою книгу и найди первых читателей.</p></div><button id="publishOwnBook" type="button">＋ Опубликовать книгу</button></div>
+</section></main></div>
+<div id="communityModal" class="community-modal" hidden><div class="community-dialog" role="dialog" aria-modal="true" aria-labelledby="communityDialogTitle"><header class="community-dialog-header"><div><p class="eyebrow">DIAMONDBOOK · КЛУБ АВТОРОВ</p><h2 id="communityDialogTitle">Аккаунт</h2></div><button id="communityDialogClose" type="button" aria-label="Закрыть">×</button></header><div id="communityDialogBody" class="community-dialog-body"></div></div></div>
+<script src="js/storage.js"></script><script src="js/cover-layout.js"></script><script src="js/community.js"></script><script src="js/cinematic.js"></script>
+</body></html>
